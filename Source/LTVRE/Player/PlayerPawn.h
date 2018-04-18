@@ -1,32 +1,47 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
+// project includes
+#include "Utility/Structs.h"
+
+// UE4 includes
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
+/// <summary>
+/// player
+/// </summary>
 class LTVRE_API APlayerPawn : public APawn
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+	/// <summary>
+	/// constructor
+	/// </summary>
 	APlayerPawn();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+private:
+# pragma region private variables
+	/// <summary>
+	/// name of player
+	/// </summary>
+	FString m_name;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	/// <summary>
+	/// type of player
+	/// </summary>
+	EPlayerType m_type;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	/// <summary>
+	/// lesson categories that player can edit
+	/// </summary>
+	list<ELessonCategory> m_categories;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player")
-	bool IsTeacher;
-	
+	/// <summary>
+	/// lessons from this player
+	/// </summary>
+	list<FLesson> m_lessons;
+# pragma endregion
 };
