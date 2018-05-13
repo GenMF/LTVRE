@@ -1,5 +1,6 @@
 #pragma once
 
+#pragma region player
 /// <summary>
 /// type of player
 /// </summary>
@@ -9,7 +10,9 @@ enum class EPlayerType
 	STUDENT,
 	TEACHER
 };
+#pragma endregion
 
+#pragma region lesson
 /// <summary>
 /// availability of lesson
 /// </summary>
@@ -37,3 +40,4 @@ enum class ELessonMap
 	NONE,
 	CASTLE
 };
+#pragma endregion
