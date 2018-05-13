@@ -3,16 +3,50 @@
 // project includes
 #include "Utility/Enums.h"
 
-// UE4 includes
-#include "Runtime/Engine/Classes/Engine/SkeletalMesh.h"
-
 // system includes
 #include <list>
 #include <map>
 
+// UE4 includes
+#include "Runtime/Engine/Classes/Engine/SkeletalMesh.h"
+
 // usings
 using namespace std;
 
+#pragma region player
+/// <summary>
+/// player settings
+/// </summary>
+struct FPlayerSettings
+{
+	/// <summary>
+	/// name of player
+	/// </summary>
+	FString m_Name = "Player";
+
+	/// <summary>
+	/// type of player
+	/// </summary>
+	EPlayerType m_Type;
+
+	/// <summary>
+	/// sound level
+	/// </summary>
+	int m_Sound = 100;
+
+	/// <summary>
+	/// music level
+	/// </summary>
+	int m_Music = 100;
+
+	/// <summary>
+	/// graphic level
+	/// </summary>
+	int m_Graphic = 6;
+};
+#pragma endregion
+
+#pragma region lesson
 /// <summary>
 /// single object from a lesson
 /// </summary>
@@ -131,3 +165,4 @@ struct FLesson
 	/// </summary>
 	FLessonMap m_Map;
 };
+#pragma endregion

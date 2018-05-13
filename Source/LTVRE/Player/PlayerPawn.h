@@ -2,10 +2,12 @@
 
 // project includes
 #include "Utility/Structs.h"
+#include "Component/SettingsComponent.h"
 
 // UE4 includes
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Camera/CameraComponent.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
@@ -22,18 +24,22 @@ public:
 	/// </summary>
 	APlayerPawn();
 
+#pragma region UPROPERTY
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")
+	/// <summary>
+	/// camera component of player
+	/// </summary>
+	UCameraComponent* Camera;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")
+	/// <summary>
+	/// setting component of player
+	/// </summary>
+	USettingsComponent* Settings;
+#pragma endregion
+
 private:
 # pragma region private variables
-	/// <summary>
-	/// name of player
-	/// </summary>
-	FString m_name;
-
-	/// <summary>
-	/// type of player
-	/// </summary>
-	EPlayerType m_type;
-
 	/// <summary>
 	/// lesson categories that player can edit
 	/// </summary>
