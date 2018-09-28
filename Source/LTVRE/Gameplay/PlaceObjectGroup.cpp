@@ -1,9 +1,12 @@
-// project includes
-#include "PlaceObjectGroup.h"
+#pragma region UE4 includes
+#include "Components/SphereComponent.h"  
+#pragma endregion
 
-// UE4 includes
-#include "Components/SphereComponent.h"
+#pragma region project includes
+#include "PlaceObjectGroup.h"  
+#pragma endregion
 
+#pragma region constructor
 // constructor
 APlaceObjectGroup::APlaceObjectGroup()
 {
@@ -11,3 +14,4 @@ APlaceObjectGroup::APlaceObjectGroup()
 	USphereComponent* Root = CreateDefaultSubobject<USphereComponent>(TEXT("Root"));
 	RootComponent = Root;
 }
+#pragma endregion

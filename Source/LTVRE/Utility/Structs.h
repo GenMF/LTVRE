@@ -1,17 +1,21 @@
 #pragma once
 
-// project includes
-#include "Utility/Enums.h"
-
-// system includes
+#pragma region system includes
 #include <list>
-#include <map>
+#include <map>  
+#pragma endregion
 
-// UE4 includes
-#include "Runtime/Engine/Classes/Engine/SkeletalMesh.h"
+#pragma region UE4 includes
+#include "Runtime/Engine/Classes/Engine/SkeletalMesh.h"  
+#pragma endregion
 
-// usings
+#pragma region project includes
+#include "Utility/Enums.h"  
+#pragma endregion
+
+#pragma region usings
 using namespace std;
+#pragma endregion
 
 #pragma region player
 /// <summary>

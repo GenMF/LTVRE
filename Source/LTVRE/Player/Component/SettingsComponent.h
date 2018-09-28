@@ -1,12 +1,14 @@
 #pragma once
 
-// project includes
-#include "Utility/Structs.h"
-
-// UE4 includes
+#pragma region UE4 includes
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "SettingsComponent.generated.h"
+#pragma endregion
+
+#pragma region project includes
+#include "Utility/Structs.h"  
+#include "SettingsComponent.generated.h"  
+#pragma endregion
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 /// <summary>
@@ -16,11 +18,13 @@ class LTVRE_API USettingsComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
+#pragma region constructor
 	/// <summary>
 	/// constructor
 	/// </summary>
 	USettingsComponent();
+#pragma endregion
 
 #pragma region UFUNCTION
 	UFUNCTION(BlueprintCallable)
@@ -112,7 +116,7 @@ public:
 	void SetGraphicLevel(int Level);
 #pragma endregion
 
-#pragma region inline function
+#pragma region public inline function
 	/// <summary>
 	/// get player type
 	/// </summary>

@@ -1,24 +1,27 @@
-// usings
+#region usings
 using UnrealBuildTool;
+#endregion
 
+#region game class
 /// <summary>
 /// game class
 /// </summary>
 public class LTVRE : ModuleRules
 {
-    /// <summary>
-    /// project
-    /// </summary>
-    /// <param name="Target">target rules</param>
+	/// <summary>
+	/// project
+	/// </summary>
+	/// <param name="Target">target rules</param>
 	public LTVRE(ReadOnlyTargetRules Target) : base(Target)
 	{
-        // pch
+		// pch
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-        // public dependencies
+
+		// public dependencies
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-        // private dependencies
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		// private dependencies
+		PrivateDependencyModuleNames.AddRange(new string[] { });
 	}
-}
+} 
+#endregion

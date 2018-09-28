@@ -1,9 +1,13 @@
 #pragma once
 
-// UE4 includes
+#pragma region UE4 includes
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PlaceObjectGroup.generated.h"
+#pragma endregion
+
+#pragma region project includes
+#include "PlaceObjectGroup.generated.h"  
+#pragma endregion
 
 UCLASS()
 /// <summary>
@@ -14,10 +18,12 @@ class LTVRE_API APlaceObjectGroup : public AActor
 	GENERATED_BODY()
 	
 public:	
+#pragma region constructor
 	/// <summary>
 	/// constructor
 	/// </summary>
 	APlaceObjectGroup();
+#pragma endregion
 
 # pragma region UPROPERTY
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Place object group")

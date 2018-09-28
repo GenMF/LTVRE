@@ -1,22 +1,25 @@
-// usings
+#region usings
 using UnrealBuildTool;
 using System.Collections.Generic;
+#endregion
 
+#region game target
 /// <summary>
 /// game target
 /// </summary>
 public class LTVRETarget : TargetRules
 {
-    /// <summary>
-    /// game target
-    /// </summary>
-    /// <param name="Target">target info</param>
+	/// <summary>
+	/// game target
+	/// </summary>
+	/// <param name="Target">target info</param>
 	public LTVRETarget(TargetInfo Target) : base(Target)
 	{
-        // set target to game
+		// set target to game
 		Type = TargetType.Game;
 
-        // add modules
-		ExtraModuleNames.AddRange( new string[] { "LTVRE" } );
+		// add modules
+		ExtraModuleNames.AddRange(new string[] { "LTVRE" });
 	}
-}
+} 
+#endregion
