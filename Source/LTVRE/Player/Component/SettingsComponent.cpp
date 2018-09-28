@@ -1,11 +1,14 @@
-// project includes
-#include "SettingsComponent.h"
+#pragma region project includes
+#include "SettingsComponent.h"  
+#pragma endregion
 
+#pragma region constructor
 // constructor
 USettingsComponent::USettingsComponent()
 {
-	
+
 }
+#pragma endregion
 
 #pragma region UFUNCTION
 // get name of player

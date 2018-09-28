@@ -1,14 +1,16 @@
 #pragma once
 
-// project includes
-#include "Utility/Structs.h"
-#include "Component/SettingsComponent.h"
-
-// UE4 includes
+#pragma region UE4 includes
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
-#include "PlayerPawn.generated.h"
+#pragma endregion
+
+#pragma region project includes
+#include "Utility/Structs.h"
+#include "Component/SettingsComponent.h"  
+#include "PlayerPawn.generated.h"  
+#pragma endregion
 
 UCLASS()
 /// <summary>
@@ -19,10 +21,12 @@ class LTVRE_API APlayerPawn : public APawn
 	GENERATED_BODY()
 
 public:
+#pragma region constructor
 	/// <summary>
 	/// constructor
 	/// </summary>
 	APlayerPawn();
+#pragma endregion
 
 #pragma region UPROPERTY
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")

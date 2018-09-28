@@ -1,4 +1,5 @@
 #pragma once
 
-// UE4 includes
+#pragma region UE4 includes
 #include "CoreMinimal.h"
+#pragma endregion
