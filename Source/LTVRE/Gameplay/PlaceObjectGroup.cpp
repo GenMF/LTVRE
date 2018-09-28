@@ -1,9 +1,9 @@
-#pragma region UE4 includes
-#include "Components/SphereComponent.h"  
+#pragma region project includes
+#include "PlaceObjectGroup.h"
 #pragma endregion
 
-#pragma region project includes
-#include "PlaceObjectGroup.h"  
+#pragma region UE4 includes
+#include "Components/SphereComponent.h"
 #pragma endregion
 
 #pragma region constructor
