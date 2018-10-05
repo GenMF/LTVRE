@@ -3,13 +3,16 @@
 #pragma region UE4 includes
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Camera/CameraComponent.h"
 #pragma endregion
 
 #pragma region project includes
-#include "Utility/Structs.h"
-#include "Component/SettingsComponent.h"  
 #include "PlayerPawn.generated.h"  
+#pragma endregion
+
+#pragma region forward decleration
+class UCameraComponent;
+class USettingsComponent;
+class ULessonsComponent;
 #pragma endregion
 
 UCLASS()
@@ -40,18 +43,11 @@ public:
 	/// setting component of player
 	/// </summary>
 	USettingsComponent* Settings;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")
+	/// <summary>
+	/// lessons component of player
+	/// </summary>
+	ULessonsComponent* Lessons;
 #pragma endregion
-
-private:
-# pragma region private variables
-	/// <summary>
-	/// lesson categories that player can edit
-	/// </summary>
-	list<ELessonCategory> m_categories;
-
-	/// <summary>
-	/// lessons from this player
-	/// </summary>
-	list<FLesson> m_lessons;
-# pragma endregion
 };

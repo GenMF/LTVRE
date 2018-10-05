@@ -1,16 +1,12 @@
 #pragma once
 
-#pragma region system includes
-#include <list>
-#include <map>  
-#pragma endregion
-
 #pragma region UE4 includes
 #include "Runtime/Engine/Classes/Engine/SkeletalMesh.h"  
 #pragma endregion
 
 #pragma region project includes
-#include "Utility/Enums.h"  
+#include "Utility/Enums.h"
+#include "Structs.generated.h"
 #pragma endregion
 
 #pragma region usings
@@ -18,155 +14,200 @@ using namespace std;
 #pragma endregion
 
 #pragma region player
+USTRUCT(BlueprintType)
 /// <summary>
 /// player settings
 /// </summary>
 struct FPlayerSettings
 {
+	GENERATED_BODY()
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Player settings")
 	/// <summary>
 	/// name of player
 	/// </summary>
-	FString m_Name = "Player";
+	FString Name = "Player";
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Player settings")
 	/// <summary>
 	/// type of player
 	/// </summary>
-	EPlayerType m_Type;
+	EPlayerType Type;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Player settings")
 	/// <summary>
 	/// sound level
 	/// </summary>
-	int m_Sound = 100;
+	int Sound = 100;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Player settings")
 	/// <summary>
 	/// music level
 	/// </summary>
-	int m_Music = 100;
+	int Music = 100;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Player settings")
 	/// <summary>
 	/// graphic level
 	/// </summary>
-	int m_Graphic = 6;
+	int Graphic = 6;
 };
 #pragma endregion
 
 #pragma region lesson
+USTRUCT(BlueprintType)
 /// <summary>
 /// single object from a lesson
 /// </summary>
 struct FLessonObject
 {
+	GENERATED_BODY()
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// name of object
 	/// </summary>
-	FString m_Name;
+	FString Name;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// transform of object relative to group
 	/// </summary>
-	FTransform m_Transform;
+	FTransform Transform;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// picture of object
 	/// </summary>
-	UTexture2D* m_PPicture;
+	UTexture2D* Picture;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// static mesh of object
 	/// </summary>
-	UStaticMesh* m_PStaticMesh;
+	UStaticMesh* StaticMesh;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// skeletal mesh of object
 	/// </summary>
-	USkeletalMesh* m_PSkeletalMesh;
+	USkeletalMesh* SkeletalMesh;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// notice to this object
 	/// </summary>
-	FString m_Notice;
+	FString Notice;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// question to this object
 	/// </summary>
-	FString m_Question;
+	FString Question;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// answers for the question
 	/// </summary>
-	list<FString> Answers;
+	TArray<FString> Answers;
 };
 
+USTRUCT(BlueprintType)
 /// <summary>
 /// group of objects from a lesson
 /// </summary>
 struct FLessonObjectGroup
 {
+	GENERATED_BODY()
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
 	/// name of object group
 	/// </summary>
-	FString m_Name;
+	FString Name;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
 	/// picture of object group
 	/// </summary>
-	UTexture2D* m_PPicture;
+	UTexture2D* Picture;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
 	/// objects
 	/// </summary>
-	list<FLessonObject> m_Objects;
+	TArray<FLessonObject> Objects;
 };
 
+USTRUCT(BlueprintType)
 /// <summary>
 /// map from a lesson
 /// </summary>
 struct FLessonMap
 {
+	GENERATED_BODY()
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
 	/// type of map
 	/// </summary>
-	ELessonMap m_Map;
+	ELessonMap Map;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
 	/// picture of map
 	/// </summary>
-	UTexture2D* m_PPicture;
+	UTexture2D* Picture;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
 	/// transform for object groups 2D
 	/// </summary>
-	map<int, FTransform> m_Transform2D;
+	TMap<int, FTransform> Transform2D;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
 	/// object groups to id
 	/// </summary>
-	map<int, FLessonObjectGroup> m_ObjectGroupID;
+	TMap<int, FLessonObjectGroup> ObjectGroupID;
 };
 
+USTRUCT(BlueprintType)
 /// <summary>
 /// lesson
 /// </summary>
 struct FLesson
 {
+	GENERATED_BODY()
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
 	/// name of lesson
 	/// </summary>
-	FString m_Name;
+	FString Name;
+	
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
+	/// <summary>
+	/// creator of lesson
+	/// </summary>
+	FString Creator;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
 	/// availability of lesson
 	/// </summary>
-	ELessonAvailability m_Availability;
+	ELessonAvailability Availability;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
 	/// category of lesson
 	/// </summary>
-	ELessonCategory m_Category;
+	ELessonCategory Category;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
 	/// map of lesson
 	/// </summary>
-	FLessonMap m_Map;
+	FLessonMap Map;
 };
 #pragma endregion

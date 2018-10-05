@@ -121,19 +121,19 @@ public:
 	/// get player type
 	/// </summary>
 	/// <returns>player type</returns>
-	inline EPlayerType GetPlayerType() { return m_settings.m_Type; }
+	inline EPlayerType GetPlayerType() { return m_settings.Type; }
 
 	/// <summary>
 	/// get sound percentage
 	/// </summary>
 	/// <returns>sound percentage</returns>
-	inline int GetSoundPercentage() { return m_settings.m_Sound; }
+	inline int GetSoundPercentage() { return m_settings.Sound; }
 
 	/// <summary>
 	/// get music percentage
 	/// </summary>
 	/// <returns>music percentage</returns>
-	inline int GetMusicPercentage() { return m_settings.m_Music; }
+	inline int GetMusicPercentage() { return m_settings.Music; }
 #pragma endregion
 
 private:
