@@ -44,7 +44,7 @@ public:
 	/// </summary>
 	USettingsComponent* Settings;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Pawn")
 	/// <summary>
 	/// lessons component of player
 	/// </summary>
