@@ -26,6 +26,38 @@ public:
 	ULessonsComponent();
 #pragma endregion
 
+#pragma region UPROPERTY
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all textures for objects
+	/// </summary>
+	TArray<UTexture2D*> LessonObjectTextures;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all static meshes for objects
+	/// </summary>
+	TArray<UStaticMesh*> LessonObjectStaticMeshes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all skeletal meshes for objects
+	/// </summary>
+	TArray<USkeletalMesh*> LessonObjectSkeletalMeshes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all static meshes for object groups
+	/// </summary>
+	TArray<UStaticMesh*> LessonObjectGroupStaticMeshes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all skeletal meshes for object groups
+	/// </summary>
+	TArray<USkeletalMesh*> LessonObjectGroupSkeletalMeshes;
+#pragma endregion
+
 #pragma region UFUNCTION
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -81,6 +113,13 @@ public:
 	/// </summary>
 	/// <param name="LessonIsNew">if current lesson is new</param>
 	void SaveCurrentLesson(bool LessonIsNew);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// get all object groups
+	/// </summary>
+	/// <returns>all object groups</returns>
+	TArray<FLessonObjectGroup> GetAllObjectGroups();
 #pragma endregion
 
 private:
@@ -94,6 +133,11 @@ private:
 	/// lesson categories that player can edit
 	/// </summary>
 	TArray<ELessonCategory> m_categories;
+
+	/// <summary>
+	/// object groups created from player
+	/// </summary>
+	TArray<FLessonObjectGroup> m_objectGroups;
 
 	/// <summary>
 	/// lessons from this player

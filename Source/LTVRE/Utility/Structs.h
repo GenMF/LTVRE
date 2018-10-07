@@ -77,21 +77,21 @@ struct FLessonObject
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
-	/// picture of object
+	/// name of picture of object
 	/// </summary>
-	UTexture2D* Picture;
+	FString Picture;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
-	/// static mesh of object
+	/// name of static mesh of object
 	/// </summary>
-	UStaticMesh* StaticMesh;
+	FString StaticMesh;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
-	/// skeletal mesh of object
+	/// name of skeletal mesh of object
 	/// </summary>
-	USkeletalMesh* SkeletalMesh;
+	FString SkeletalMesh;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
@@ -128,9 +128,9 @@ struct FLessonObjectGroup
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
-	/// picture of object group
+	/// name of picture of object group
 	/// </summary>
-	UTexture2D* Picture;
+	FString Picture;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
@@ -155,9 +155,9 @@ struct FLessonMap
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
-	/// picture of map
+	/// name of picture of map
 	/// </summary>
-	UTexture2D* Picture;
+	FString Picture;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>

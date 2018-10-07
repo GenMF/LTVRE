@@ -85,4 +85,10 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
 	//else
 		/// TODO: fill
 }
+
+// get all object groups
+TArray<FLessonObjectGroup> ULessonsComponent::GetAllObjectGroups()
+{
+	return m_objectGroups;
+}
 #pragma endregion
