@@ -120,6 +120,33 @@ public:
 	/// </summary>
 	/// <returns>all object groups</returns>
 	TArray<FLessonObjectGroup> GetAllObjectGroups();
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// get current object group
+	/// </summary>
+	/// <returns>current object group</returns>
+	FLessonObjectGroup GetCurrentObjectGroup();
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// empty the current object group to default
+	/// </summary>
+	void EmptyCurrentObjectGroup();
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set name of current object group
+	/// </summary>
+	/// <param name="Name">name to set</param>
+	void SetObjectGroupName(FString Name);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// save current object group to object group list
+	/// </summary>
+	/// <param name="ObjectGroupIsNew">if current object group is new</param>
+	void SaveCurrentObjectGroup(bool ObjectGroupIsNew);
 #pragma endregion
 
 private:
@@ -128,6 +155,11 @@ private:
 	/// current lesson
 	/// </summary>
 	FLesson m_currentLesson;
+
+	/// <summary>
+	/// current object group
+	/// </summary>
+	FLessonObjectGroup m_currentObjectGroup;
 
 	/// <summary>
 	/// lesson categories that player can edit
