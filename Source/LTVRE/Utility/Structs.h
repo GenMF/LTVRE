@@ -71,27 +71,15 @@ struct FLessonObject
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
-	/// transform of object relative to group
-	/// </summary>
-	FTransform Transform;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
 	/// name of picture of object
 	/// </summary>
 	FString Picture;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
-	/// name of static mesh of object
+	/// map of id and name of single objects
 	/// </summary>
-	FString StaticMesh;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
-	/// name of skeletal mesh of object
-	/// </summary>
-	FString SkeletalMesh;
+	TMap<int, FString> IDObject;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
@@ -131,6 +119,12 @@ struct FLessonObjectGroup
 	/// name of picture of object group
 	/// </summary>
 	FString Picture;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	/// <summary>
+	/// transform for objects 2D
+	/// </summary>
+	TMap<int, FTransform> Transform2D;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
