@@ -6,8 +6,10 @@
 #pragma endregion
 
 #pragma region project includes
-#include "Utility/Structs.h"  
-#include "LessonsComponent.generated.h"  
+#include "Utility/Structs.h"
+#include "Lesson/SingleObject.h"
+#include "Lesson/ObjectGroup.h"
+#include "LessonsComponent.generated.h"
 #pragma endregion
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -35,27 +37,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
-	/// all static meshes for objects
+	/// all single objects
 	/// </summary>
-	TArray<UStaticMesh*> LessonObjectStaticMeshes;
+	TArray<TSubclassOf<ASingleObject>> SingleObjects;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
-	/// all skeletal meshes for objects
+	/// all basic object groups
 	/// </summary>
-	TArray<USkeletalMesh*> LessonObjectSkeletalMeshes;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
-	/// <summary>
-	/// all static meshes for object groups
-	/// </summary>
-	TArray<UStaticMesh*> LessonObjectGroupStaticMeshes;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
-	/// <summary>
-	/// all skeletal meshes for object groups
-	/// </summary>
-	TArray<USkeletalMesh*> LessonObjectGroupSkeletalMeshes;
+	TArray<TSubclassOf<AObjectGroup>> ObjectGroups;
 #pragma endregion
 
 #pragma region UFUNCTION
