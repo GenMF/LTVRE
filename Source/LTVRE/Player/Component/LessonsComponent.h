@@ -31,9 +31,21 @@ public:
 #pragma region UPROPERTY
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
-	/// all textures for objects
+	/// all textures for maps
 	/// </summary>
-	TArray<UTexture2D*> LessonObjectTextures;
+	TArray<UTexture2D*> MapTextures;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all textures for single objects
+	/// </summary>
+	TArray<UTexture2D*> SingleObjectTextures;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all textures for object groups
+	/// </summary>
+	TArray<UTexture2D*> ObjectGroupTextures;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
