@@ -28,32 +28,4 @@ public:
 	/// </summary>
 	AObjectGroup();
 #pragma endregion
-
-#pragma region UFUNCTION
-	UFUNCTION(BlueprintCallable, Category = "Object group")
-	/// <summary>
-	/// add a single place to list
-	/// </summary>
-	/// <param name="PlaceSingleObject">place single object to add</param>
-	void AddPlaceSingleObject(APlaceSingleObject* PlaceSingleObject);
-#pragma endregion
-
-#pragma region public inline function
-	/// <summary>
-	/// get all places where a single object can be placed
-	/// </summary>
-	/// <returns>list with all places where a single object can be placed</returns>
-	inline TArray<APlaceSingleObject*> GetSingleObjectPlaces()
-	{
-		return m_singleObjectPlaces;
-	}
-#pragma endregion
-
-private:
-#pragma region private variables
-	/// <summary>
-	/// array of places where single objects can be placed
-	/// </summary>
-	TArray<APlaceSingleObject*> m_singleObjectPlaces;
-#pragma endregion
 };
