@@ -58,6 +58,12 @@ public:
 	/// all basic object groups
 	/// </summary>
 	TArray<TSubclassOf<AObjectGroup>> ObjectGroups;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all basic object groups, to identify the 2d transform for the buttons
+	/// </summary>
+	TArray<FLessonObjectGroup> ObjectGroupInformations;
 #pragma endregion
 
 #pragma region UFUNCTION

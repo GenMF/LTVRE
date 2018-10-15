@@ -1,16 +1,8 @@
 #pragma once
 
-#pragma region UE4 includes
-#include "Runtime/Engine/Classes/Engine/SkeletalMesh.h"  
-#pragma endregion
-
 #pragma region project includes
 #include "Utility/Enums.h"
 #include "Structs.generated.h"
-#pragma endregion
-
-#pragma region usings
-using namespace std;
 #pragma endregion
 
 #pragma region player
@@ -122,9 +114,9 @@ struct FLessonObjectGroup
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
-	/// transform for objects 2D
+	/// vector 2D for objects 2D
 	/// </summary>
-	TMap<int, FTransform> Transform2D;
+	TMap<int, FVector2D> Transform2D;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
@@ -155,9 +147,9 @@ struct FLessonMap
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
-	/// transform for object groups 2D
+	/// vector 2D for object groups 2D
 	/// </summary>
-	TMap<int, FTransform> Transform2D;
+	TMap<int, FVector2D> Transform2D;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
