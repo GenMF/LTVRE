@@ -2,6 +2,11 @@
 #include "LessonsComponent.h" 
 #pragma endregion
 
+#pragma region UE4 includes
+#include "Engine/Texture2D.h"
+#pragma endregion
+
+
 #pragma region constructor
 // constructor
 ULessonsComponent::ULessonsComponent()
@@ -102,6 +107,13 @@ FLessonObjectGroup ULessonsComponent::GetCurrentObjectGroup()
 void ULessonsComponent::EmptyCurrentObjectGroup()
 {
 	m_currentObjectGroup = FLessonObjectGroup();
+
+	// if no object group textures return
+	if (ObjectGroupTextures.Num() <= 0)
+		return;
+
+	// set current object group picture to first available
+	m_currentObjectGroup.Picture = ObjectGroupTextures[0]->GetName();
 }
 
 // set name of current object group
