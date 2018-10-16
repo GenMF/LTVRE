@@ -1,5 +1,6 @@
 #pragma region project includes
-#include "LessonsComponent.h" 
+#include "LessonsComponent.h"
+#include "Player/PlayerPawn.h"
 #pragma endregion
 
 #pragma region UE4 includes
@@ -113,7 +114,7 @@ void ULessonsComponent::EmptyCurrentObjectGroup()
 		return;
 
 	// set current object group picture to first available
-	m_currentObjectGroup.Picture = ObjectGroupTextures[0]->GetName();
+	m_currentObjectGroup.ObjectName = ObjectGroupTextures[0]->GetName();
 }
 
 // set name of current object group
@@ -136,6 +137,36 @@ void ULessonsComponent::SetObjectGroupName(FString Name)
 		// add char at index i
 		m_currentObjectGroup.Name += Name[i];
 	}
+}
+
+// set picture name of current object group
+void ULessonsComponent::SetObjectGroupObjectName(FString Name)
+{
+	// if name length is not valid return
+	if (Name.Len() <= 0)
+		return;
+
+	// set name
+	m_currentObjectGroup.ObjectName = Name;
+}
+
+// set object group object at index (ID)
+void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
+{
+	// while array length is lower than id add new lesson object
+	while (m_currentObjectGroup.Objects.Num() < ID + 1)
+		m_currentObjectGroup.Objects.Add(FLessonObject());
+
+	// lesson object to set
+	FLessonObject lessonObject;
+
+	// find lesson object from lesson object array
+	for (FLessonObject obj : LessonObjects)
+		if (obj.Name.Contains(LessonObjectName))
+			lessonObject = obj;
+
+	// set lesson object at index
+	m_currentObjectGroup.Objects[ID] = lessonObject;
 }
 
 // save current object group to object group list

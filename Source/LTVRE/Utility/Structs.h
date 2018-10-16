@@ -63,18 +63,6 @@ struct FLessonObject
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
-	/// name of picture of object
-	/// </summary>
-	FString Picture;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
-	/// map of id and name of single objects
-	/// </summary>
-	TMap<int, FString> IDObject;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
 	/// notice to this object
 	/// </summary>
 	FString Notice;
@@ -110,19 +98,37 @@ struct FLessonObjectGroup
 	/// <summary>
 	/// name of picture of object group
 	/// </summary>
-	FString Picture;
+	FString ObjectName;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
 	/// vector 2D for objects 2D
 	/// </summary>
-	TMap<int, FVector2D> Transform2D;
+	TArray<FVector2D> Transform2D;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
 	/// objects
 	/// </summary>
 	TArray<FLessonObject> Objects;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
+	/// <summary>
+	/// notice to this object group
+	/// </summary>
+	FString Notice;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
+	/// <summary>
+	/// question to this object group
+	/// </summary>
+	FString Question;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
+	/// <summary>
+	/// answers for the question group
+	/// </summary>
+	TArray<FString> Answers;
 };
 
 USTRUCT(BlueprintType)
@@ -149,13 +155,13 @@ struct FLessonMap
 	/// <summary>
 	/// vector 2D for object groups 2D
 	/// </summary>
-	TMap<int, FVector2D> Transform2D;
+	TArray<FVector2D> Transform2D;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
-	/// object groups to id
+	/// object groups array
 	/// </summary>
-	TMap<int, FLessonObjectGroup> ObjectGroupID;
+	TArray<FLessonObjectGroup> ObjectGroups;
 };
 
 USTRUCT(BlueprintType)
