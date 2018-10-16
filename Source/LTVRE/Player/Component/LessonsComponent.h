@@ -61,6 +61,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
+	/// all basic objects
+	/// </summary>
+	TArray<FLessonObject> LessonObjects;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
 	/// all basic object groups, to identify the 2d transform for the buttons
 	/// </summary>
 	TArray<FLessonObjectGroup> ObjectGroupInformations;
@@ -148,6 +154,21 @@ public:
 	/// </summary>
 	/// <param name="Name">name to set</param>
 	void SetObjectGroupName(FString Name);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set object name of current object group
+	/// </summary>
+	/// <param name="Name">name to set</param>
+	void SetObjectGroupObjectName(FString Name);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set object group object at index (ID)
+	/// </summary>
+	/// <param name="ID">index in array</param>
+	/// <param name="LessonObjectName">lesson object name</param>
+	void SetObjectGroupObject(int ID, FString LessonObjectName);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
