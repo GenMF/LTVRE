@@ -172,10 +172,26 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
+	/// set current lesson object group
+	/// </summary>
+	/// <param name="ObjectGroup">object group to set</param>
+	void SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
 	/// save current object group to object group list
 	/// </summary>
 	/// <param name="ObjectGroupIsNew">if current object group is new</param>
-	void SaveCurrentObjectGroup(bool ObjectGroupIsNew);
+	/// <param name="Index">index that object group has to be replaced</param>
+	void SaveCurrentObjectGroup(bool ObjectGroupIsNew, int Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// delete an object group at given index
+	/// </summary>
+	/// <param name="Index">index</param>
+	/// <returns>if object group deleted</returns>
+	bool DeleteObjectGroupAtIndex(int Index);
 #pragma endregion
 
 private:

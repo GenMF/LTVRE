@@ -169,8 +169,14 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 	m_currentObjectGroup.Objects[ID] = lessonObject;
 }
 
+// set current lesson object group
+void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup)
+{
+	m_currentObjectGroup = ObjectGroup;
+}
+
 // save current object group to object group list
-void ULessonsComponent::SaveCurrentObjectGroup(bool ObjectGroupIsNew)
+void ULessonsComponent::SaveCurrentObjectGroup(bool ObjectGroupIsNew, int Index)
 {
 	// if current object group has no name return
 	if (m_currentObjectGroup.Name.Len() <= 0)
@@ -182,7 +188,24 @@ void ULessonsComponent::SaveCurrentObjectGroup(bool ObjectGroupIsNew)
 		m_objectGroups.Add(m_currentObjectGroup);
 
 	// if current object group is already in list
-	//else
-	/// TODO: fill
+	else
+		m_objectGroups[Index] = m_currentObjectGroup;
+	
+	// empty current object group
+	EmptyCurrentObjectGroup();
+}
+
+// delete an object group at given index
+bool ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
+{
+	// if index plus 1 is lower than object group count return false 
+	if (m_objectGroups.Num() < Index + 1)
+		return false;
+
+	// remove object group at index
+	m_objectGroups.RemoveAt(Index);
+
+	// return correct delete
+	return true;
 }
 #pragma endregion
