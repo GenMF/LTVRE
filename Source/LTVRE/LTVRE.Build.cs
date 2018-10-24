@@ -18,7 +18,7 @@ public class LTVRE : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		// public dependencies
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "XmlParser" });
 
 		// private dependencies
 		PrivateDependencyModuleNames.AddRange(new string[] { });

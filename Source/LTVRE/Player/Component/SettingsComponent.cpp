@@ -3,6 +3,10 @@
 #include "Helper/Helper.h"
 #pragma endregion
 
+#pragma region UE4 includes
+#include "XmlParser/Public/FastXml.h"
+#pragma endregion
+
 #pragma region system includes
 #include <fstream>
 #pragma endregion
@@ -16,6 +20,42 @@ using namespace std;
 USettingsComponent::USettingsComponent()
 {
 
+}
+#pragma endregion
+
+#pragma region public overrides
+// get single xml element
+bool USettingsComponent::ProcessElement(const TCHAR* ElementName, const TCHAR* ElementData, int32 XmlFileLineNumber)
+{
+	// save element name in string
+	FString name = ElementName;
+
+	// set name from xml element
+	if (name == "Name")
+		SetName(ElementData);
+
+	// set type from xml element
+	else if (name == "Type")
+		m_settings.Type = (EPlayerType)FMath::Max(FMath::Min(FCString::Atoi(ElementData), 0), 1);
+
+	// set sound from xml element
+	else if (name == "Sound")
+		SetSoundLevel(FMath::Max(FMath::Min(FCString::Atoi(ElementData), 6), 1));
+
+	// set music from xml element
+	else if (name == "Music")
+		SetMusicLevel(FMath::Max(FMath::Min(FCString::Atoi(ElementData), 6), 1));
+
+	// set graphic from xml element
+	else if (name == "Graphic")
+		SetGraphicLevel(FMath::Max(FMath::Min(FCString::Atoi(ElementData), 6), 1));
+
+	// no settings element found return false
+	else
+		return false;
+
+	// return true
+	return true;
 }
 #pragma endregion
 
@@ -73,9 +113,6 @@ bool USettingsComponent::IsTeacher()
 {
 	// return if player is teacher
 	return m_settings.Type == EPlayerType::TEACHER;
-
-	// save settings
-	SaveSettings();
 }
 
 // set player to teacher
@@ -93,13 +130,10 @@ int USettingsComponent::GetSoundLevel()
 {
 	// if sound is 0 return 0
 	if (m_settings.Sound == 0)
-		return 0;
+		return 1;
 
 	// returns level of sound
-	return 6 - m_settings.Sound / 20;
-
-	// save settings
-	SaveSettings();
+	return 1 + m_settings.Sound / 20;
 }
 
 // set level of sound
@@ -110,7 +144,7 @@ void USettingsComponent::SetSoundLevel(int Level)
 		return;
 
 	// set sound level
-	m_settings.Sound = 100 - ((Level - 1) * 20);
+	m_settings.Sound = (Level - 1) * 20;
 
 	// save settings
 	SaveSettings();
@@ -121,13 +155,10 @@ int USettingsComponent::GetMusicLevel()
 {
 	// if sound is 0 return 0
 	if (m_settings.Music == 0)
-		return 0;
+		return 1;
 
-	// returns level of sound
-	return 6 - m_settings.Music / 20;
-
-	// save settings
-	SaveSettings();
+	// returns level of music
+	return 1 + m_settings.Music / 20;
 }
 
 // set level of music
@@ -138,7 +169,7 @@ void USettingsComponent::SetMusicLevel(int Level)
 		return;
 
 	// set music
-	m_settings.Music = 100 - ((Level - 1) * 20);
+	m_settings.Music = (Level - 1) * 20;
 
 	// save settings
 	SaveSettings();
@@ -147,15 +178,8 @@ void USettingsComponent::SetMusicLevel(int Level)
 // get level of graphic (1 - 6)
 int USettingsComponent::GetGraphicLevel()
 {
-	// if sound is 0 return 0
-	if (m_settings.Graphic == 0)
-		return 0;
-
-	// returns level of sound
-	return 7 - m_settings.Graphic;
-
-	// save settings
-	SaveSettings();
+	// returns level of graphic
+	return m_settings.Graphic;
 }
 
 // set level of graphic
@@ -166,10 +190,29 @@ void USettingsComponent::SetGraphicLevel(int Level)
 		return;
 
 	// set graphic
-	m_settings.Graphic = 6 - (Level - 1);
+	m_settings.Graphic = Level;
 
 	// save settings
 	SaveSettings();
+}
+#pragma endregion
+
+#pragma region public function
+// load settings from file
+void USettingsComponent::LoadSettings()
+{
+	// error saves
+	FText errorText;
+	int errorNumber;
+
+	// parse xml file into this
+	if (!FFastXml::ParseXmlFile(this, *Helper::GetAbsoluteFileName("Settings.xml"), 
+		nullptr, nullptr, false, false, errorText, errorNumber))
+	{
+		// log errors
+		GLog->Log("LTVRE", ELogVerbosity::Error, FString("Error: ").Append(errorText.ToString()));
+		GLog->Log("LTVRE", ELogVerbosity::Error, FString("Error number: ") + FString::FromInt(errorNumber));
+	}
 }
 #pragma endregion
 
@@ -187,8 +230,30 @@ void USettingsComponent::SaveSettings()
 	if (!file.is_open())
 		return;
 
-	// write into file
-	file << "settings" << endl;
+	// write name into file
+	file << "<Name>";
+	file << TCHAR_TO_ANSI(*m_settings.Name);
+	file << "</Name>" << endl;
+
+	// write type into file
+	file << "<Type>";
+	file << TCHAR_TO_ANSI(*(FString::FromInt((int)m_settings.Type)));
+	file << "</Type>" << endl;
+
+	// write sound into file
+	file << "<Sound>";
+	file << TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)m_settings.Sound / 20)));
+	file << "</Sound>" << endl;
+
+	// write music into file
+	file << "<Music>";
+	file << TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)m_settings.Music / 20)));
+	file << "</Music>" << endl;
+
+	// write graphic into file
+	file << "<Graphic>";
+	file << TCHAR_TO_ANSI(*(FString::FromInt((int)m_settings.Graphic)));
+	file << "</Graphic>";
 
 	// close file
 	file.close();
