@@ -1,5 +1,14 @@
 #pragma region project includes
-#include "SettingsComponent.h"  
+#include "SettingsComponent.h"
+#include "Helper/Helper.h"
+#pragma endregion
+
+#pragma region system includes
+#include <fstream>
+#pragma endregion
+
+#pragma region usings
+using namespace std;
 #pragma endregion
 
 #pragma region constructor
@@ -37,6 +46,9 @@ void USettingsComponent::SetName(FString _name)
 		// add char at index i
 		m_settings.Name += _name[i];
 	}
+
+	// save settings
+	SaveSettings();
 }
 
 // get player is student
@@ -51,6 +63,9 @@ void USettingsComponent::SetStudent()
 {
 	// set player type to student
 	m_settings.Type = EPlayerType::STUDENT;
+
+	// save settings
+	SaveSettings();
 }
 
 // get player is teacher
@@ -58,6 +73,9 @@ bool USettingsComponent::IsTeacher()
 {
 	// return if player is teacher
 	return m_settings.Type == EPlayerType::TEACHER;
+
+	// save settings
+	SaveSettings();
 }
 
 // set player to teacher
@@ -65,6 +83,9 @@ void USettingsComponent::SetTeacher()
 {
 	// set player type to teacher
 	m_settings.Type = EPlayerType::TEACHER;
+
+	// save settings
+	SaveSettings();
 }
 
 // get level of sound (1 - 6)
@@ -76,6 +97,9 @@ int USettingsComponent::GetSoundLevel()
 
 	// returns level of sound
 	return 6 - m_settings.Sound / 20;
+
+	// save settings
+	SaveSettings();
 }
 
 // set level of sound
@@ -87,6 +111,9 @@ void USettingsComponent::SetSoundLevel(int Level)
 
 	// set sound level
 	m_settings.Sound = 100 - ((Level - 1) * 20);
+
+	// save settings
+	SaveSettings();
 }
 
 // get level of music (1 - 6)
@@ -98,6 +125,9 @@ int USettingsComponent::GetMusicLevel()
 
 	// returns level of sound
 	return 6 - m_settings.Music / 20;
+
+	// save settings
+	SaveSettings();
 }
 
 // set level of music
@@ -109,6 +139,9 @@ void USettingsComponent::SetMusicLevel(int Level)
 
 	// set music
 	m_settings.Music = 100 - ((Level - 1) * 20);
+
+	// save settings
+	SaveSettings();
 }
 
 // get level of graphic (1 - 6)
@@ -120,6 +153,9 @@ int USettingsComponent::GetGraphicLevel()
 
 	// returns level of sound
 	return 7 - m_settings.Graphic;
+
+	// save settings
+	SaveSettings();
 }
 
 // set level of graphic
@@ -131,5 +167,30 @@ void USettingsComponent::SetGraphicLevel(int Level)
 
 	// set graphic
 	m_settings.Graphic = 6 - (Level - 1);
+
+	// save settings
+	SaveSettings();
+}
+#pragma endregion
+
+#pragma region private function
+// save settings to file
+void USettingsComponent::SaveSettings()
+{
+	// file to write into
+	ofstream file;
+
+	// open file
+	file.open(TCHAR_TO_ANSI(*Helper::GetAbsoluteFileName("Settings.xml")));
+	
+	// if file could not be opened return
+	if (!file.is_open())
+		return;
+
+	// write into file
+	file << "settings" << endl;
+
+	// close file
+	file.close();
 }
 #pragma endregion
