@@ -21,5 +21,8 @@ APlayerPawn::APlayerPawn()
 
 	// create default lessons component
 	Lessons = CreateDefaultSubobject<ULessonsComponent>(TEXT("Lessons"));
+
+	// load settings from file
+	Settings->LoadSettings();
 }
 #pragma endregion

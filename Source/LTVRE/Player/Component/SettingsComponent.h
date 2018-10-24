@@ -3,6 +3,7 @@
 #pragma region UE4 includes
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "XmlParser/Public/FastXml.h"
 #pragma endregion
 
 #pragma region project includes
@@ -14,7 +15,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 /// <summary>
 /// settings component
 /// </summary>
-class LTVRE_API USettingsComponent : public UActorComponent
+class LTVRE_API USettingsComponent : public UActorComponent, public IFastXmlCallback
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,59 @@ public:
 	/// constructor
 	/// </summary>
 	USettingsComponent();
+#pragma endregion
+
+#pragma region public overrides
+	/// <summary>
+	/// get xml decleration
+	/// </summary>
+	/// <param name="ElementData">element data</param>
+	/// <param name="XmlFileLineNumber">file line number</param>
+	/// <returns>xml decleration correct processed</returns>
+	virtual bool ProcessXmlDeclaration(const TCHAR * ElementData, int32 XmlFileLineNumber) override
+	{
+		return true;
+	}
+
+	/// <summary>
+	/// get single xml element
+	/// </summary>
+	/// <param name="ElementName">element name</param>
+	/// <param name="ElementData">element value</param>
+	/// <param name="XmlFileLineNumber">file line number</param>
+	/// <returns>xml element correct processed</returns>
+	virtual bool ProcessElement(const TCHAR* ElementName, const TCHAR* ElementData, int32 XmlFileLineNumber) override;
+
+	/// <summary>
+	/// get single xml attribute
+	/// </summary>
+	/// <param name="AttributeName">attribute name</param>
+	/// <param name="AttributeValue">attribute value</param>
+	/// <returns>xml attribute correct processed</returns>
+	virtual bool ProcessAttribute(const TCHAR* AttributeName, const TCHAR* AttributeValue) override
+	{
+		return true;
+	}
+
+	/// <summary>
+	/// get if element scope ends
+	/// </summary>
+	/// <param name="Element">element</param>
+	/// <returns>element scope ends</returns>
+	virtual bool ProcessClose(const TCHAR* Element) override
+	{
+		return true;
+	}
+
+	/// <summary>
+	/// get encountered comment
+	/// </summary>
+	/// <param name="Comment">comment</param>
+	/// <returns>comment processed</returns>
+	virtual bool ProcessComment(const TCHAR* Comment) override
+	{
+		return true;
+	}
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -134,6 +188,13 @@ public:
 	/// </summary>
 	/// <returns>music percentage</returns>
 	inline int GetMusicPercentage() { return m_settings.Music; }
+#pragma endregion
+
+#pragma region public function
+	/// <summary>
+	/// load settings from file
+	/// </summary>
+	void LoadSettings();
 #pragma endregion
 
 private:
