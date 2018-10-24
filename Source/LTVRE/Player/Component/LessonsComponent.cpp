@@ -7,7 +7,6 @@
 #include "Engine/Texture2D.h"
 #pragma endregion
 
-
 #pragma region constructor
 // constructor
 ULessonsComponent::ULessonsComponent()

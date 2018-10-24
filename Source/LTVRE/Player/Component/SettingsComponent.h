@@ -143,4 +143,11 @@ private:
 	/// </summary>
 	FPlayerSettings m_settings;
 #pragma endregion
+
+#pragma region private function
+	/// <summary>
+	/// save settings to file
+	/// </summary>
+	void SaveSettings();
+#pragma endregion
 };
