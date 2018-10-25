@@ -1,6 +1,7 @@
 #pragma region project includes
 #include "LessonsComponent.h"
 #include "Player/PlayerPawn.h"
+#include "Helper/Helper.h"
 #pragma endregion
 
 #pragma region UE4 includes
@@ -89,6 +90,9 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
 	// if current lesson is already in list
 	//else
 		/// TODO: fill
+	
+	// save lessons
+	SaveLesson();
 }
 
 // get all object groups
@@ -154,18 +158,18 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 {
 	// while array length is lower than id add new lesson object
 	while (m_currentObjectGroup.Objects.Num() < ID + 1)
-		m_currentObjectGroup.Objects.Add(FLessonObject());
+		m_currentObjectGroup.Objects.Add(FObjectGroupObject());
 
-	// lesson object to set
-	FLessonObject lessonObject;
+	// object group object to set
+	FObjectGroupObject objGrpObj;
 
 	// find lesson object from lesson object array
 	for (FLessonObject obj : LessonObjects)
 		if (obj.Name.Contains(LessonObjectName))
-			lessonObject = obj;
+			objGrpObj.Name = obj.Name;
 
 	// set lesson object at index
-	m_currentObjectGroup.Objects[ID] = lessonObject;
+	m_currentObjectGroup.Objects[ID] = objGrpObj;
 }
 
 // set current lesson object group
@@ -192,6 +196,9 @@ void ULessonsComponent::SaveCurrentObjectGroup(bool ObjectGroupIsNew, int Index)
 	
 	// empty current object group
 	EmptyCurrentObjectGroup();
+
+	// save lessons
+	SaveLesson();
 }
 
 // delete an object group at given index
@@ -206,5 +213,32 @@ bool ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
 
 	// return correct delete
 	return true;
+}
+#pragma endregion
+
+#pragma region private function
+// save lessons and object groups to file
+void ULessonsComponent::SaveLesson()
+{
+	// file to write into
+	ofstream file;
+
+	// open file
+	file.open(TCHAR_TO_ANSI(*Helper::GetAbsoluteFileName("Lessons.xml")));
+
+	// if file could not be opened return
+	if (!file.is_open())
+		return;
+
+	// check each object group and save
+	for (FLessonObjectGroup obj : m_objectGroups)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(obj));
+
+	// check each lesson and save
+	for (FLesson lesson : m_lessons)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(lesson));
+
+	// close file
+	file.close();
 }
 #pragma endregion

@@ -230,30 +230,8 @@ void USettingsComponent::SaveSettings()
 	if (!file.is_open())
 		return;
 
-	// write name into file
-	file << "<Name>";
-	file << TCHAR_TO_ANSI(*m_settings.Name);
-	file << "</Name>" << endl;
-
-	// write type into file
-	file << "<Type>";
-	file << TCHAR_TO_ANSI(*(FString::FromInt((int)m_settings.Type)));
-	file << "</Type>" << endl;
-
-	// write sound into file
-	file << "<Sound>";
-	file << TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)m_settings.Sound / 20)));
-	file << "</Sound>" << endl;
-
-	// write music into file
-	file << "<Music>";
-	file << TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)m_settings.Music / 20)));
-	file << "</Music>" << endl;
-
-	// write graphic into file
-	file << "<Graphic>";
-	file << TCHAR_TO_ANSI(*(FString::FromInt((int)m_settings.Graphic)));
-	file << "</Graphic>";
+	// write settings xml string into file
+	file << TCHAR_TO_ANSI(*Helper::StructToStringXML(m_settings));
 
 	// close file
 	file.close();
