@@ -12,7 +12,6 @@
 #pragma region project includes
 #include "Utility/Structs.h"
 #include "Lesson/SingleObject.h"
-#include "Lesson/ObjectGroup.h"
 #include "LessonsComponent.generated.h"
 #pragma endregion
 
@@ -65,7 +64,7 @@ public:
 	/// <summary>
 	/// all basic object groups
 	/// </summary>
-	TArray<TSubclassOf<AObjectGroup>> ObjectGroups;
+	TArray<TSubclassOf<ASingleObject>> ObjectGroups;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>

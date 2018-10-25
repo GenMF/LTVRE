@@ -230,11 +230,15 @@ void ULessonsComponent::SaveLesson()
 	if (!file.is_open())
 		return;
 
-	// check each object group and save
+	// check each lesson object and write into string
+	for (FLessonObject lessonObj : LessonObjectInformations)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(lessonObj));
+
+	// check each object group and write into string
 	for (FLessonObjectGroup obj : m_objectGroups)
 		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(obj));
 
-	// check each lesson and save
+	// check each lesson and write into string
 	for (FLesson lesson : m_lessons)
 		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(lesson));
 
