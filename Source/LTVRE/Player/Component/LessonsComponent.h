@@ -1,5 +1,9 @@
 #pragma once
 
+#pragma region system includes
+#include <fstream>
+#pragma endregion
+
 #pragma region UE4 includes
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -10,6 +14,10 @@
 #include "Lesson/SingleObject.h"
 #include "Lesson/ObjectGroup.h"
 #include "LessonsComponent.generated.h"
+#pragma endregion
+
+#pragma region usings
+using namespace std;
 #pragma endregion
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -70,6 +78,12 @@ public:
 	/// all basic object groups, to identify the 2d transform for the buttons
 	/// </summary>
 	TArray<FLessonObjectGroup> ObjectGroupInformations;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all basic lesson objects
+	/// </summary>
+	TArray<FLessonObject> LessonObjectInformations;
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -221,4 +235,11 @@ private:
 	/// </summary>
 	TArray<FLesson> m_lessons;
 # pragma endregion
+
+#pragma region private function
+	/// <summary>
+	/// save lessons
+	/// </summary>
+	void SaveLesson();
+#pragma endregion
 };

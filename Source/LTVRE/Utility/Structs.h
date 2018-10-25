@@ -82,6 +82,27 @@ struct FLessonObject
 
 USTRUCT(BlueprintType)
 /// <summary>
+/// object group of objects from a lesson
+/// </summary>
+struct FObjectGroupObject
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Object group object")
+	/// <summary>
+	/// name of lesson object
+	/// </summary>
+	FString Name;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Object group object")
+	/// <summary>
+	/// transform of object
+	/// </summary>
+	FTransform Transform;
+};
+
+USTRUCT(BlueprintType)
+/// <summary>
 /// group of objects from a lesson
 /// </summary>
 struct FLessonObjectGroup
@@ -100,7 +121,7 @@ struct FLessonObjectGroup
 	/// </summary>
 	FString ObjectName;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
 	/// vector 2D for objects 2D
 	/// </summary>
@@ -110,25 +131,7 @@ struct FLessonObjectGroup
 	/// <summary>
 	/// objects
 	/// </summary>
-	TArray<FLessonObject> Objects;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
-	/// notice to this object group
-	/// </summary>
-	FString Notice;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
-	/// question to this object group
-	/// </summary>
-	FString Question;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
-	/// <summary>
-	/// answers for the question group
-	/// </summary>
-	TArray<FString> Answers;
+	TArray<FObjectGroupObject> Objects;
 };
 
 USTRUCT(BlueprintType)
@@ -159,9 +162,9 @@ struct FLessonMap
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
-	/// object groups array
+	/// object groups
 	/// </summary>
-	TArray<FLessonObjectGroup> ObjectGroups;
+	TArray<FString> ObjectGroups;
 };
 
 USTRUCT(BlueprintType)
