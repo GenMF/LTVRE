@@ -58,19 +58,13 @@ public:
 	/// <summary>
 	/// all single objects
 	/// </summary>
-	TArray<TSubclassOf<ASingleObject>> SingleObjects;
+	TArray<TSubclassOf<ASingleObject>> SingleObjectClasses;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
 	/// all basic object groups
 	/// </summary>
-	TArray<TSubclassOf<ASingleObject>> ObjectGroups;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
-	/// <summary>
-	/// all basic objects
-	/// </summary>
-	TArray<FLessonObject> LessonObjects;
+	TArray<TSubclassOf<ASingleObject>> ObjectGroupClasses;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
 	/// <summary>
@@ -82,10 +76,17 @@ public:
 	/// <summary>
 	/// all basic lesson objects
 	/// </summary>
-	TArray<FLessonObject> LessonObjectInformations;
+	TMap<FString, FLessonObject> LessonObjectInformations;
 #pragma endregion
 
 #pragma region UFUNCTION
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// get all lesson objects
+	/// </summary>
+	/// <returns>all lesson objects</returns>
+	TArray<FLessonObject> GetAllLessonObjects();
+
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
 	/// get all lessons
@@ -194,17 +195,14 @@ public:
 	/// <summary>
 	/// save current object group to object group list
 	/// </summary>
-	/// <param name="ObjectGroupIsNew">if current object group is new</param>
-	/// <param name="Index">index that object group has to be replaced</param>
-	void SaveCurrentObjectGroup(bool ObjectGroupIsNew, int Index);
+	void SaveCurrentObjectGroup();
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
 	/// delete an object group at given index
 	/// </summary>
-	/// <param name="Index">index</param>
 	/// <returns>if object group deleted</returns>
-	bool DeleteObjectGroupAtIndex(int Index);
+	bool DeleteObjectGroupAtIndex();
 #pragma endregion
 
 private:
@@ -227,12 +225,12 @@ private:
 	/// <summary>
 	/// object groups created from player
 	/// </summary>
-	TArray<FLessonObjectGroup> m_objectGroups;
+	TMap<FString, FLessonObjectGroup> m_objectGroups;
 
 	/// <summary>
 	/// lessons from this player
 	/// </summary>
-	TArray<FLesson> m_lessons;
+	TMap<FString, FLesson> m_lessons;
 # pragma endregion
 
 #pragma region private function
