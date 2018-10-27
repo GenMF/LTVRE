@@ -17,10 +17,32 @@ ULessonsComponent::ULessonsComponent()
 #pragma endregion
 
 #pragma region UFUNCTION
+// get all lesson objects
+TArray<FLessonObject> ULessonsComponent::GetAllLessonObjects()
+{
+	// array for return
+	TArray<FLessonObject> lessonObjects;
+
+	// check all lesson objects informations and add lesson object to array
+	for (auto& Elem : LessonObjectInformations)
+		lessonObjects.Add(Elem.Value);
+
+	// return lesson objects
+	return lessonObjects;
+}
+
 // get all lessons
 TArray<FLesson> ULessonsComponent::GetAllLessons()
 {
-	return m_lessons; 
+	// array for return
+	TArray<FLesson> lessons;
+
+	// check all lessons and add lesson to array
+	for (auto& Elem : m_lessons)
+		lessons.Add(Elem.Value);
+
+	// return lessons
+	return lessons; 
 }
 
 // get current lesson
@@ -84,10 +106,10 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
 
 	// if current lesson is a new lesson
 	if (LessonIsNew)
-		// add current lesson to lesson list
-		m_lessons.Add(m_currentLesson);
+		// add current lesson to lesson map
+		m_lessons.Add(m_currentLesson.Name, m_currentLesson);
 
-	// if current lesson is already in list
+	// if current lesson is already in map
 	//else
 		/// TODO: fill
 	
@@ -98,7 +120,15 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
 // get all object groups
 TArray<FLessonObjectGroup> ULessonsComponent::GetAllObjectGroups()
 {
-	return m_objectGroups;
+	// array for return
+	TArray<FLessonObjectGroup> objectGroups;
+
+	// check all object groups and add object group to array
+	for (auto& Elem : m_objectGroups)
+		objectGroups.Add(Elem.Value);
+
+	// return lessons
+	return objectGroups;
 }
 
 // get current object group
@@ -163,10 +193,10 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 	// object group object to set
 	FObjectGroupObject objGrpObj;
 
-	// find lesson object from lesson object array
-	for (FLessonObject obj : LessonObjects)
-		if (obj.Name.Contains(LessonObjectName))
-			objGrpObj.Name = obj.Name;
+	// find lesson object from lesson object map
+	for (auto& Elem : LessonObjectInformations)
+		if (Elem.Value.Name.Contains(LessonObjectName))
+			objGrpObj.Name = Elem.Value.Name;
 
 	// set lesson object at index
 	m_currentObjectGroup.Objects[ID] = objGrpObj;
@@ -179,20 +209,19 @@ void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup)
 }
 
 // save current object group to object group list
-void ULessonsComponent::SaveCurrentObjectGroup(bool ObjectGroupIsNew, int Index)
+void ULessonsComponent::SaveCurrentObjectGroup()
 {
 	// if current object group has no name return
 	if (m_currentObjectGroup.Name.Len() <= 0)
 		return;
 
-	// if current object group is a new object group
-	if (ObjectGroupIsNew)
-		// add current object group to object group list
-		m_objectGroups.Add(m_currentObjectGroup);
+	// if current object group allready in map replace
+	if (m_objectGroups.Contains(m_currentObjectGroup.Name))
+		m_objectGroups.Emplace(m_currentObjectGroup.Name, m_currentObjectGroup);
 
-	// if current object group is already in list
+	// if not in map add to map
 	else
-		m_objectGroups[Index] = m_currentObjectGroup;
+		m_objectGroups.Add(m_currentObjectGroup.Name, m_currentObjectGroup);
 	
 	// empty current object group
 	EmptyCurrentObjectGroup();
@@ -202,17 +231,20 @@ void ULessonsComponent::SaveCurrentObjectGroup(bool ObjectGroupIsNew, int Index)
 }
 
 // delete an object group at given index
-bool ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
+bool ULessonsComponent::DeleteObjectGroupAtIndex()
 {
-	// if index plus 1 is lower than object group count return false 
-	if (m_objectGroups.Num() < Index + 1)
-		return false;
+	// if current object group is in map
+	if (m_objectGroups.Contains(m_currentObjectGroup.Name))
+	{
+		// remove current object group from map
+		m_objectGroups.Remove(m_currentObjectGroup.Name);
 
-	// remove object group at index
-	m_objectGroups.RemoveAt(Index);
+		// return correct delete
+		return true;
+	}
 
-	// return correct delete
-	return true;
+	// return false delete
+	return false;
 }
 #pragma endregion
 
@@ -231,16 +263,16 @@ void ULessonsComponent::SaveLesson()
 		return;
 
 	// check each lesson object and write into string
-	for (FLessonObject lessonObj : LessonObjectInformations)
-		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(lessonObj));
+	for (auto& Elem : LessonObjectInformations)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem.Value));
 
 	// check each object group and write into string
-	for (FLessonObjectGroup obj : m_objectGroups)
-		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(obj));
+	for (auto& Elem : m_objectGroups)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem.Value));
 
 	// check each lesson and write into string
-	for (FLesson lesson : m_lessons)
-		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(lesson));
+	for (auto& Elem : m_lessons)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem.Value));
 
 	// close file
 	file.close();
