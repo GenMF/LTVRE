@@ -27,7 +27,7 @@ class LTVRE_API ULessonsComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 #pragma region constructor
 	/// <summary>
 	/// constructor
@@ -71,12 +71,6 @@ public:
 	/// all basic object groups, to identify the 2d transform for the buttons
 	/// </summary>
 	TArray<FLessonObjectGroup> ObjectGroupInformations;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
-	/// <summary>
-	/// all basic lesson objects
-	/// </summary>
-	TMap<FString, FLessonObject> LessonObjectInformations;
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -201,8 +195,16 @@ public:
 	/// <summary>
 	/// delete an object group at given index
 	/// </summary>
+	/// <param name="Index">index of object group</param>
 	/// <returns>if object group deleted</returns>
-	bool DeleteObjectGroupAtIndex();
+	void DeleteObjectGroupAtIndex(int Index);
+#pragma endregion
+
+#pragma region public function
+	/// <summary>
+	/// load Lessons.xml
+	/// </summary>
+	void LoadLesson();
 #pragma endregion
 
 private:
@@ -213,24 +215,39 @@ private:
 	FLesson m_currentLesson;
 
 	/// <summary>
+	/// lessons from this player
+	/// </summary>
+	TArray<FLesson> m_lessons;
+
+	/// <summary>
 	/// current object group
 	/// </summary>
 	FLessonObjectGroup m_currentObjectGroup;
 
 	/// <summary>
-	/// lesson categories that player can edit
+	/// current object group name
 	/// </summary>
-	TArray<ELessonCategory> m_categories;
+	FString m_currentObjectGroupName;
 
 	/// <summary>
 	/// object groups created from player
 	/// </summary>
-	TMap<FString, FLessonObjectGroup> m_objectGroups;
+	TArray<FLessonObjectGroup> m_objectGroups;
 
 	/// <summary>
-	/// lessons from this player
+	/// all questions
 	/// </summary>
-	TMap<FString, FLesson> m_lessons;
+	TArray<FLessonObject> m_questionCatalog;
+
+	/// <summary>
+	/// current question
+	/// </summary>
+	FLessonObject m_currentQuestion;
+
+	/// <summary>
+	/// lesson categories that player can edit
+	/// </summary>
+	TArray<ELessonCategory> m_categories;
 # pragma endregion
 
 #pragma region private function

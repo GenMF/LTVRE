@@ -2,6 +2,7 @@
 #include "LessonsComponent.h"
 #include "Player/PlayerPawn.h"
 #include "Helper/Helper.h"
+#include "Helper/LessonParser.h"
 #pragma endregion
 
 #pragma region UE4 includes
@@ -12,7 +13,7 @@
 // constructor
 ULessonsComponent::ULessonsComponent()
 {
-
+	
 }
 #pragma endregion
 
@@ -20,29 +21,15 @@ ULessonsComponent::ULessonsComponent()
 // get all lesson objects
 TArray<FLessonObject> ULessonsComponent::GetAllLessonObjects()
 {
-	// array for return
-	TArray<FLessonObject> lessonObjects;
-
-	// check all lesson objects informations and add lesson object to array
-	for (auto& Elem : LessonObjectInformations)
-		lessonObjects.Add(Elem.Value);
-
 	// return lesson objects
-	return lessonObjects;
+	return m_questionCatalog;
 }
 
 // get all lessons
 TArray<FLesson> ULessonsComponent::GetAllLessons()
 {
-	// array for return
-	TArray<FLesson> lessons;
-
-	// check all lessons and add lesson to array
-	for (auto& Elem : m_lessons)
-		lessons.Add(Elem.Value);
-
 	// return lessons
-	return lessons; 
+	return m_lessons;
 }
 
 // get current lesson
@@ -107,7 +94,7 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
 	// if current lesson is a new lesson
 	if (LessonIsNew)
 		// add current lesson to lesson map
-		m_lessons.Add(m_currentLesson.Name, m_currentLesson);
+		m_lessons.Add(m_currentLesson);
 
 	// if current lesson is already in map
 	//else
@@ -120,15 +107,8 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
 // get all object groups
 TArray<FLessonObjectGroup> ULessonsComponent::GetAllObjectGroups()
 {
-	// array for return
-	TArray<FLessonObjectGroup> objectGroups;
-
-	// check all object groups and add object group to array
-	for (auto& Elem : m_objectGroups)
-		objectGroups.Add(Elem.Value);
-
 	// return lessons
-	return objectGroups;
+	return m_objectGroups;
 }
 
 // get current object group
@@ -140,6 +120,7 @@ FLessonObjectGroup ULessonsComponent::GetCurrentObjectGroup()
 // empty the current object group to default
 void ULessonsComponent::EmptyCurrentObjectGroup()
 {
+	// set current object group default lesson object group
 	m_currentObjectGroup = FLessonObjectGroup();
 
 	// if no object group textures return
@@ -148,6 +129,9 @@ void ULessonsComponent::EmptyCurrentObjectGroup()
 
 	// set current object group picture to first available
 	m_currentObjectGroup.ObjectName = ObjectGroupTextures[0]->GetName();
+
+	// empty current object group name
+	m_currentObjectGroupName = "";
 }
 
 // set name of current object group
@@ -193,10 +177,8 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 	// object group object to set
 	FObjectGroupObject objGrpObj;
 
-	// find lesson object from lesson object map
-	for (auto& Elem : LessonObjectInformations)
-		if (Elem.Value.Name.Contains(LessonObjectName))
-			objGrpObj.Name = Elem.Value.Name;
+	// set name of object group object
+	objGrpObj.Name = LessonObjectName;
 
 	// set lesson object at index
 	m_currentObjectGroup.Objects[ID] = objGrpObj;
@@ -205,6 +187,10 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 // set current lesson object group
 void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup)
 {
+	// set current object group name
+	m_currentObjectGroupName = ObjectGroup.Name;
+
+	// set current object group
 	m_currentObjectGroup = ObjectGroup;
 }
 
@@ -215,13 +201,21 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 	if (m_currentObjectGroup.Name.Len() <= 0)
 		return;
 
-	// if current object group allready in map replace
-	if (m_objectGroups.Contains(m_currentObjectGroup.Name))
-		m_objectGroups.Emplace(m_currentObjectGroup.Name, m_currentObjectGroup);
+	// if current object group name is empty
+	if (m_currentObjectGroupName == "")
+	{
+		// add current object group to array
+		m_objectGroups.Add(m_currentObjectGroup);
+	}
 
-	// if not in map add to map
+	//if current object group name valid
 	else
-		m_objectGroups.Add(m_currentObjectGroup.Name, m_currentObjectGroup);
+	{
+		// check all object groups, if name equals replace object group
+		for (int i = 0; i < m_objectGroups.Num(); i++)
+			if (m_objectGroups[i].Name == m_currentObjectGroupName)
+				m_objectGroups[i] = m_currentObjectGroup;
+	}
 	
 	// empty current object group
 	EmptyCurrentObjectGroup();
@@ -231,20 +225,36 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 }
 
 // delete an object group at given index
-bool ULessonsComponent::DeleteObjectGroupAtIndex()
+void ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
 {
-	// if current object group is in map
-	if (m_objectGroups.Contains(m_currentObjectGroup.Name))
-	{
-		// remove current object group from map
-		m_objectGroups.Remove(m_currentObjectGroup.Name);
+	m_objectGroups.RemoveAt(Index);
+}
+#pragma endregion
 
-		// return correct delete
-		return true;
+#pragma region public function
+// load Lessons.xml
+void ULessonsComponent::LoadLesson()
+{
+	// file to lesson parser
+	FileToLessonParser ftlp;
+
+	// error saves
+	FText errorText;
+	int errorNumber;
+
+	// parse xml file into file to string parser
+	if (!FFastXml::ParseXmlFile(&ftlp, *Helper::GetAbsoluteFileName("Lessons.xml"),
+		nullptr, nullptr, false, false, errorText, errorNumber))
+	{
+		// log errors
+		GLog->Log("LTVRE", ELogVerbosity::Error, FString("Error: ").Append(errorText.ToString()));
+		GLog->Log("LTVRE", ELogVerbosity::Error, FString("Error number: ") + FString::FromInt(errorNumber));
 	}
 
-	// return false delete
-	return false;
+	// set arrays from parser to component
+	m_questionCatalog = ftlp.m_LessonObjects;
+	m_objectGroups = ftlp.m_LessonObjectGroups;
+	m_lessons = ftlp.m_Lessons;
 }
 #pragma endregion
 
@@ -262,19 +272,37 @@ void ULessonsComponent::SaveLesson()
 	if (!file.is_open())
 		return;
 
-	// check each lesson object and write into string
-	for (auto& Elem : LessonObjectInformations)
-		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem.Value));
+	// check each question and write into string
+	for (auto& Elem : m_questionCatalog)
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem));
 
 	// check each object group and write into string
 	for (auto& Elem : m_objectGroups)
-		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem.Value));
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem));
 
 	// check each lesson and write into string
 	for (auto& Elem : m_lessons)
-		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem.Value));
+		file << TCHAR_TO_ANSI(*Helper::StructToStringXML(Elem));
 
 	// close file
 	file.close();
+}
+
+// load all lesson objects from xml
+void LoadLessonObjects(FString _lessonObjectsXML)
+{
+
+}
+
+// load all lesson object Groups from xml
+void LoadLessonObjectGroups(FString _lessonObjectGroupsXML)
+{
+
+}
+
+// load all lessons from xml
+void LoadLessons(FString _lessonsXML)
+{
+
 }
 #pragma endregion
