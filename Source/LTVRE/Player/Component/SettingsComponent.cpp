@@ -50,10 +50,6 @@ bool USettingsComponent::ProcessElement(const TCHAR* ElementName, const TCHAR* E
 	else if (name == "Graphic")
 		SetGraphicLevel(FMath::Max(FMath::Min(FCString::Atoi(ElementData), 6), 1));
 
-	// no settings element found return false
-	else
-		return false;
-
 	// return true
 	return true;
 }

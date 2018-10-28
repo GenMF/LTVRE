@@ -155,17 +155,25 @@ public:
 		// check all 2D transforms
 		for (FVector2D vec2D : _lesson.Map.Transform2D)
 		{
-			// transform 2D x value
+			// transform2d element
 			text.Append(AddTabs(_tabs + 2));
+			text.Append("<Transform2D>\n");
+
+			// transform 2D x value
+			text.Append(AddTabs(_tabs + 3));
 			text.Append("<Transform2D.X>");
 			text.Append(FString::FromInt(vec2D.X * 1000));
 			text.Append("</Transform2D.X>\n");
 
 			// transform 2D y value
-			text.Append(AddTabs(_tabs + 2));
+			text.Append(AddTabs(_tabs + 3));
 			text.Append("<Transform2D.Y>");
 			text.Append(FString::FromInt(vec2D.Y * 1000));
 			text.Append("</Transform2D.Y>\n");
+
+			// transform2d close element
+			text.Append(AddTabs(_tabs + 2));
+			text.Append("</Transform2D>\n");
 		}
 
 		// check all object group names
@@ -176,6 +184,37 @@ public:
 			text.Append("<ObjectGroupName>");
 			text.Append(name);
 			text.Append("</ObjectGroupName>\n");
+		}
+
+		// check all lesson object transforms
+		for (FTransform transform : _lesson.Map.LessonObjectTransforms)
+		{
+			// transform of object group
+			StructToStringXML(transform, _tabs + 2);
+		}
+
+		// check all lesson objects
+		for (int i = 0; i < _lesson.Map.LessonObjectTransforms.Num(); i++)
+		{
+			// lesson object element
+			text.Append(AddTabs(_tabs + 2));
+			text.Append("<LessonObject>\n");
+
+			// name of lesson object
+			text.Append(AddTabs(_tabs + 3));
+			text.Append("<Name>");
+			text.Append(_lesson.Map.LessonObjectNames[i]);
+			text.Append("</Name>\n");
+
+			// name of lesson object object name
+			text.Append(AddTabs(_tabs + 3));
+			text.Append("<ObjectName>");
+			text.Append(_lesson.Map.LessonObjectObjectNameNames[i]);
+			text.Append("</ObjectName>\n");
+
+			// lesson object close element
+			text.Append(AddTabs(_tabs + 2));
+			text.Append("</LessonObject>\n");
 		}
 
 		// map close element
@@ -220,17 +259,25 @@ public:
 		// check each 2D transform
 		for (FVector2D vec2D : _lessonObjGrp.Transform2D)
 		{
-			// transform 2D x value
+			// transform2d element
 			text.Append(AddTabs(_tabs + 1));
+			text.Append("<Transform2D>\n");
+
+			// transform 2D x value
+			text.Append(AddTabs(_tabs + 2));
 			text.Append("<Transform2D.X>");
 			text.Append(FString::FromInt(vec2D.X * 1000));
 			text.Append("</Transform2D.X>\n");
 
 			// transform 2D y value
-			text.Append(AddTabs(_tabs + 1));
+			text.Append(AddTabs(_tabs + 2));
 			text.Append("<Transform2D.Y>");
 			text.Append(FString::FromInt(vec2D.Y * 1000));
 			text.Append("</Transform2D.Y>\n");
+
+			// transform2d close element
+			text.Append(AddTabs(_tabs + 1));
+			text.Append("</Transform2D>\n");
 		}
 
 		// check all lesson objects
@@ -246,8 +293,11 @@ public:
 			text.Append(lessonObj.Name);
 			text.Append("</Name>\n");
 
-			// transform
-			text.Append(StructToStringXML(lessonObj.Transform, _tabs + 2));
+			// question name of group object
+			text.Append(AddTabs(_tabs + 2));
+			text.Append("<QuestionName>");
+			text.Append(lessonObj.QuestionName);
+			text.Append("</QuestionName>\n");
 
 			// lesson object close element
 			text.Append(AddTabs(_tabs + 1));
@@ -282,6 +332,12 @@ public:
 		text.Append("<Name>");
 		text.Append(_lessonObject.Name);
 		text.Append("</Name>\n");
+
+		// object name of lesson object
+		text.Append(AddTabs(_tabs + 1));
+		text.Append("<ObjectName>");
+		text.Append(_lessonObject.ObjectName);
+		text.Append("</ObjectName>\n");
 
 		// notice of lesson object
 		text.Append(AddTabs(_tabs + 1));
