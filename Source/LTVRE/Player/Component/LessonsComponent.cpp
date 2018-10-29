@@ -229,6 +229,111 @@ void ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
 {
 	m_objectGroups.RemoveAt(Index);
 }
+
+// get current question
+FLessonObject ULessonsComponent::GetCurrentQuestion()
+{
+	return m_currentQuestion;
+}
+
+// set current question
+void ULessonsComponent::SetCurrentQuestion(FLessonObject Question)
+{
+	m_currentQuestion = Question;
+}
+
+// set notice of current question
+void ULessonsComponent::SetCurrentQuestionNotice(FString Notice)
+{
+	// text to set
+	FString text = "";
+
+	// check all chars of notice
+	for (int i = 0; i < Notice.Len(); i++)
+		// if count under 32 add char to text
+		if (i < 31)
+			text += Notice[i];
+
+	// set notice of current question
+	m_currentQuestion.Notice = text;
+
+	// save current question
+	SaveCurrentQuestion();
+}
+
+// set question o current question
+void ULessonsComponent::SetCurrentQuestionQuestion(FString Question)
+{
+	// text to set
+	FString text = "";
+
+	// check all chars of notice
+	for (int i = 0; i < Question.Len(); i++)
+		// if count under 32 add char to text
+		if (i < 31)
+			text += Question[i];
+
+	// set notice of current question
+	m_currentQuestion.Question = text;
+
+	// save current question
+	SaveCurrentQuestion();
+}
+
+// set answer at index of current question
+void ULessonsComponent::SetCurrentQuestionAnswer(int Index, FString Answer)
+{
+	// while array length is lower than id add new answer
+	while (m_currentQuestion.Answers.Num() < Index + 1)
+		m_currentQuestion.Answers.Add("");
+
+	// text to set
+	FString text = "";
+
+	// check all chars of answer
+	for (int i = 0; i < Answer.Len(); i++)
+		// if count under 32 add char to text
+		if (i < 31)
+			text += Answer[i];
+
+	// set answer of current question
+	m_currentQuestion.Answers[Index] = text;
+
+	// save current question
+	SaveCurrentQuestion();
+}
+
+// delete current question from array
+void ULessonsComponent::DeleteCurrentQuestion()
+{
+	// index to delete question from catalog
+	int indexToDelete = -1;
+
+	// check all questions
+	for (int i = 0; i < m_questionCatalog.Num(); i++)
+		// if current question name is equal to question in catalog
+		if (m_questionCatalog[i].Name == m_currentQuestion.Name)
+			// set index to delete to iterator index
+			indexToDelete = i;
+
+	// if index to delete not found return
+	if (indexToDelete == -1)
+		return;
+
+	// delete question from catalog
+	m_questionCatalog.RemoveAt(indexToDelete);
+
+	// name questions new
+	for (int i = 0; i < m_questionCatalog.Num(); i++)
+	{
+		// set name of question
+		m_questionCatalog[i].Name = "Question";
+		m_questionCatalog[i].Name.Append(FString::FromInt(i));
+	}
+
+	// save to file
+	SaveLesson();
+}
 #pragma endregion
 
 #pragma region public function
@@ -288,21 +393,46 @@ void ULessonsComponent::SaveLesson()
 	file.close();
 }
 
-// load all lesson objects from xml
-void LoadLessonObjects(FString _lessonObjectsXML)
+// save current question to array
+void ULessonsComponent::SaveCurrentQuestion()
 {
+	// if question length under 0 return
+	if (m_currentQuestion.Question.Len() <= 0)
+		return;
 
-}
+	// bool to check if current question already in catalog
+	bool questionAlreadyInCatalog = false;
 
-// load all lesson object Groups from xml
-void LoadLessonObjectGroups(FString _lessonObjectGroupsXML)
-{
+	// check all questions
+	for (int i = 0; i < m_questionCatalog.Num(); i++)
+	{
+		// if current question name is equal to question in catalog
+		if (m_questionCatalog[i].Name == m_currentQuestion.Name)
+		{
+			// if question length is under 0 continue
+			if (m_currentQuestion.Question.Len() > 0)
+			{
+				// set question in catalog to current question
+				m_questionCatalog[i] = m_currentQuestion;
 
-}
+				// set bool question already in catalog true
+				questionAlreadyInCatalog = true;
+			}
+		}
+	}
 
-// load all lessons from xml
-void LoadLessons(FString _lessonsXML)
-{
+	// if question not already in catalog
+	if (!questionAlreadyInCatalog)
+	{
+		// set current question name to question + count of catalog
+		m_currentQuestion.Name = "Question";
+		m_currentQuestion.Name.Append(FString::FromInt(m_questionCatalog.Num()));
 
+		// add current question to catalog
+		m_questionCatalog.Add(m_currentQuestion);
+	}
+
+	// save to file
+	SaveLesson();
 }
 #pragma endregion
