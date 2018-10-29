@@ -198,6 +198,48 @@ public:
 	/// <param name="Index">index of object group</param>
 	/// <returns>if object group deleted</returns>
 	void DeleteObjectGroupAtIndex(int Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// get current question
+	/// </summary>
+	/// <returns>current question</returns>
+	FLessonObject GetCurrentQuestion();
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set current question
+	/// </summary>
+	/// <param name="Question">question to set</param>
+	void SetCurrentQuestion(FLessonObject Question);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set notice of current question
+	/// </summary>
+	/// <param name="Notice">notice to set</param>
+	void SetCurrentQuestionNotice(FString Notice);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set question o current question
+	/// </summary>
+	/// <param name="Question">question to set</param>
+	void SetCurrentQuestionQuestion(FString Question);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set answer at index of current question
+	/// </summary>
+	/// <param name="Index">index of answer</param>
+	/// <param name="Answer">answer to set</param>
+	void SetCurrentQuestionAnswer(int Index, FString Answer);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// delete current question from array
+	/// </summary>
+	void DeleteCurrentQuestion();
 #pragma endregion
 
 #pragma region public function
@@ -255,5 +297,10 @@ private:
 	/// save lessons
 	/// </summary>
 	void SaveLesson();
+
+	/// <summary>
+	/// save current question to array
+	/// </summary>
+	void SaveCurrentQuestion();
 #pragma endregion
 };
