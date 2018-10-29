@@ -76,13 +76,6 @@ public:
 #pragma region UFUNCTION
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
-	/// get all lesson objects
-	/// </summary>
-	/// <returns>all lesson objects</returns>
-	TArray<FLessonObject> GetAllLessonObjects();
-
-	UFUNCTION(BlueprintCallable, Category = "Lessons component")
-	/// <summary>
 	/// get all lessons
 	/// </summary>
 	/// <returns>all lessons</returns>
@@ -94,6 +87,13 @@ public:
 	/// </summary>
 	/// <returns>current lesson</returns>
 	FLesson GetCurrentLesson();
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set current lesson
+	/// </summary>
+	/// <param name="Lesson">lesson to set</param>
+	void SetCurrentLesson(FLesson Lesson);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -131,10 +131,25 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
+	/// set texture name of current lesson map texture
+	/// </summary>
+	/// <param name="TextureName"></param>
+	void SetLessonMapPicture(FString TextureName);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
 	/// save current lesson to lessons list
 	/// </summary>
 	/// <param name="LessonIsNew">if current lesson is new</param>
-	void SaveCurrentLesson(bool LessonIsNew);
+	/// <param name="Index">index of current lesson</param>
+	void SaveCurrentLesson(bool LessonIsNew, int Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// delete current lesson at index
+	/// </summary>
+	/// <param name="Index">index of current lesson</param>
+	void DeleteCurrentLessonAtIndex(int Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -198,6 +213,13 @@ public:
 	/// <param name="Index">index of object group</param>
 	/// <returns>if object group deleted</returns>
 	void DeleteObjectGroupAtIndex(int Index);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// get all lesson objects
+	/// </summary>
+	/// <returns>all lesson objects</returns>
+	TArray<FLessonObject> GetAllLessonObjects();
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>

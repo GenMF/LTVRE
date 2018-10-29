@@ -18,13 +18,6 @@ ULessonsComponent::ULessonsComponent()
 #pragma endregion
 
 #pragma region UFUNCTION
-// get all lesson objects
-TArray<FLessonObject> ULessonsComponent::GetAllLessonObjects()
-{
-	// return lesson objects
-	return m_questionCatalog;
-}
-
 // get all lessons
 TArray<FLesson> ULessonsComponent::GetAllLessons()
 {
@@ -36,6 +29,12 @@ TArray<FLesson> ULessonsComponent::GetAllLessons()
 FLesson ULessonsComponent::GetCurrentLesson()
 {
 	return m_currentLesson;
+}
+
+// set current lesson
+void ULessonsComponent::SetCurrentLesson(FLesson Lesson)
+{
+	m_currentLesson = Lesson;
 }
 
 // empty the current lesson to default
@@ -84,23 +83,43 @@ void ULessonsComponent::SetLessonCategory(ELessonCategory Category)
 	m_currentLesson.Category = Category;
 }
 
-// save current lesson to lessons list
-void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew)
+// set texture name of current lesson map texture
+void ULessonsComponent::SetLessonMapPicture(FString TextureName)
 {
-	// if current lesson has no name return
-	if (m_currentLesson.Name.Len() <= 0)
+	m_currentLesson.Map.Picture = TextureName;
+}
+
+// save current lesson to lessons list
+void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
+{
+	// if current lesson has no name or index not valid return
+	if (m_currentLesson.Name.Len() <= 0 || (!LessonIsNew && (Index < 0 || Index > m_lessons.Num() - 1)))
 		return;
 
 	// if current lesson is a new lesson
 	if (LessonIsNew)
-		// add current lesson to lesson map
+		// add current lesson to lesson array
 		m_lessons.Add(m_currentLesson);
 
-	// if current lesson is already in map
-	//else
-		/// TODO: fill
+	// if current lesson is already in array
+	else
+		m_lessons[Index] = m_currentLesson;
 	
 	// save lessons
+	SaveLesson();
+}
+
+// delete current lesson at index
+void ULessonsComponent::DeleteCurrentLessonAtIndex(int Index)
+{
+	// if invalid index return
+	if (Index < 0 || Index > m_lessons.Num() - 1)
+		return;
+
+	// remove lesson at index
+	m_lessons.RemoveAt(Index);
+
+	// save lesson
 	SaveLesson();
 }
 
@@ -228,6 +247,13 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 void ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
 {
 	m_objectGroups.RemoveAt(Index);
+}
+
+// get all lesson objects
+TArray<FLessonObject> ULessonsComponent::GetAllLessonObjects()
+{
+	// return lesson objects
+	return m_questionCatalog;
 }
 
 // get current question
