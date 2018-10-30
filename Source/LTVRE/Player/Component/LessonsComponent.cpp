@@ -89,6 +89,17 @@ void ULessonsComponent::SetLessonMapPicture(FString TextureName)
 	m_currentLesson.Map.Picture = TextureName;
 }
 
+// set object name of current lesson map at index
+void ULessonsComponent::SetLessonMapObject(int Index, FString ObjectName)
+{
+	// while array length is lower than id add new object group name
+	while (m_currentLesson.Map.ObjectGroups.Num() < Index + 1)
+		m_currentLesson.Map.ObjectGroups.Add("");
+
+	// set object group name at index
+	m_currentLesson.Map.ObjectGroups[Index] = ObjectName;
+}
+
 // save current lesson to lessons list
 void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
 {

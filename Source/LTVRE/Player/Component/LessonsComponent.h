@@ -71,6 +71,12 @@ public:
 	/// all basic object groups, to identify the 2d transform for the buttons
 	/// </summary>
 	TArray<FLessonObjectGroup> ObjectGroupInformations;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Required")
+	/// <summary>
+	/// all basic maps, to identify the 2d transform for the buttons
+	/// </summary>
+	TArray<FLessonObjectGroup> MapInformations;
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -135,6 +141,14 @@ public:
 	/// </summary>
 	/// <param name="TextureName"></param>
 	void SetLessonMapPicture(FString TextureName);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
+	/// set object name of current lesson map at index
+	/// </summary>
+	/// <param name="Index">index of object</param>
+	/// <param name="ObjectName">name to set</param>
+	void SetLessonMapObject(int Index, FString ObjectName);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
