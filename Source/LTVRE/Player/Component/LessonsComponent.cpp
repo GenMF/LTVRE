@@ -215,10 +215,15 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 }
 
 // set current lesson object group
-void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup)
+void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup, bool NewObjectGroup)
 {
-	// set current object group name
-	m_currentObjectGroupName = ObjectGroup.Name;
+	// if object group is new set empty name
+	if (NewObjectGroup)
+		m_currentObjectGroupName = "";
+
+	// if not new object group set current object group name
+	else
+		m_currentObjectGroupName = ObjectGroup.Name;
 
 	// set current object group
 	m_currentObjectGroup = ObjectGroup;

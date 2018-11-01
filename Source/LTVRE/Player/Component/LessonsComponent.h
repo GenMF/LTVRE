@@ -212,7 +212,8 @@ public:
 	/// set current lesson object group
 	/// </summary>
 	/// <param name="ObjectGroup">object group to set</param>
-	void SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup);
+	/// <param name="NewObjectGroup">object group is new</param>
+	void SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup, bool NewObjectGroup);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
