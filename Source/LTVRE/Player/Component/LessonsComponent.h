@@ -181,6 +181,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
+	/// set current lesson object group
+	/// </summary>
+	/// <param name="ObjectGroup">object group to set</param>
+	/// <param name="NewObjectGroup">object group is new</param>
+	void SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup, bool NewObjectGroup);
+
+	UFUNCTION(BlueprintCallable, Category = "Lessons component")
+	/// <summary>
 	/// empty the current object group to default
 	/// </summary>
 	void EmptyCurrentObjectGroup();
@@ -209,14 +217,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
-	/// set current lesson object group
-	/// </summary>
-	/// <param name="ObjectGroup">object group to set</param>
-	/// <param name="NewObjectGroup">object group is new</param>
-	void SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup, bool NewObjectGroup);
-
-	UFUNCTION(BlueprintCallable, Category = "Lessons component")
-	/// <summary>
 	/// save current object group to object group list
 	/// </summary>
 	void SaveCurrentObjectGroup();
@@ -231,10 +231,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
-	/// get all lesson objects
+	/// get all questions
 	/// </summary>
-	/// <returns>all lesson objects</returns>
-	TArray<FLessonObject> GetAllLessonObjects();
+	/// <returns>all questions</returns>
+	TArray<FLessonObject> GetAllQuestions();
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -283,7 +283,7 @@ public:
 	/// <summary>
 	/// load Lessons.xml
 	/// </summary>
-	void LoadLesson();
+	void LoadLessons();
 #pragma endregion
 
 private:

@@ -140,12 +140,6 @@ public:
 		text.Append(AddTabs(_tabs + 1));
 		text.Append("<Map>\n");
 
-		// type of map
-		text.Append(AddTabs(_tabs + 2));
-		text.Append("<Type>");
-		text.Append(FString::FromInt((int)_lesson.Map.Map));
-		text.Append("</Type>\n");
-
 		// picture of map
 		text.Append(AddTabs(_tabs + 2));
 		text.Append("<Picture>");
@@ -209,7 +203,7 @@ public:
 			// name of lesson object object name
 			text.Append(AddTabs(_tabs + 3));
 			text.Append("<ObjectName>");
-			text.Append(_lesson.Map.LessonObjectObjectNameNames[i]);
+			text.Append(_lesson.Map.LessonObjectObjectNames[i]);
 			text.Append("</ObjectName>\n");
 
 			// lesson object close element

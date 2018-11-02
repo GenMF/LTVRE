@@ -266,7 +266,7 @@ void ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
 }
 
 // get all lesson objects
-TArray<FLessonObject> ULessonsComponent::GetAllLessonObjects()
+TArray<FLessonObject> ULessonsComponent::GetAllQuestions()
 {
 	// return lesson objects
 	return m_questionCatalog;
@@ -380,7 +380,7 @@ void ULessonsComponent::DeleteCurrentQuestion()
 
 #pragma region public function
 // load Lessons.xml
-void ULessonsComponent::LoadLesson()
+void ULessonsComponent::LoadLessons()
 {
 	// file to lesson parser
 	FileToLessonParser ftlp;

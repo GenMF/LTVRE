@@ -33,14 +33,4 @@ enum class ELessonCategory : uint8
 	NONE	UMETA(DisplayName = "None"),
 	HISTORY	UMETA(DisplayName = "History")
 };
-
-UENUM(BlueprintType)
-/// <summary>
-/// map of lesson
-/// </summary>
-enum class ELessonMap : uint8
-{
-	EMPTY	UMETA(DisplayName = "Empty"),
-	CASTLE	UMETA(DisplayName = "Castle")
-};
 #pragma endregion
