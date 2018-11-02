@@ -150,45 +150,39 @@ struct FLessonMap
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
 	/// <summary>
-	/// type of map
-	/// </summary>
-	ELessonMap Map;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
-	/// <summary>
 	/// name of picture of map
 	/// </summary>
 	FString Picture;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map 2D")
 	/// <summary>
 	/// vector 2D for object groups 2D
 	/// </summary>
 	TArray<FVector2D> Transform2D;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map 2D")
 	/// <summary>
 	/// object groups
 	/// </summary>
 	TArray<FString> ObjectGroups;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map 2D")
 	/// <summary>
 	/// lesson object transforms
 	/// </summary>
 	TArray<FTransform> LessonObjectTransforms;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map VR")
 	/// <summary>
 	/// lesson object names
 	/// </summary>
 	TArray<FString> LessonObjectNames;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map VR")
 	/// <summary>
-	/// lesson object object name names
+	/// lesson object object names
 	/// </summary>
-	TArray<FString> LessonObjectObjectNameNames;
+	TArray<FString> LessonObjectObjectNames;
 };
 
 USTRUCT(BlueprintType)

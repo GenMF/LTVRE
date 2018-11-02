@@ -129,7 +129,7 @@ public:
 
 			// if current type is lesson map add name to array
 			else if (m_currentType == "Lesson_Map_LessonObject")
-				m_currentLesson.Map.LessonObjectObjectNameNames.Add(ElementData);
+				m_currentLesson.Map.LessonObjectObjectNames.Add(ElementData);
 
 			// if current type is not object group
 			else
@@ -177,13 +177,6 @@ public:
 		{
 			// set availability of current lesson
 			m_currentLesson.Category = (ELessonCategory)FCString::Atoi(ElementData);
-		}
-
-		// if element is type
-		else if (name == "Type")
-		{
-			// set type of current lesson map
-			m_currentLesson.Map.Map = (ELessonMap)FCString::Atoi(ElementData);
 		}
 
 		// if element is picture

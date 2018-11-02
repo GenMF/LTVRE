@@ -26,6 +26,6 @@ APlayerPawn::APlayerPawn()
 	Settings->LoadSettings();
 
 	// load lessons from file
-	Lessons->LoadLesson();
+	Lessons->LoadLessons();
 }
 #pragma endregion
