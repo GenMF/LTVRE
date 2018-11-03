@@ -203,7 +203,7 @@ struct FLesson
 	/// <summary>
 	/// creator of lesson
 	/// </summary>
-	FString Creator;
+	FString Creator = "this";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>

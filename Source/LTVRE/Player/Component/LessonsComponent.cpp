@@ -21,7 +21,6 @@ ULessonsComponent::ULessonsComponent()
 // get all lessons
 TArray<FLesson> ULessonsComponent::GetAllLessons()
 {
-	// return lessons
 	return m_lessons;
 }
 
