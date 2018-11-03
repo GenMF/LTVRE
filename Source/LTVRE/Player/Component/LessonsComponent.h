@@ -99,7 +99,8 @@ public:
 	/// set current lesson
 	/// </summary>
 	/// <param name="Lesson">lesson to set</param>
-	void SetCurrentLesson(FLesson Lesson);
+	/// <param name="NewLesson">lesson is new</param>
+	void SetCurrentLesson(FLesson Lesson, bool NewLesson);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -292,6 +293,11 @@ private:
 	/// current lesson
 	/// </summary>
 	FLesson m_currentLesson;
+
+	/// <summary>
+	/// current lesson name
+	/// </summary>
+	FString m_currentLessonName;
 
 	/// <summary>
 	/// lessons from this player

@@ -31,15 +31,28 @@ FLesson ULessonsComponent::GetCurrentLesson()
 }
 
 // set current lesson
-void ULessonsComponent::SetCurrentLesson(FLesson Lesson)
+void ULessonsComponent::SetCurrentLesson(FLesson Lesson, bool NewLesson)
 {
+	// if lesson is new set empty name
+	if (NewLesson)
+		m_currentLessonName = "";
+
+	// if not new lesson set current lesson name
+	else
+		m_currentLessonName = Lesson.Name;
+
+	// set current lesson
 	m_currentLesson = Lesson;
 }
 
 // empty the current lesson to default
 void ULessonsComponent::EmptyCurrentLesson()
 {
+	// reset lesson to default
 	m_currentLesson = FLesson();
+
+	// empty current object group name
+	m_currentObjectGroupName = "";
 }
 
 // set name of current lesson
@@ -105,6 +118,21 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
 	// if current lesson has no name or index not valid return
 	if (m_currentLesson.Name.Len() <= 0 || (!LessonIsNew && (Index < 0 || Index > m_lessons.Num() - 1)))
 		return;
+
+	// check all lessons
+	for (FLesson lesson : m_lessons)
+	{
+		// if name already in array
+		if (lesson.Name == m_currentLesson.Name &&
+			m_currentLesson.Name != m_currentLessonName)
+		{
+			// empty current lesson
+			EmptyCurrentLesson();
+
+			// return
+			return;
+		}
+	}
 
 	// if current lesson is a new lesson
 	if (LessonIsNew)
@@ -234,6 +262,21 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 	// if current object group has no name return
 	if (m_currentObjectGroup.Name.Len() <= 0)
 		return;
+
+	// check all object groups
+	for (FLessonObjectGroup objGrp : m_objectGroups)
+	{
+		// if name already in array
+		if (objGrp.Name == m_currentObjectGroup.Name &&
+			m_currentObjectGroup.Name != m_currentObjectGroupName)
+		{
+			// empty current object group
+			EmptyCurrentObjectGroup();
+			
+			// return
+			return;
+		}
+	}
 
 	// if current object group name is empty
 	if (m_currentObjectGroupName == "")
