@@ -12,7 +12,7 @@
 // constructor
 APlayerPawn::APlayerPawn()
 {
-	// create defaulft camera component
+	// create default camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	RootComponent = Camera;
 
