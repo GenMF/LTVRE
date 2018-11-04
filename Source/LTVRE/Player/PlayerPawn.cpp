@@ -12,9 +12,12 @@
 // constructor
 APlayerPawn::APlayerPawn()
 {
+	USceneComponent* pRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = pRoot;
+
 	// create default camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	RootComponent = Camera;
+	Camera->SetupAttachment(pRoot);
 
 	// create default settings component
 	Settings = CreateDefaultSubobject<USettingsComponent>(TEXT("Settings"));
