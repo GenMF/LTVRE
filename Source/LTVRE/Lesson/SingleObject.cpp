@@ -6,6 +6,7 @@
 // constructor
 ASingleObject::ASingleObject()
 {
-
+	// set replicates in network
+	bReplicates = true;
 }
 #pragma endregion

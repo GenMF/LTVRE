@@ -10,6 +10,18 @@ enum class EPlayerType : uint8
 	STUDENT	UMETA(DisplayName = "Student"),
 	TEACHER	UMETA(Displayname = "Teacher")
 };
+
+UENUM(BlueprintType)
+/// <summary>
+/// status of player
+/// </summary>
+enum class EPlayerStatus : uint8
+{
+	MENU		UMETA(DisplayName = "Menu"),
+	PRACTICE	UMETA(DisplayName = "Practice"),
+	STUDENT		UMETA(DisplayName = "Student"),
+	TEACHER		UMETA(DisplayName = "Teacher")
+};
 #pragma endregion
 
 #pragma region lesson
