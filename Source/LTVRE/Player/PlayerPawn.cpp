@@ -4,6 +4,7 @@
 #include "Component/LessonsComponent.h"
 #include "Game/LTVREGameInstance.h"
 #include "Lesson/LocationObjectGroup.h"
+#include "Lesson/Component/LocationSingleObjectComponent.h"
 #pragma endregion
 
 #pragma region UE4 includes
@@ -44,9 +45,6 @@ void APlayerPawn::InitializeLesson()
 	// get current lesson
 	FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
 
-	// current object group
-	FLessonObjectGroup objectGroup;
-
 	// get all place object group actors
 	TArray<AActor*> FoundPlaceObjectGroup;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALocationObjectGroup::StaticClass(), FoundPlaceObjectGroup);
@@ -64,6 +62,9 @@ void APlayerPawn::InitializeLesson()
 				// if name of current user generated object group equals current group object from map
 				if (objGrp.Name == lesson.Map.ObjectGroups[i])
 				{
+					// object group actor
+					ASingleObject* pObjGrp = nullptr;
+
 					// check all object group subclasses to spawn the right object
 					for (TSubclassOf<ASingleObject> objClass : Lessons->ObjectGroupClasses)
 					{
@@ -77,7 +78,47 @@ void APlayerPawn::InitializeLesson()
 								if (((ALocationObjectGroup*)(pActor))->ID == i)
 								{
 									// spawn object group
-									GetWorld()->SpawnActor<ASingleObject>(objClass, pActor->GetActorLocation(), pActor->GetActorRotation());
+									pObjGrp = GetWorld()->SpawnActor<ASingleObject>(objClass, pActor->GetActorLocation(), pActor->GetActorRotation());
+								}
+							}
+						}
+					}
+
+					// if object group actor not valid break
+					if (!pObjGrp)
+						break;
+
+					// check all objects of object group
+					for (int j = 0; j < objGrp.Objects.Num(); j++)
+					{
+						// check all single object subclasses
+						for (TSubclassOf<ASingleObject> singleObjClass : Lessons->SingleObjectClasses)
+						{
+							// if current single object class contains current object group object name
+							if (singleObjClass->GetName().Contains(objGrp.Objects[j].Name))
+							{
+								// check current object group actor children
+								for (UActorComponent* pLocSingleObjComp : pObjGrp->GetComponentsByClass(ULocationSingleObjectComponent::StaticClass()))
+								{
+									// if index of current location equals index of current object
+									if (((ULocationSingleObjectComponent*)(pLocSingleObjComp))->ID == j)
+									{
+										// spawn object
+										ASingleObject* singleObj = GetWorld()->SpawnActor<ASingleObject>(singleObjClass, 
+											((USceneComponent*)pLocSingleObjComp)->GetComponentLocation(),
+											((USceneComponent*)pLocSingleObjComp)->GetComponentRotation());
+
+										// check all questions
+										for (FLessonObject lessonObj : Lessons->GetAllQuestions())
+										{
+											// if current question is equal with current object question
+											if (lessonObj.Name == objGrp.Objects[j].QuestionName)
+											{
+												// set question of current object actor
+												singleObj->SetLessonObject(lessonObj);
+											}
+										}
+									}
 								}
 							}
 						}
