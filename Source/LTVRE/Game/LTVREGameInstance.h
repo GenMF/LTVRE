@@ -22,6 +22,20 @@ public:
 #pragma region UFUNCTION
 	UFUNCTION(BlueprintCallable, Category = "LTVRE game instance")
 	/// <summary>
+	/// get status of player
+	/// </summary>
+	/// <returns>status of player</returns>
+	EPlayerStatus GetPlayerStatus();
+
+	UFUNCTION(BlueprintCallable, Category = "LTVRE game instance")
+	/// <summary>
+	/// set player status
+	/// </summary>
+	/// <param name="Status">status to set</param>
+	void SetPlayerStatus(EPlayerStatus Status);
+
+	UFUNCTION(BlueprintCallable, Category = "LTVRE game instance")
+	/// <summary>
 	/// get current lesson
 	/// </summary>
 	/// <returns>current lesson</returns>
@@ -37,6 +51,11 @@ public:
 	
 private:
 #pragma region private variables
+	/// <summary>
+	/// status of player
+	/// </summary>
+	EPlayerStatus m_status;
+
 	/// <summary>
 	/// current lesson
 	/// </summary>

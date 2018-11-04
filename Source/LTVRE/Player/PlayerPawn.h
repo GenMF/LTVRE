@@ -50,4 +50,12 @@ public:
 	/// </summary>
 	ULessonsComponent* Lessons;
 #pragma endregion
+
+#pragma region UFUNCTION
+	UFUNCTION(BlueprintCallable, Category = "Player Pawn")
+	/// <summary>
+	/// initialize lesson in vr level
+	/// </summary>
+	void InitializeLesson();
+#pragma endregion
 };
