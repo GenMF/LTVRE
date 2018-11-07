@@ -120,9 +120,13 @@ void UQuestionBase::HideShowQuestion()
 			m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
 			m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
 
-			// check all answer buttons and show
+			// check all answer buttons
 			for (UButton* pBtn : m_pAnswerButtons)
+			{
+				// show button and set style
 				pBtn->SetVisibility(ESlateVisibility::Visible);
+				pBtn->SetStyle(ButtonClickShownStyle);
+			}
 		}
 
 		// set question shown
@@ -138,6 +142,45 @@ void UQuestionBase::HideShowQuestion()
 	default:
 		break;
 	}
+}
+
+// click answer at index
+void UQuestionBase::ClickAnswer(int Index)
+{
+	// is answer already given and not practice return
+	if (m_answerGiven && ((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus() != EPlayerStatus::PRACTICE)
+		return;
+
+	// check all answer buttons
+	for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+	{
+		// button style to set
+		FButtonStyle style = ButtonClickShownStyle;
+
+		// if current index is correct answer
+		if (i == m_correctAnswer)
+		{
+			// set color of style green
+			style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+			style.Hovered.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+			style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+		}
+
+		// if current index is clicked index
+		else if (i == Index)
+		{
+			// set color of style red
+			style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+			style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+			style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+
+		// set style of answer button at index
+		m_pAnswerButtons[i]->SetStyle(style);
+	}
+
+	// set answer given to true
+	m_answerGiven = true;
 }
 #pragma endregion
 
