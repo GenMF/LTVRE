@@ -13,6 +13,7 @@
 class UCameraComponent;
 class USettingsComponent;
 class ULessonsComponent;
+class UWidgetInteractionComponent;
 #pragma endregion
 
 UCLASS()
@@ -32,13 +33,19 @@ public:
 #pragma endregion
 
 #pragma region UPROPERTY
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Pawn")
 	/// <summary>
 	/// camera component of player
 	/// </summary>
 	UCameraComponent* Camera;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Player Pawn")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
+	/// <summary>
+	/// widget interaction component of player
+	/// </summary>
+	UWidgetInteractionComponent* WidgetInteraction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
 	/// <summary>
 	/// setting component of player
 	/// </summary>

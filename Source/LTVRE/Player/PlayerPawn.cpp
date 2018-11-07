@@ -5,24 +5,32 @@
 #include "Game/LTVREGameInstance.h"
 #include "Lesson/LocationObjectGroup.h"
 #include "Lesson/Component/LocationSingleObjectComponent.h"
+#include "UI/QuestionBase.h"
 #pragma endregion
 
 #pragma region UE4 includes
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/WidgetComponent.h"
 #pragma endregion
 
 #pragma region constructor
 // constructor
 APlayerPawn::APlayerPawn()
 {
+	// create root scene component
 	USceneComponent* pRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = pRoot;
 
 	// create default camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(pRoot);
+
+	// create default widget interaction component
+	WidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteraction"));
+	WidgetInteraction->SetupAttachment(Camera);
 
 	// create default settings component
 	Settings = CreateDefaultSubobject<USettingsComponent>(TEXT("Settings"));
@@ -116,6 +124,12 @@ void APlayerPawn::InitializeLesson()
 											{
 												// set question of current object actor
 												singleObj->SetLessonObject(lessonObj);
+
+												// set player reference of widget
+												((UQuestionBase*)singleObj->QuestionPractice->GetUserWidgetObject())->SetPlayer(this);
+
+												// set object reference of widget
+												((UQuestionBase*)singleObj->QuestionPractice->GetUserWidgetObject())->SetObject(singleObj);
 											}
 										}
 									}
