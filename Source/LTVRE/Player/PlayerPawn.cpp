@@ -122,14 +122,32 @@ void APlayerPawn::InitializeLesson()
 											// if current question is equal with current object question
 											if (lessonObj.Name == objGrp.Objects[j].QuestionName)
 											{
+												// set player reference of current object actor
+												singleObj->SetPlayer(this);
+
 												// set question of current object actor
 												singleObj->SetLessonObject(lessonObj);
 
+												// question practice widget of object
+												UQuestionBase* question = (UQuestionBase*)singleObj->QuestionPractice->GetUserWidgetObject();
+
 												// set player reference of widget
-												((UQuestionBase*)singleObj->QuestionPractice->GetUserWidgetObject())->SetPlayer(this);
+												question->SetPlayer(this);
 
 												// set object reference of widget
-												((UQuestionBase*)singleObj->QuestionPractice->GetUserWidgetObject())->SetObject(singleObj);
+												question->SetObject(singleObj);
+
+												// get references
+												question->GetReferences();
+
+												// set question of question practice
+												question->SetQuestion(singleObj->GetLessonObjectQuestion());
+
+												// set notice of question practice
+												question->SetNotice(singleObj->GetLessonObjectNotice());
+
+												// set answers of question practice
+												question->SetAnswerTexts(singleObj->GetLessonObjectAnswers(), singleObj->GetCorrectAnswer());
 											}
 										}
 									}

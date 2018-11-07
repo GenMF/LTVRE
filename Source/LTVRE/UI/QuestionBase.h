@@ -62,6 +62,12 @@ public:
 #pragma endregion
 
 #pragma region UFUNCTION
+	UFUNCTION(BlueprintImplementableEvent, Category = "Question base")
+	/// <summary>
+	/// get references from widget
+	/// </summary>
+	void GetReferences();
+
 	UFUNCTION(BlueprintCallable, Category = "Question base")
 	/// <summary>
 	/// set references
