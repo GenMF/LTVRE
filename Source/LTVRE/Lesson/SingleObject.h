@@ -10,6 +10,10 @@
 #include "SingleObject.generated.h"  
 #pragma endregion
 
+#pragma region forward decleration
+class UWidgetComponent;
+#pragma endregion
+
 UCLASS()
 /// <summary>
 /// class for a single lesson object
@@ -24,6 +28,14 @@ public:
 	/// constructor
 	/// </summary>
 	ASingleObject();
+#pragma endregion
+
+#pragma region UPROPERTY
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
+	/// <summary>
+	/// question practice widget component
+	/// </summary>
+	UWidgetComponent* QuestionPractice;
 #pragma endregion
 
 #pragma region UFUNCTION
