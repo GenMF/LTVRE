@@ -114,6 +114,13 @@ public:
 	/// hide or show question
 	/// </summary>
 	void HideShowQuestion();
+
+	UFUNCTION(BlueprintCallable, Category = "Question base")
+	/// <summary>
+	/// click answer at index
+	/// </summary>
+	/// <param name="Index">index to click</param>
+	void ClickAnswer(int Index);
 #pragma endregion
 
 #pragma region public inline function
@@ -167,6 +174,11 @@ private:
 	/// question and answers are shown
 	/// </summary>
 	bool m_questionShown;
+
+	/// <summary>
+	/// if answer is already given
+	/// </summary>
+	bool m_answerGiven;
 
 	/// <summary>
 	/// correct answer index
