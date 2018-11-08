@@ -6,6 +6,7 @@
 #include "Lesson/LocationObjectGroup.h"
 #include "Lesson/Component/LocationSingleObjectComponent.h"
 #include "UI/QuestionBase.h"
+#include "UI/Interaction.h"
 #pragma endregion
 
 #pragma region UE4 includes
@@ -43,6 +44,71 @@ APlayerPawn::APlayerPawn()
 
 	// load lessons from file
 	Lessons->LoadLessons();
+}
+#pragma endregion
+
+#pragma region public override function
+// called every frame
+void APlayerPawn::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// if map is menu return
+	if (GetWorld()->GetMapName() == "Menu")
+		return;
+
+	// hit result
+	FHitResult hit;
+
+	// trace from camera forward
+	GetWorld()->LineTraceSingleByChannel(
+		hit,
+		Camera->GetComponentLocation(),
+		Camera->GetComponentLocation() + Camera->GetForwardVector() * 10000,
+		ECollisionChannel::ECC_Visibility
+	);
+
+	// if hit component valid and has tag question practice
+	if (hit.Component.IsValid() && hit.Component->ComponentHasTag("QuestionPractice") &&
+		((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus() == EPlayerStatus::PRACTICE)
+	{
+		// set trace target
+		m_pTraceTarget = hit.GetActor();
+
+		// release widget interaction click
+		WidgetInteraction->ReleasePointerKey(FKey("LeftMouseButton"));
+
+		// increase click timer
+		m_clickTimer += DeltaTime;
+
+		// set percentage of interaction widget
+		m_pInteraction->SetPercentage(m_clickTimer / ClickTime * 100.0f);
+
+		// set image percentage of interaction widget
+		m_pInteraction->SetImagePercentage();
+
+		// if click timer lower than time tio click return
+		if (m_clickTimer < ClickTime)
+			return;
+
+		// click widget interaction
+		WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
+
+		// reset click timer
+		m_clickTimer = 0.0f;
+	}
+
+	// if trace target valid
+	else if(m_pTraceTarget != nullptr)
+	{
+		// set trace target null and click timer 0
+		m_pTraceTarget = nullptr;
+		m_clickTimer = 0.0f;
+
+		// set percentage 0 and set image percentage
+		m_pInteraction->SetPercentage(0.0f);
+		m_pInteraction->SetImagePercentage();
+	}
 }
 #pragma endregion
 
@@ -159,5 +225,16 @@ void APlayerPawn::InitializeLesson()
 			}
 		}
 	}
+}
+
+// set interaction reference
+void APlayerPawn::SetInteraction(UInteraction* Interaction)
+{
+	// set interaction widget reference
+	m_pInteraction = Interaction;
+
+	// set percentage and image percentage
+	m_pInteraction->SetPercentage(0.0f);
+	m_pInteraction->SetImagePercentage();
 }
 #pragma endregion
