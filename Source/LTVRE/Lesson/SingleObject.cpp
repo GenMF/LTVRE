@@ -31,6 +31,9 @@ ASingleObject::ASingleObject()
 
 	// set collision preset
 	QuestionPractice->SetCollisionProfileName("TraceVisibility");
+
+	// add tag
+	QuestionPractice->ComponentTags.Add("QuestionPractice");
 }
 #pragma endregion
 
