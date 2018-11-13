@@ -11,6 +11,7 @@
 
 #pragma region UE4 includes
 #include "Camera/CameraComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Components/WidgetInteractionComponent.h"
@@ -28,6 +29,13 @@ APlayerPawn::APlayerPawn()
 	// create default camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(pRoot);
+
+	// create default static mesh component
+	HeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeadMesh"));
+	HeadMesh->SetupAttachment(Camera);
+	//HeadMesh->SetVisibility(false);
+	HeadMesh->SetCollisionProfileName("NoCollision");
+	HeadMesh->SetIsReplicated(true);
 
 	// create default widget interaction component
 	WidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteraction"));
@@ -142,6 +150,19 @@ void APlayerPawn::Tick(float DeltaTime)
 		// set image percentage of interaction widget
 		m_pInteraction->SetImagePercentage();
 	}
+
+	// if not local player return
+	if (!IsLocallyControlled())
+		return;
+
+	// if server set camera rotation on clients
+	if (HasAuthority())
+		SetCameraRotationClient(Camera->RelativeRotation);
+
+	// if client set camera rotation on server
+	else
+		SetCameraRotationServer(Camera->RelativeRotation);
+
 }
 #pragma endregion
 
@@ -261,6 +282,34 @@ void APlayerPawn::SetInteraction(UInteraction* Interaction)
 	// set percentage and image percentage
 	m_pInteraction->SetPercentage(0.0f);
 	m_pInteraction->SetImagePercentage();
+}
+
+// set rotation on server validate
+bool APlayerPawn::SetCameraRotationServer_Validate(FRotator rotation)
+{
+	return true;
+}
+
+// set rotation on server implementation
+void APlayerPawn::SetCameraRotationServer_Implementation(FRotator rotation)
+{
+	// set rotatcion on clients
+	SetCameraRotationClient(rotation);
+}
+
+// set rotation on client validate
+bool APlayerPawn::SetCameraRotationClient_Validate(FRotator rotation)
+{
+	return true;
+}
+
+// set rotation on client implementation
+void APlayerPawn::SetCameraRotationClient_Implementation(FRotator rotation)
+{
+	// if not local player
+	if (!IsLocallyControlled())
+		// set local rotation of camera
+		Camera->SetRelativeRotation(rotation);
 }
 #pragma endregion
 

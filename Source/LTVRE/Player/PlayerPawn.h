@@ -50,6 +50,12 @@ public:
 	/// </summary>
 	UCameraComponent* Camera;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Pawn")
+	/// <summary>
+	/// static mesh component of player
+	/// </summary>
+	UStaticMeshComponent* HeadMesh;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
 	/// <summary>
 	/// widget interaction component of player
@@ -87,6 +93,20 @@ public:
 	/// set interaction reference
 	/// </summary>
 	void SetInteraction(UInteraction* Interaction);
+
+	UFUNCTION(Server, Unreliable, WithValidation)
+	/// <summary>
+	/// set camera rotation on server
+	/// </summary>
+	/// <param name="rotation">rotation to set</param>
+	void SetCameraRotationServer(FRotator rotation);
+
+	UFUNCTION(NetMulticast, Unreliable, WithValidation)
+	/// <summary>
+	/// set camera rotation on client
+	/// </summary>
+	/// <param name="rotation">rotation to set</param>
+	void SetCameraRotationClient(FRotator rotation);
 #pragma endregion
 
 private:
