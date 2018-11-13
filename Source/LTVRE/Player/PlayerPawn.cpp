@@ -152,7 +152,8 @@ void APlayerPawn::InitializeLesson()
 								if (((ALocationObjectGroup*)(pActor))->ID == i)
 								{
 									// spawn object group
-									pObjGrp = GetWorld()->SpawnActor<ASingleObject>(objClass, pActor->GetActorLocation(), pActor->GetActorRotation());
+									pObjGrp = GetWorld()->SpawnActor<ASingleObject>(objClass, pActor->GetActorLocation(), 
+										pActor->GetActorRotation());
 								}
 							}
 						}
@@ -213,7 +214,8 @@ void APlayerPawn::InitializeLesson()
 												question->SetNotice(singleObj->GetLessonObjectNotice());
 
 												// set answers of question practice
-												question->SetAnswerTexts(singleObj->GetLessonObjectAnswers(), singleObj->GetCorrectAnswer());
+												question->SetAnswerTexts(singleObj->GetLessonObjectAnswers(), 
+													singleObj->GetCorrectAnswer());
 											}
 										}
 									}

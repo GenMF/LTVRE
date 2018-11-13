@@ -32,7 +32,7 @@ public:
 	/// <summary>
 	/// constructor
 	/// </summary>
-	ULessonsComponent();
+	ULessonsComponent() {}
 #pragma endregion
 
 #pragma region UPROPERTY
@@ -85,14 +85,14 @@ public:
 	/// get all lessons
 	/// </summary>
 	/// <returns>all lessons</returns>
-	TArray<FLesson> GetAllLessons();
+	FORCEINLINE TArray<FLesson> GetAllLessons() { return m_lessons; }
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
 	/// get current lesson
 	/// </summary>
 	/// <returns>current lesson</returns>
-	FLesson GetCurrentLesson();
+	FORCEINLINE FLesson GetCurrentLesson() { return m_currentLesson; }
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -171,14 +171,14 @@ public:
 	/// get all object groups
 	/// </summary>
 	/// <returns>all object groups</returns>
-	TArray<FLessonObjectGroup> GetAllObjectGroups();
+	FORCEINLINE TArray<FLessonObjectGroup> GetAllObjectGroups() { return m_objectGroups; }
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
 	/// get current object group
 	/// </summary>
 	/// <returns>current object group</returns>
-	FLessonObjectGroup GetCurrentObjectGroup();
+	FORCEINLINE FLessonObjectGroup GetCurrentObjectGroup() { return m_currentObjectGroup; }
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -235,14 +235,14 @@ public:
 	/// get all questions
 	/// </summary>
 	/// <returns>all questions</returns>
-	TArray<FLessonObject> GetAllQuestions();
+	FORCEINLINE TArray<FLessonObject> GetAllQuestions() { return m_questionCatalog; }
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
 	/// get current question
 	/// </summary>
 	/// <returns>current question</returns>
-	FLessonObject GetCurrentQuestion();
+	FORCEINLINE FLessonObject GetCurrentQuestion() { return m_currentQuestion; }
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>

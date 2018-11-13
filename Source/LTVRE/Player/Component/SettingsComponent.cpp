@@ -15,14 +15,6 @@
 using namespace std;
 #pragma endregion
 
-#pragma region constructor
-// constructor
-USettingsComponent::USettingsComponent()
-{
-
-}
-#pragma endregion
-
 #pragma region public overrides
 // get single xml element
 bool USettingsComponent::ProcessElement(const TCHAR* ElementName, const TCHAR* ElementData, int32 XmlFileLineNumber)
@@ -56,12 +48,6 @@ bool USettingsComponent::ProcessElement(const TCHAR* ElementName, const TCHAR* E
 #pragma endregion
 
 #pragma region UFUNCTION
-// get name of player
-FString USettingsComponent::GetName()
-{
-	return m_settings.Name;
-}
-
 // set name of player
 void USettingsComponent::SetName(FString _name)
 {
@@ -87,13 +73,6 @@ void USettingsComponent::SetName(FString _name)
 	SaveSettings();
 }
 
-// get player is student
-bool USettingsComponent::IsStudent()
-{
-	// return if player is student
-	return m_settings.Type == EPlayerType::STUDENT;
-}
-
 // set player to student
 void USettingsComponent::SetStudent()
 {
@@ -102,13 +81,6 @@ void USettingsComponent::SetStudent()
 
 	// save settings
 	SaveSettings();
-}
-
-// get player is teacher
-bool USettingsComponent::IsTeacher()
-{
-	// return if player is teacher
-	return m_settings.Type == EPlayerType::TEACHER;
 }
 
 // set player to teacher

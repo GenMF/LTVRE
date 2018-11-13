@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// constructor
 	/// </summary>
-	ULocationSingleObjectComponent();
+	ULocationSingleObjectComponent() {}
 #pragma endregion
 
 #pragma region UPROPERTY

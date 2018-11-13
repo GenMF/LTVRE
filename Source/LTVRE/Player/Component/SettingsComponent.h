@@ -24,7 +24,7 @@ public:
 	/// <summary>
 	/// constructor
 	/// </summary>
-	USettingsComponent();
+	USettingsComponent() {}
 #pragma endregion
 
 #pragma region public overrides
@@ -81,52 +81,52 @@ public:
 #pragma endregion
 
 #pragma region UFUNCTION
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// get name of player
 	/// </summary>
 	/// <returns>name of player</returns>
-	FString GetName();
+	FORCEINLINE FString GetName() { return m_settings.Name; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// set name of player
 	/// </summary>
 	/// <param name="_name">name of player</param>
 	void SetName(FString _name);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// get player is student
 	/// </summary>
-	bool IsStudent();
+	FORCEINLINE bool IsStudent() { return m_settings.Type == EPlayerType::STUDENT; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// set player to student
 	/// </summary>
 	void SetStudent();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// get player is teacher
 	/// </summary>
-	bool IsTeacher();
+	FORCEINLINE bool IsTeacher() { return m_settings.Type == EPlayerType::TEACHER; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// set player to teacher
 	/// </summary>
 	void SetTeacher();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// get level of sound (1 - 6)
 	/// </summary>
 	/// <returns>level of sound</returns>
 	int GetSoundLevel();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// set level of sound
 	/// 1 is 100% sound
@@ -136,14 +136,14 @@ public:
 	/// <param name="Level">level of sound</param>
 	void SetSoundLevel(int Level);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// get level of music (1 - 6)
 	/// </summary>
 	/// <returns>level of music</returns>
 	int GetMusicLevel();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// set level of music
 	/// 1 is 100% music
@@ -153,14 +153,14 @@ public:
 	/// <param name="Level">level of music</param>
 	void SetMusicLevel(int Level);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// get level of graphic (1 - 6)
 	/// </summary>
 	/// <returns>level of graphic</returns>
 	int GetGraphicLevel();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>
 	/// set level of graphic
 	/// 1 is highest graphic
