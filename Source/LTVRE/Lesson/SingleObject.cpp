@@ -21,6 +21,9 @@ ASingleObject::ASingleObject()
 	USceneComponent* pRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = pRoot;
 
+	// add actor tag
+	Tags.Add("LessonObject");
+
 	// create default widget component
 	QuestionPractice = CreateDefaultSubobject<UWidgetComponent>(TEXT("QuestionPractice"));
 	QuestionPractice->SetupAttachment(pRoot);
@@ -101,6 +104,24 @@ void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 		// if random index is 0 set correct answer to current index
 		if (randomIndices[i] == 0)
 			m_correctAnswer = i;
+	}
+}
+
+// toggle question widget visibility
+void ASingleObject::ToggleQuestionWidget(EPlayerStatus _status)
+{
+	// switch player status
+	switch (_status)
+	{
+	// practice status
+	case EPlayerStatus::PRACTICE:
+		// toggle question practice widget visibility
+		QuestionPractice->ToggleVisibility();
+		break;
+
+	// default
+	default:
+		break;
 	}
 }
 #pragma endregion

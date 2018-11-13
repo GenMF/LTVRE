@@ -68,34 +68,57 @@ void APlayerPawn::Tick(float DeltaTime)
 		ECollisionChannel::ECC_Visibility
 	);
 
-	// if hit component valid and has tag question practice
-	if (hit.Component.IsValid() && hit.Component->ComponentHasTag("QuestionPractice") &&
-		((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus() == EPlayerStatus::PRACTICE)
+	// save player status
+	EPlayerStatus status = ((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus();
+
+	// save trace target to id (0 = no valid target, 1 = question widget target, 2 = single object target)
+	int targetID = 0;
+	
+	// if hit component valid and tag correct
+	if (hit.Component.IsValid() &&
+		((hit.Component->ComponentHasTag("QuestionPractice") && status == EPlayerStatus::PRACTICE) ||
+		(hit.Component->ComponentHasTag("QuestionTeacher") && status == EPlayerStatus::TEACHER) ||
+		(hit.Component->ComponentHasTag("QuestionStudent") && status == EPlayerStatus::STUDENT)))
+	{
+		targetID = 1;
+	}
+	
+	// if hit actor valid and tag correct
+	else if (hit.Actor.IsValid() && hit.Actor->ActorHasTag("LessonObject"))
+	{
+		targetID = 2;
+	}
+
+	// if target id valid
+	if (targetID)
 	{
 		// set trace target
 		m_pTraceTarget = hit.GetActor();
 
-		// release widget interaction click
-		WidgetInteraction->ReleasePointerKey(FKey("LeftMouseButton"));
+		// if target id is question widget target
+		if(targetID == 1)
+			// release widget interaction click
+			WidgetInteraction->ReleasePointerKey(FKey("LeftMouseButton"));
 
 		// increase click timer
 		m_clickTimer += DeltaTime;
 
-		// set percentage of interaction widget
-		m_pInteraction->SetPercentage(m_clickTimer / ClickTime * 100.0f);
+		// if click timer lower than time to click return
+		if (m_clickTimer >= ClickTime)
+		{
+			// if target id is question widget target
+			if (targetID == 1)
+				// click widget interaction
+				WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
 
-		// set image percentage of interaction widget
-		m_pInteraction->SetImagePercentage();
+			// if target id is single object target
+			else
+				// toggle visibility of question widget
+				((ASingleObject*)(hit.GetActor()))->ToggleQuestionWidget(status);
 
-		// if click timer lower than time tio click return
-		if (m_clickTimer < ClickTime)
-			return;
-
-		// click widget interaction
-		WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
-
-		// reset click timer
-		m_clickTimer = 0.0f;
+			// reset click timer
+			m_clickTimer = 0.0f;
+		}
 	}
 
 	// if trace target valid
@@ -107,6 +130,16 @@ void APlayerPawn::Tick(float DeltaTime)
 
 		// set percentage 0 and set image percentage
 		m_pInteraction->SetPercentage(0.0f);
+		m_pInteraction->SetImagePercentage();
+	}
+
+	// if interaction reference valid
+	if (m_pInteraction)
+	{
+		// set percentage of interaction widget
+		m_pInteraction->SetPercentage(m_clickTimer / ClickTime * 100.0f);
+
+		// set image percentage of interaction widget
 		m_pInteraction->SetImagePercentage();
 	}
 }
