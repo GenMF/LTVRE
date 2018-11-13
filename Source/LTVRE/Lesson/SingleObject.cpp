@@ -24,20 +24,15 @@ ASingleObject::ASingleObject()
 	// add actor tag
 	Tags.Add("LessonObject");
 
-	// create default widget component
+	// create default widget component and initialize
 	QuestionPractice = CreateDefaultSubobject<UWidgetComponent>(TEXT("QuestionPractice"));
 	QuestionPractice->SetupAttachment(pRoot);
+	InitWidget(QuestionPractice, "QuestionPractice");
 
-	// set draw size and scale of question practice widget component
-	QuestionPractice->SetDrawSize(FVector2D(1600.0f, 900.0f));
-	QuestionPractice->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
-
-	// set collision preset and hide widget
-	QuestionPractice->SetCollisionProfileName("TraceVisibility");
-	QuestionPractice->SetVisibility(false);
-
-	// add tag
-	QuestionPractice->ComponentTags.Add("QuestionPractice");
+	// create default widget component and initialize
+	QuestionTeacher = CreateDefaultSubobject<UWidgetComponent>(TEXT("QuestionTeacher"));
+	QuestionTeacher->SetupAttachment(pRoot);
+	InitWidget(QuestionTeacher, "QuestionTeacher");
 }
 #pragma endregion
 
@@ -51,8 +46,9 @@ void ASingleObject::Tick(float DeltaTime)
 	if (!m_pPlayer)
 		return;
 
-	// set rotation from question widget to player camera
+	// set rotation from question widgets to player camera
 	QuestionPractice->SetWorldRotation((m_pPlayer->GetActorLocation() - QuestionPractice->GetComponentLocation()).Rotation());
+	QuestionTeacher->SetWorldRotation((m_pPlayer->GetActorLocation() - QuestionTeacher->GetComponentLocation()).Rotation());
 }
 #pragma endregion
 
@@ -116,13 +112,47 @@ void ASingleObject::ToggleQuestionWidget(EPlayerStatus _status)
 	{
 	// practice status
 	case EPlayerStatus::PRACTICE:
+	{
 		// toggle question practice widget visibility
 		QuestionPractice->ToggleVisibility();
+
+		// set collision preset of question practice widget
+		QuestionPractice->SetCollisionProfileName("TraceVisibility");
+		break;
+	}
+
+	// practice status
+	case EPlayerStatus::TEACHER:
+		// toggle question teacher widget visibility
+		QuestionTeacher->ToggleVisibility();
+
+		// set collision preset of question teacher widget
+		QuestionTeacher->SetCollisionProfileName("TraceVisibility");
 		break;
 
 	// default
 	default:
 		break;
 	}
+}
+#pragma endregion
+
+#pragma region private function
+// initialize widget
+void ASingleObject::InitWidget(UWidgetComponent* _pWidget, FString _tag)
+{
+	// set draw size and scale of widget component
+	_pWidget->SetDrawSize(FVector2D(1600.0f, 900.0f));
+	_pWidget->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
+
+	// set no collision and hide widget
+	_pWidget->SetCollisionProfileName("NoCollision");
+	_pWidget->SetVisibility(false);
+
+	// set transparent blend mode
+	_pWidget->SetBlendMode(EWidgetBlendMode::Transparent);
+
+	// add tag
+	_pWidget->ComponentTags.Add(*_tag);
 }
 #pragma endregion

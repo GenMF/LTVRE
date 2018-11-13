@@ -15,6 +15,8 @@ class USettingsComponent;
 class ULessonsComponent;
 class UWidgetInteractionComponent;
 class UInteraction;
+class UQuestionBase;
+class ASingleObject;
 #pragma endregion
 
 UCLASS()
@@ -105,5 +107,14 @@ private:
 	/// interaction widget reference
 	/// </summary>
 	UInteraction* m_pInteraction;
+#pragma endregion
+
+#pragma region private function
+	/// <summary>
+	/// initialize question widget
+	/// </summary>
+	/// <param name="_pWidget">widget reference</param>
+	/// <param name="_pSingleObj">single object reference</param>
+	void InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj);
 #pragma endregion
 };

@@ -212,7 +212,7 @@ void APlayerPawn::InitializeLesson()
 									if (((ULocationSingleObjectComponent*)(pLocSingleObjComp))->ID == j)
 									{
 										// spawn object
-										ASingleObject* singleObj = GetWorld()->SpawnActor<ASingleObject>(singleObjClass, 
+										ASingleObject* pSingleObj = GetWorld()->SpawnActor<ASingleObject>(singleObjClass, 
 											((USceneComponent*)pLocSingleObjComp)->GetComponentLocation(),
 											((USceneComponent*)pLocSingleObjComp)->GetComponentRotation());
 
@@ -223,32 +223,22 @@ void APlayerPawn::InitializeLesson()
 											if (lessonObj.Name == objGrp.Objects[j].QuestionName)
 											{
 												// set player reference of current object actor
-												singleObj->SetPlayer(this);
+												pSingleObj->SetPlayer(this);
 
 												// set question of current object actor
-												singleObj->SetLessonObject(lessonObj);
+												pSingleObj->SetLessonObject(lessonObj);
 
 												// question practice widget of object
-												UQuestionBase* question = (UQuestionBase*)singleObj->QuestionPractice->GetUserWidgetObject();
+												UQuestionBase* pQuestion = (UQuestionBase*)pSingleObj->QuestionPractice->GetUserWidgetObject();
 
-												// set player reference of widget
-												question->SetPlayer(this);
+												// initialize question practice widget
+												InitWidget(pQuestion, pSingleObj);
 
-												// set object reference of widget
-												question->SetObject(singleObj);
+												// question teacher widget of object
+												pQuestion = (UQuestionBase*)pSingleObj->QuestionTeacher->GetUserWidgetObject();
 
-												// get references
-												question->GetReferences();
-
-												// set question of question practice
-												question->SetQuestion(singleObj->GetLessonObjectQuestion());
-
-												// set notice of question practice
-												question->SetNotice(singleObj->GetLessonObjectNotice());
-
-												// set answers of question practice
-												question->SetAnswerTexts(singleObj->GetLessonObjectAnswers(), 
-													singleObj->GetCorrectAnswer());
+												// initialize question teacher widget
+												InitWidget(pQuestion, pSingleObj);
 											}
 										}
 									}
@@ -271,5 +261,29 @@ void APlayerPawn::SetInteraction(UInteraction* Interaction)
 	// set percentage and image percentage
 	m_pInteraction->SetPercentage(0.0f);
 	m_pInteraction->SetImagePercentage();
+}
+#pragma endregion
+
+#pragma region private function
+// initialize question widget
+void APlayerPawn::InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj)
+{
+	// set player reference of widget
+	_pWidget->SetPlayer(this);
+
+	// set object reference of widget
+	_pWidget->SetObject(_pSingleObj);
+
+	// get references
+	_pWidget->GetReferences();
+
+	// set question of question practice
+	_pWidget->SetQuestion(_pSingleObj->GetLessonObjectQuestion());
+
+	// set notice of question practice
+	_pWidget->SetNotice(_pSingleObj->GetLessonObjectNotice());
+
+	// set answers of question practice
+	_pWidget->SetAnswerTexts(_pSingleObj->GetLessonObjectAnswers(),	_pSingleObj->GetCorrectAnswer());
 }
 #pragma endregion
