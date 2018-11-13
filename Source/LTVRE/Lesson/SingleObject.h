@@ -45,6 +45,12 @@ public:
 	/// question practice widget component
 	/// </summary>
 	UWidgetComponent* QuestionPractice;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
+	/// <summary>
+	/// question teacher widget component
+	/// </summary>
+	UWidgetComponent* QuestionTeacher;
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -127,5 +133,14 @@ private:
 	/// player reference
 	/// </summary>
 	APlayerPawn* m_pPlayer;
+#pragma endregion
+
+#pragma region private function
+	/// <summary>
+	/// initialize widget
+	/// </summary>
+	/// <param name="_pWidget">widget reference</param>
+	/// <param name="_tag">tag to set</param>
+	void InitWidget(UWidgetComponent* _pWidget, FString _tag);
 #pragma endregion
 };
