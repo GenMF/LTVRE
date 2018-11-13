@@ -32,8 +32,9 @@ ASingleObject::ASingleObject()
 	QuestionPractice->SetDrawSize(FVector2D(1600.0f, 900.0f));
 	QuestionPractice->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 
-	// set collision preset
+	// set collision preset and hide widget
 	QuestionPractice->SetCollisionProfileName("TraceVisibility");
+	QuestionPractice->SetVisibility(false);
 
 	// add tag
 	QuestionPractice->ComponentTags.Add("QuestionPractice");
