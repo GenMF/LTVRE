@@ -99,6 +99,12 @@ public:
 	/// </summary>
 	/// <param name="_lessonObject">lesson object to set</param>
 	void SetLessonObject(FLessonObject _lessonObject);
+
+	/// <summary>
+	/// toggle question widget visibility
+	/// </summary>
+	/// <param name="_status">player status</param>
+	void ToggleQuestionWidget(EPlayerStatus _status);
 #pragma endregion
 
 private:
