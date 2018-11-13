@@ -32,17 +32,13 @@ public:
 
 		// if mobile app
 		if (mobile)
-		{
 			// get save folder mobile
 			fileName = "/storage/emulated/0/" + _fileName;
-		}
 
 		// if not mobile app
 		else
-		{
 			// get save folder
 			fileName = FPaths::ProjectSavedDir() + _fileName;
-		}
 
 		// return absolute path file name
 		return fileName;
@@ -61,35 +57,20 @@ public:
 		// string to return
 		FString text = "";
 
-		// write name into string
-		text.Append(AddTabs(_tabs));
-		text.Append("<Name>");
-		text.Append(TCHAR_TO_ANSI(*_settings.Name));
-		text.Append("</Name>\n");
+		// name element
+		text.Append(Element("Name", TCHAR_TO_ANSI(*_settings.Name), _tabs));
 
-		// write type into string
-		text.Append(AddTabs(_tabs));
-		text.Append("<Type>");
-		text.Append(TCHAR_TO_ANSI(*(FString::FromInt((int)_settings.Type))));
-		text.Append("</Type>\n");
+		// type element
+		text.Append(Element("Type", TCHAR_TO_ANSI(*(FString::FromInt((int)_settings.Type))), _tabs));
 
-		// write sound into string
-		text.Append(AddTabs(_tabs));
-		text.Append("<Sound>");
-		text.Append(TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)_settings.Sound / 20))));
-		text.Append("</Sound>\n");
+		// sound element
+		text.Append(Element("Sound", TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)_settings.Sound / 20))), _tabs));
 
-		// write music into string
-		text.Append(AddTabs(_tabs));
-		text.Append("<Music>");
-		text.Append(TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)_settings.Music / 20))));
-		text.Append("</Music>\n");
+		// music element
+		text.Append(Element("Music", TCHAR_TO_ANSI(*(FString::FromInt(1 + (int)_settings.Music / 20))), _tabs));
 
-		// write graphic into string
-		text.Append(AddTabs(_tabs));
-		text.Append("<Graphic>");
-		text.Append(TCHAR_TO_ANSI(*(FString::FromInt((int)_settings.Graphic))));
-		text.Append("</Graphic>\n");
+		// graphic element
+		text.Append(Element("Graphic", TCHAR_TO_ANSI(*(FString::FromInt((int)_settings.Graphic))), _tabs));
 
 		// return full string
 		return text;
@@ -108,116 +89,74 @@ public:
 		// string to return
 		FString text = "";
 
-		// lesson element
-		text.Append(AddTabs(_tabs));
-		text.Append("<Lesson>\n");
+		// lesson open element
+		text.Append(OpenElement("Lesson", _tabs));
 
-		// name of lesson
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Name>");
-		text.Append(_lesson.Name);
-		text.Append("</Name>\n");
+		// name of lesson element
+		text.Append(Element("Name", _lesson.Name, _tabs + 1));
 
-		// creator of lesson
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Creator>");
-		text.Append(_lesson.Creator);
-		text.Append("</Creator>\n");
+		// creator of lesson element
+		text.Append(Element("Creator", _lesson.Creator, _tabs + 1));
 
-		// availability of lesson
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Availability>");
-		text.Append(FString::FromInt((int)_lesson.Availability));
-		text.Append("</Availability>\n");
+		// availability of lesson element
+		text.Append(Element("Availability", FString::FromInt((int)_lesson.Availability), _tabs + 1));
 
-		// category of lesson
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Category>");
-		text.Append(FString::FromInt((int)_lesson.Category));
-		text.Append("</Category>\n");
+		// category of lesson element
+		text.Append(Element("Category", FString::FromInt((int)_lesson.Category), _tabs + 1));
 
-		// map element
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Map>\n");
+		// map open element
+		text.Append(OpenElement("Map", _tabs + 1));
 
-		// picture of map
-		text.Append(AddTabs(_tabs + 2));
-		text.Append("<Picture>");
-		text.Append(_lesson.Map.Picture);
-		text.Append("</Picture>\n");
+		// picture of map element
+		text.Append(Element("Picture", _lesson.Map.Picture, _tabs + 2));
 
 		// check all 2D transforms
 		for (FVector2D vec2D : _lesson.Map.Transform2D)
 		{
-			// transform2d element
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<Transform2D>\n");
+			// transform2d open element
+			text.Append(OpenElement("Transform2D", _tabs + 2));
 
-			// transform 2D x value
-			text.Append(AddTabs(_tabs + 3));
-			text.Append("<Transform2D.X>");
-			text.Append(FString::FromInt(vec2D.X * 1000));
-			text.Append("</Transform2D.X>\n");
+			// transform 2D x value element
+			text.Append(Element("Transform2D.X", FString::FromInt(vec2D.X * 1000), _tabs + 3));
 
-			// transform 2D y value
-			text.Append(AddTabs(_tabs + 3));
-			text.Append("<Transform2D.Y>");
-			text.Append(FString::FromInt(vec2D.Y * 1000));
-			text.Append("</Transform2D.Y>\n");
+			// transform 2D y value element
+			text.Append(Element("Transform2D.Y", FString::FromInt(vec2D.Y * 1000), _tabs + 3));
 
 			// transform2d close element
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("</Transform2D>\n");
+			text.Append(CloseElement("Transform2D", _tabs + 2));
 		}
 
 		// check all object group names
 		for (FString name : _lesson.Map.ObjectGroups)
-		{
-			// name of object group
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<ObjectGroupName>");
-			text.Append(name);
-			text.Append("</ObjectGroupName>\n");
-		}
+			// name of object group element
+			text.Append(Element("ObjectGroupName", name, _tabs + 2));
 
 		// check all lesson object transforms
 		for (FTransform transform : _lesson.Map.LessonObjectTransforms)
-		{
 			// transform of object group
 			StructToStringXML(transform, _tabs + 2);
-		}
 
 		// check all lesson objects
 		for (int i = 0; i < _lesson.Map.LessonObjectTransforms.Num(); i++)
 		{
-			// lesson object element
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<LessonObject>\n");
+			// lesson object open element
+			text.Append(OpenElement("LessonObject", _tabs + 2));
 
-			// name of lesson object
-			text.Append(AddTabs(_tabs + 3));
-			text.Append("<Name>");
-			text.Append(_lesson.Map.LessonObjectNames[i]);
-			text.Append("</Name>\n");
+			// name of lesson object element
+			text.Append(Element("Name", _lesson.Map.LessonObjectNames[i], _tabs + 3));
 
-			// name of lesson object object name
-			text.Append(AddTabs(_tabs + 3));
-			text.Append("<ObjectName>");
-			text.Append(_lesson.Map.LessonObjectObjectNames[i]);
-			text.Append("</ObjectName>\n");
+			// name of lesson object object name element
+			text.Append(Element("ObjectName", _lesson.Map.LessonObjectObjectNames[i], _tabs + 3));
 
 			// lesson object close element
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("</LessonObject>\n");
+			text.Append(CloseElement("LessonObject", _tabs + 2));
 		}
 
 		// map close element
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("</Map>\n");
+		text.Append(CloseElement("Map", _tabs + 1));
 
 		// lesson close element
-		text.Append(AddTabs(_tabs));
-		text.Append("</Lesson>\n");
+		text.Append(CloseElement("Lesson", _tabs));
 
 		// return full string
 		return text;
@@ -234,73 +173,49 @@ public:
 		// string to return
 		FString text = "";
 
-		// object group element
-		text.Append(AddTabs(_tabs));
-		text.Append("<ObjectGroup>\n");
+		// object group open element
+		text.Append(OpenElement("ObjectGroup", _tabs));
 
-		// name of group object
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Name>");
-		text.Append(_lessonObjGrp.Name);
-		text.Append("</Name>\n");
+		// name of group object element
+		text.Append(Element("Name", _lessonObjGrp.Name, _tabs + 1));
 
-		// object name of group object
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<ObjectName>");
-		text.Append(_lessonObjGrp.ObjectName);
-		text.Append("</ObjectName>\n");
+		// object name of group object element
+		text.Append(Element("ObjectName", _lessonObjGrp.ObjectName, _tabs + 1));
 
 		// check each 2D transform
 		for (FVector2D vec2D : _lessonObjGrp.Transform2D)
 		{
-			// transform2d element
-			text.Append(AddTabs(_tabs + 1));
-			text.Append("<Transform2D>\n");
+			// transform2d open element
+			text.Append(OpenElement("Transform2D", _tabs + 1));
 
-			// transform 2D x value
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<Transform2D.X>");
-			text.Append(FString::FromInt(vec2D.X * 1000));
-			text.Append("</Transform2D.X>\n");
+			// transform 2D x value element
+			text.Append(Element("Transform2D.X", FString::FromInt(vec2D.X * 1000), _tabs + 2));
 
-			// transform 2D y value
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<Transform2D.Y>");
-			text.Append(FString::FromInt(vec2D.Y * 1000));
-			text.Append("</Transform2D.Y>\n");
+			// transform 2D y value element
+			text.Append(Element("Transform2D.Y", FString::FromInt(vec2D.Y * 1000), _tabs + 2));
 
 			// transform2d close element
-			text.Append(AddTabs(_tabs + 1));
-			text.Append("</Transform2D>\n");
+			text.Append(CloseElement("Transform2D", _tabs + 1));
 		}
 
 		// check all lesson objects
 		for (FObjectGroupObject lessonObj : _lessonObjGrp.Objects)
 		{
-			// lesson object element
-			text.Append(AddTabs(_tabs + 1));
-			text.Append("<LessonObject>\n");
+			// lesson object open element
+			text.Append(OpenElement("LessonObject", _tabs + 1));
 
-			// name of group object
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<Name>");
-			text.Append(lessonObj.Name);
-			text.Append("</Name>\n");
+			// name of group object element
+			text.Append(Element("Name", lessonObj.Name, _tabs + 2));
 
-			// question name of group object
-			text.Append(AddTabs(_tabs + 2));
-			text.Append("<QuestionName>");
-			text.Append(lessonObj.QuestionName);
-			text.Append("</QuestionName>\n");
+			// question name of group object element
+			text.Append(Element("QuestionName", lessonObj.QuestionName, _tabs + 2));
 
 			// lesson object close element
-			text.Append(AddTabs(_tabs + 1));
-			text.Append("</LessonObject>\n");
+			text.Append(CloseElement("LessonObject", _tabs + 1));
 		}
 
 		// object group close element
-		text.Append(AddTabs(_tabs));
-		text.Append("</ObjectGroup>\n");
+		text.Append(CloseElement("ObjectGroup", _tabs));
 
 		// return full string
 		return text;
@@ -317,47 +232,28 @@ public:
 		// string to return
 		FString text = "";
 
-		// lesson object element
-		text.Append(AddTabs(_tabs));
-		text.Append("<LessonObject>\n");
+		// lesson object open element
+		text.Append(OpenElement("LessonObject", _tabs));
 
-		// name of lesson object
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Name>");
-		text.Append(_lessonObject.Name);
-		text.Append("</Name>\n");
+		// name of lesson object element
+		text.Append(Element("Name", _lessonObject.Name, _tabs + 1));
 
-		// object name of lesson object
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<ObjectName>");
-		text.Append(_lessonObject.ObjectName);
-		text.Append("</ObjectName>\n");
+		// object name of lesson object element
+		text.Append(Element("ObjectName", _lessonObject.ObjectName, _tabs + 1));
 
-		// notice of lesson object
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Notice>");
-		text.Append(_lessonObject.Notice);
-		text.Append("</Notice>\n");
+		// notice of lesson object element
+		text.Append(Element("Notice", _lessonObject.Notice, _tabs + 1));
 
-		// question of lesson object
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Question>");
-		text.Append(_lessonObject.Question);
-		text.Append("</Question>\n");
+		// question of lesson object element
+		text.Append(Element("Question", _lessonObject.Question, _tabs + 1));
 
 		// check all answers
 		for (FString answer : _lessonObject.Answers)
-		{
-			// answer of lesson object
-			text.Append(AddTabs(_tabs + 1));
-			text.Append("<Answer>");
-			text.Append(answer);
-			text.Append("</Answer>\n");
-		}
+			// answer of lesson object element
+			text.Append(Element("Answer", answer, _tabs + 1));
 
 		// lesson object close element
-		text.Append(AddTabs(_tabs));
-		text.Append("</LessonObject>\n");
+		text.Append(CloseElement("LessonObject", _tabs));
 
 		// return full string
 		return text;
@@ -374,66 +270,109 @@ public:
 		// string to return
 		FString text = "";
 
-		// transform element
-		text.Append(AddTabs(_tabs));
-		text.Append("<Transform>\n");
+		// transform open element
+		text.Append(OpenElement("Transform", _tabs));
 
-		// location of transform
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Location.X>");
-		text.Append(FString::FromInt(_transform.GetLocation().X * 1000));
-		text.Append("</Location.X>\n");
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Location.Y>");
-		text.Append(FString::FromInt(_transform.GetLocation().Y * 1000));
-		text.Append("</Location.Y>\n");
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Location.Z>");
-		text.Append(FString::FromInt(_transform.GetLocation().Z * 1000));
-		text.Append("</Location.Z>\n");
+		// location of transform element
+		text.Append(Element("Location.X", FString::FromInt(_transform.GetLocation().X * 1000), _tabs + 1));
+		text.Append(Element("Location.Y", FString::FromInt(_transform.GetLocation().Y * 1000), _tabs + 1));
+		text.Append(Element("Location.Y", FString::FromInt(_transform.GetLocation().Z * 1000), _tabs + 1));
 
-		// rotation of transform
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Rotation.X>");
-		text.Append(FString::FromInt(_transform.GetRotation().X * 1000));
-		text.Append("</Rotation.X>\n");
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Rotation.Y>");
-		text.Append(FString::FromInt(_transform.GetRotation().Y * 1000));
-		text.Append("</Rotation.Y>\n");
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Rotation.Z>");
-		text.Append(FString::FromInt(_transform.GetRotation().Z * 1000));
-		text.Append("</Rotation.Z>\n");
+		// rotation of transform element
+		text.Append(Element("Rotation.X", FString::FromInt(_transform.GetRotation().X * 1000), _tabs + 1));
+		text.Append(Element("Rotation.Y", FString::FromInt(_transform.GetRotation().Y * 1000), _tabs + 1));
+		text.Append(Element("Rotation.Y", FString::FromInt(_transform.GetRotation().Z * 1000), _tabs + 1));
 
-		// scale of transform
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Scale.X>");
-		text.Append(FString::FromInt(_transform.GetScale3D().X * 1000));
-		text.Append("</Scale.X>\n");
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Scale.Y>");
-		text.Append(FString::FromInt(_transform.GetScale3D().Y * 1000));
-		text.Append("</Scale.Y>\n");
-		text.Append(AddTabs(_tabs + 1));
-		text.Append("<Scale.Z>");
-		text.Append(FString::FromInt(_transform.GetScale3D().Z * 1000));
-		text.Append("</Scale.Z>\n");
+		// scale of transform element
+		text.Append(Element("Scale.X", FString::FromInt(_transform.GetScale3D().X * 1000), _tabs + 1));
+		text.Append(Element("Scale.Y", FString::FromInt(_transform.GetScale3D().Y * 1000), _tabs + 1));
+		text.Append(Element("Scale.Y", FString::FromInt(_transform.GetScale3D().Z * 1000), _tabs + 1));
 
 		// transform close element
-		text.Append(AddTabs(_tabs));
-		text.Append("</Transform>\n");
+		text.Append(CloseElement("Transform", _tabs));
 
 		// return full string
 		return text;
 	}
 
 	/// <summary>
-	/// get tab string
+	/// single xml element
+	/// </summary>
+	/// <param name="_name">element name</param>
+	/// <param name="_value">element value</param>
+	/// <param name="_tabs">number of tabs</param>
+	/// <returns>element as string</returns>
+	static FString Element(FString _name, FString _value, int _tabs = 0)
+	{
+		// string to return
+		FString text = "";
+
+		// append open element
+		text.Append(Tabs(_tabs));
+		text.Append("<");
+		text.Append(_name);
+		text.Append(">");
+
+		// append element value
+		text.Append(_value);
+
+		// append close element
+		text.Append("</");
+		text.Append(_name);
+		text.Append(">\n");
+
+		// return full string
+		return text;
+	}
+
+	/// <summary>
+	/// xml open element
+	/// </summary>
+	/// <param name="_name">element name</param>
+	/// <param name="_tabs">number of tabs</param>
+	/// <returns>open element as string</returns>
+	static FString OpenElement(FString _name, int _tabs = 0)
+	{
+		// string to return
+		FString text = "";
+
+		// append open element
+		text.Append(Tabs(_tabs));
+		text.Append("<");
+		text.Append(_name);
+		text.Append(">\n");
+
+		// return full string
+		return text;
+	}
+
+	/// <summary>
+	/// xml close element
+	/// </summary>
+	/// <param name="_name">element name</param>
+	/// <param name="_tabs">number of tabs</param>
+	/// <returns>open element as string</returns>
+	static FString CloseElement(FString _name, int _tabs = 0)
+	{
+		// string to return
+		FString text = "";
+
+		// append open element
+		text.Append(Tabs(_tabs));
+		text.Append("</");
+		text.Append(_name);
+		text.Append(">\n");
+
+		// return full string
+		return text;
+	}
+
+	/// <summary>
+	/// tab string
 	/// </summary>
 	/// <param name="_count">number of tabs</param>
 	/// <returns>string with tabs</returns>
-	static FString AddTabs(int _count)
+	static FString Tabs(int _count)
 	{
 		// string to return
 		FString text = "";

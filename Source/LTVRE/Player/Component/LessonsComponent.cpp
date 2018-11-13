@@ -9,27 +9,7 @@
 #include "Engine/Texture2D.h"
 #pragma endregion
 
-#pragma region constructor
-// constructor
-ULessonsComponent::ULessonsComponent()
-{
-	
-}
-#pragma endregion
-
 #pragma region UFUNCTION
-// get all lessons
-TArray<FLesson> ULessonsComponent::GetAllLessons()
-{
-	return m_lessons;
-}
-
-// get current lesson
-FLesson ULessonsComponent::GetCurrentLesson()
-{
-	return m_currentLesson;
-}
-
 // set current lesson
 void ULessonsComponent::SetCurrentLesson(FLesson Lesson, bool NewLesson)
 {
@@ -161,17 +141,19 @@ void ULessonsComponent::DeleteCurrentLessonAtIndex(int Index)
 	SaveLesson();
 }
 
-// get all object groups
-TArray<FLessonObjectGroup> ULessonsComponent::GetAllObjectGroups()
+// set current lesson object group
+void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup, bool NewObjectGroup)
 {
-	// return lessons
-	return m_objectGroups;
-}
+	// if object group is new set empty name
+	if (NewObjectGroup)
+		m_currentObjectGroupName = "";
 
-// get current object group
-FLessonObjectGroup ULessonsComponent::GetCurrentObjectGroup()
-{
-	return m_currentObjectGroup;
+	// if not new object group set current object group name
+	else
+		m_currentObjectGroupName = ObjectGroup.Name;
+
+	// set current object group
+	m_currentObjectGroup = ObjectGroup;
 }
 
 // empty the current object group to default
@@ -241,21 +223,6 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 	m_currentObjectGroup.Objects[ID] = objGrpObj;
 }
 
-// set current lesson object group
-void ULessonsComponent::SetCurrentObjectGroup(FLessonObjectGroup ObjectGroup, bool NewObjectGroup)
-{
-	// if object group is new set empty name
-	if (NewObjectGroup)
-		m_currentObjectGroupName = "";
-
-	// if not new object group set current object group name
-	else
-		m_currentObjectGroupName = ObjectGroup.Name;
-
-	// set current object group
-	m_currentObjectGroup = ObjectGroup;
-}
-
 // save current object group to object group list
 void ULessonsComponent::SaveCurrentObjectGroup()
 {
@@ -305,19 +272,6 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 void ULessonsComponent::DeleteObjectGroupAtIndex(int Index)
 {
 	m_objectGroups.RemoveAt(Index);
-}
-
-// get all lesson objects
-TArray<FLessonObject> ULessonsComponent::GetAllQuestions()
-{
-	// return lesson objects
-	return m_questionCatalog;
-}
-
-// get current question
-FLessonObject ULessonsComponent::GetCurrentQuestion()
-{
-	return m_currentQuestion;
 }
 
 // set current question
