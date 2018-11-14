@@ -14,6 +14,7 @@ class UCameraComponent;
 class USettingsComponent;
 class ULessonsComponent;
 class UWidgetInteractionComponent;
+class UTextRenderComponent;
 class UInteraction;
 class UQuestionBase;
 class ASingleObject;
@@ -64,6 +65,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
 	/// <summary>
+	/// text render component of player name
+	/// </summary>
+	UTextRenderComponent* NameText;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
+	/// <summary>
 	/// setting component of player
 	/// </summary>
 	USettingsComponent* Settings;
@@ -98,15 +105,30 @@ public:
 	/// <summary>
 	/// set camera rotation on server
 	/// </summary>
-	/// <param name="rotation">rotation to set</param>
-	void SetCameraRotationServer(FRotator rotation);
+	/// <param name="_rotation">rotation to set</param>
+	void SetCameraRotationServer(FRotator _rotation);
 
 	UFUNCTION(NetMulticast, Unreliable, WithValidation)
 	/// <summary>
 	/// set camera rotation on client
 	/// </summary>
-	/// <param name="rotation">rotation to set</param>
-	void SetCameraRotationClient(FRotator rotation);
+	/// <param name="_rotation">rotation to set</param>
+	void SetCameraRotationClient(FRotator _rotation);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	/// <summary>
+	/// set name text on server
+	/// </summary>
+	/// <param name="_name">name to set</param>
+	void SetNameTextServer(const FString &_name);
+#pragma endregion
+
+protected:
+#pragma region protected override function
+	/// <summary>
+	/// called at begin play
+	/// </summary>
+	void BeginPlay() override;
 #pragma endregion
 
 private:
