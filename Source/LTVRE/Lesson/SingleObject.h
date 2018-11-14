@@ -40,6 +40,12 @@ public:
 #pragma endregion
 
 #pragma region UPROPERTY
+	UPROPERTY(ReplicatedUsing = HideShowMeshes, BlueprintReadWrite, Category = "Single object")
+	/// <summary>
+	/// if meshes are visible or not
+	/// </summary>
+	bool MeshesVisible = true;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
 	/// <summary>
 	/// question practice widget component
@@ -83,6 +89,12 @@ public:
 	{
 		return m_lessonObject.Answers;
 	}
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Single object")
+	/// <summary>
+	/// hide or show static meshes in blueprint
+	/// </summary>
+	void HideShowMeshes();
 #pragma endregion
 
 #pragma region public inline function

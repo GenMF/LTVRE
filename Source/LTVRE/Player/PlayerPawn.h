@@ -108,7 +108,7 @@ public:
 	/// <param name="_rotation">rotation to set</param>
 	void SetCameraRotationServer(FRotator _rotation);
 
-	UFUNCTION(NetMulticast, Unreliable, WithValidation)
+	UFUNCTION(NetMulticast, Unreliable)
 	/// <summary>
 	/// set camera rotation on client
 	/// </summary>

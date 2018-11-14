@@ -156,6 +156,14 @@ public:
 	/// <param name="_answers">answer texts</param>
 	/// <param name="_correctIndex">correct answer index</param>
 	void SetAnswerTexts(TArray<FString> _answers, int _correctIndex);
+
+	/// <summary>
+	/// click on widget at position
+	/// </summary>
+	/// <param name="_widgetSize">size of widget</param>
+	/// <param name="_widgetTransform">world transform of widget</param>
+	/// <param name="_hitLocation">position</param>
+	void ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTransform, FVector _hitLocation);
 #pragma endregion
 
 private:
@@ -256,5 +264,24 @@ private:
 	/// player reference
 	/// </summary>
 	APlayerPawn* m_pPlayer;
+#pragma endregion
+
+#pragma region private function
+	/// <summary>
+	/// get 2d vector from -0.5,-0.5 (upper left) to 0.5,0.5 (lower right)
+	/// </summary>
+	/// <param name="_widgetSize">size of widget</param>
+	/// <param name="_widgetTransform">world transform of widget</param>
+	/// <param name="_hitLocation">world location of hit</param>
+	/// <returns>2d vector relative to ui</returns>
+	FVector2D CalculatePositionRelativeToWidget(FVector2D _widgetSize, FTransform _widgetTransform, FVector _hitLocation);
+
+	/// <summary>
+	/// check if position is in button
+	/// </summary>
+	/// <param name="_position">position to check</param>
+	/// <param name="_pButton">button</param>
+	/// <returns>in button or not</returns>
+	bool CheckPositionInButton(FVector2D _position, UButton* _pButton);
 #pragma endregion
 };

@@ -120,13 +120,28 @@ void APlayerPawn::Tick(float DeltaTime)
 		{
 			// if target id is question widget target
 			if (targetID == 1)
+			{
 				// click widget interaction
 				WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
 
+				// if not practice click on widget
+				if (status != EPlayerStatus::PRACTICE)
+				{
+					// get question base from hit component
+					UQuestionBase* pQuestionBase = (UQuestionBase*)(((UWidgetComponent*)(hit.GetComponent()))->GetUserWidgetObject());
+
+					// click at question base widget
+					pQuestionBase->ClickOnWidget(((UWidgetComponent*)(hit.GetComponent()))->GetDrawSize(),
+						hit.GetComponent()->GetComponentTransform(), hit.Location);
+				}
+			}
+
 			// if target id is single object target
 			else
+			{
 				// toggle visibility of question widget
 				((ASingleObject*)(hit.GetActor()))->ToggleQuestionWidget(status);
+			}
 
 			// reset click timer
 			m_clickTimer = 0.0f;
@@ -170,6 +185,10 @@ void APlayerPawn::Tick(float DeltaTime)
 // initialize lesson in vr level
 void APlayerPawn::InitializeLesson()
 {
+	// if not local player return
+	if (!IsLocallyControlled())
+		return;
+
 	// get current lesson
 	FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
 
@@ -249,6 +268,9 @@ void APlayerPawn::InitializeLesson()
 												// set question of current object actor
 												pSingleObj->SetLessonObject(lessonObj);
 
+												// hide meshes
+												pSingleObj->MeshesVisible = false;
+
 												// question practice widget of object
 												UQuestionBase* pQuestion = (UQuestionBase*)pSingleObj->QuestionPractice->GetUserWidgetObject();
 
@@ -293,14 +315,8 @@ bool APlayerPawn::SetCameraRotationServer_Validate(FRotator rotation)
 // set rotation on server implementation
 void APlayerPawn::SetCameraRotationServer_Implementation(FRotator rotation)
 {
-	// set rotatcion on clients
+	// set rotation on clients
 	SetCameraRotationClient(rotation);
-}
-
-// set rotation on client validate
-bool APlayerPawn::SetCameraRotationClient_Validate(FRotator rotation)
-{
-	return true;
 }
 
 // set rotation on client implementation
@@ -352,12 +368,13 @@ void APlayerPawn::BeginPlay()
 	if (GetWorld()->GetMapName() == "Menu")
 		return;
 
-	// if server show head mesh
-	if (HasAuthority())
+	// if server and not local player show head mesh
+	if (HasAuthority() && !IsLocallyControlled())
 		HeadMesh->SetVisibility(true);
 
-	// if not server set name of name text
-	if (!HasAuthority())
+	// if client and local player
+	if (!HasAuthority() && IsLocallyControlled())
+		// set name text on server
 		SetNameTextServer(Settings->GetName());
 }
 #pragma endregion
