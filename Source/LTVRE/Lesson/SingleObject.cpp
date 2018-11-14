@@ -5,6 +5,7 @@
 
 #pragma region UE4 includes
 #include "Components/WidgetComponent.h"
+#include "UnrealNetwork.h"
 #pragma endregion
 
 #pragma region constructor
@@ -156,3 +157,11 @@ void ASingleObject::InitWidget(UWidgetComponent* _pWidget, FString _tag)
 	_pWidget->ComponentTags.Add(*_tag);
 }
 #pragma endregion
+
+void ASingleObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// replicate variable
+	DOREPLIFETIME(ASingleObject, MeshesVisible);
+}

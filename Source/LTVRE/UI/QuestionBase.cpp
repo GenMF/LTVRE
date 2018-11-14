@@ -7,6 +7,7 @@
 
 #pragma region UE4 includes
 #include "Components/Button.h"
+#include "Components/CanvasPanelSlot.h"
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -89,7 +90,19 @@ void UQuestionBase::HideShowNotice()
 // hide or show object
 void UQuestionBase::HideShowObject()
 {
-	/// TODO:
+	// if object shown set button text to show object
+	if (m_objectShown && m_pShowHideObjectButtonText)
+		m_pShowHideObjectButtonText->SetText(FText::FromString("show object"));
+	
+	// if object not shown set button text to hide object
+	else if(m_pShowHideObjectButtonText)
+		m_pShowHideObjectButtonText->SetText(FText::FromString("hide object"));
+
+	// toggle object shown
+	m_objectShown = !m_objectShown;
+
+	// set meshes of single object visible
+	m_pObject->MeshesVisible = m_objectShown;
 }
 
 // hide or show question
@@ -195,5 +208,41 @@ void UQuestionBase::SetAnswerTexts(TArray<FString> _answers, int _correctIndex)
 
 	// set correct answer number
 	m_correctAnswer = _correctIndex;
+}
+
+// click on widget at position
+void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTransform, FVector _hitLocation)
+{
+	// get relative location to ui
+	FVector2D anchor = CalculatePositionRelativeToWidget(_widgetSize, _widgetTransform, _hitLocation);
+
+	// if anchor is in show hide object button show or hide object
+	if (CheckPositionInButton(anchor, m_pShowHideObjectButton))
+		HideShowObject();
+}
+#pragma endregion
+
+#pragma region private function
+// get 2d vector from 0,0 (upper left) to 1,1 (lower right)
+FVector2D UQuestionBase::CalculatePositionRelativeToWidget(FVector2D _widgetSize, FTransform _widgetTransform, 
+	FVector _hitLocation)
+{
+	// get relative position from hit location to widget transform
+	FVector relative = _widgetTransform.InverseTransformPosition(_hitLocation);
+
+	// return relative location to ui
+	return FVector2D(FMath::Abs(1 - (relative.Y + _widgetSize.X / 2) / _widgetSize.X),
+		FMath::Abs(1 - (relative.Z + _widgetSize.Y / 2) / _widgetSize.Y));
+}
+
+// check if position is in button
+bool UQuestionBase::CheckPositionInButton(FVector2D _position, UButton* _pButton)
+{
+	// get anchors from button
+	FAnchors anchors = ((UCanvasPanelSlot*)(_pButton->Slot))->GetAnchors();
+
+	// return if position is in anchors
+	return _position.X >= anchors.Minimum.X && _position.X <= anchors.Maximum.X &&
+		_position.Y >= anchors.Minimum.Y && _position.Y <= anchors.Maximum.Y;
 }
 #pragma endregion
