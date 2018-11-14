@@ -16,6 +16,7 @@
 #include "Engine/World.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/TextRenderComponent.h"
 #pragma endregion
 
 #pragma region constructor
@@ -33,13 +34,16 @@ APlayerPawn::APlayerPawn()
 	// create default static mesh component
 	HeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeadMesh"));
 	HeadMesh->SetupAttachment(Camera);
-	//HeadMesh->SetVisibility(false);
+	HeadMesh->SetVisibility(false);
 	HeadMesh->SetCollisionProfileName("NoCollision");
-	HeadMesh->SetIsReplicated(true);
 
 	// create default widget interaction component
 	WidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteraction"));
 	WidgetInteraction->SetupAttachment(Camera);
+
+	// create default text render component
+	NameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("NameText"));
+	NameText->SetupAttachment(pRoot);
 
 	// create default settings component
 	Settings = CreateDefaultSubobject<USettingsComponent>(TEXT("Settings"));
@@ -61,8 +65,8 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// if map is menu return
-	if (GetWorld()->GetMapName() == "Menu")
+	// if map is menu or not local player return
+	if (GetWorld()->GetMapName() == "Menu" || !IsLocallyControlled())
 		return;
 
 	// hit result
@@ -150,10 +154,6 @@ void APlayerPawn::Tick(float DeltaTime)
 		// set image percentage of interaction widget
 		m_pInteraction->SetImagePercentage();
 	}
-
-	// if not local player return
-	if (!IsLocallyControlled())
-		return;
 
 	// if server set camera rotation on clients
 	if (HasAuthority())
@@ -310,6 +310,55 @@ void APlayerPawn::SetCameraRotationClient_Implementation(FRotator rotation)
 	if (!IsLocallyControlled())
 		// set local rotation of camera
 		Camera->SetRelativeRotation(rotation);
+}
+
+// set name text on server validate
+bool APlayerPawn::SetNameTextServer_Validate(const FString &_name)
+{
+	return true;
+}
+
+// set name text on server implementation
+void APlayerPawn::SetNameTextServer_Implementation(const FString &_name)
+{
+	// set text of name text
+	NameText->SetText(_name);
+
+	// array to save all players into
+	TArray<AActor*> pFoundActors;
+
+	// get all players and save it to the array
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
+
+	// check all player
+	for (AActor* pPlayer : pFoundActors)
+		// if local player
+		if(((APlayerPawn*)pPlayer)->IsLocallyControlled())
+			// rotate name text to server player
+			NameText->SetWorldRotation((pPlayer->GetActorLocation() - NameText->GetComponentLocation()).Rotation());
+}
+#pragma endregion
+
+#pragma region protected override function
+// called at begin play
+void APlayerPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// reset name text
+	NameText->SetText("");
+
+	// if map is menu return
+	if (GetWorld()->GetMapName() == "Menu")
+		return;
+
+	// if server show head mesh
+	if (HasAuthority())
+		HeadMesh->SetVisibility(true);
+
+	// if not server set name of name text
+	if (!HasAuthority())
+		SetNameTextServer(Settings->GetName());
 }
 #pragma endregion
 
