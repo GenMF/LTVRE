@@ -76,6 +76,13 @@ public:
 	/// </summary>
 	/// <param name="_noticeShown">notice shown</paramn>
 	void ShowHideNoticeStudentClient(bool _noticeShown);
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// show or hide question of student on clients
+	/// </summary>
+	/// <param name="_questionShown">question shown</paramn>
+	void ShowHideQuestionStudentClient(bool _questionShown);
 #pragma endregion
 
 #pragma region public inline function
@@ -110,6 +117,12 @@ public:
 	/// </summary>
 	/// <param name="_noticeShown">notice shown</param>
 	void ShowHideNoticeStudent(bool _noticeShown);
+
+	/// <summary>
+	/// show or hide question of student
+	/// </summary>
+	/// <param name="_questionShown">question shown</param>
+	void ShowHideQuestionStudent(bool _questionShown);
 
 	/// <summary>
 	/// rotate question widgets to location
