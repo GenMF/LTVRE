@@ -42,18 +42,22 @@ void UQuestionBase::HideAll()
 	m_objectShown = true;
 
 	// hide notice, question and object
-	HideShowNotice();
-	HideShowQuestion();
+	HideShowNotice(false);
+	HideShowQuestion(false);
 	HideShowObject();
 }
 
 // hide or show notice
-void UQuestionBase::HideShowNotice()
+void UQuestionBase::HideShowNotice(bool _noticeShown)
 {
+	// if player null return
+	if (m_pPlayer == nullptr)
+		return;
+
 	// switch player status
 	switch (((ULTVREGameInstance*)(m_pPlayer->GetGameInstance()))->GetPlayerStatus())
 	{
-		// practice
+	// practice
 	case EPlayerStatus::PRACTICE:
 	{
 		// if notice is already shown
@@ -77,11 +81,58 @@ void UQuestionBase::HideShowNotice()
 		break;
 	}
 
-	/// TODO:
+	// teacher
 	case EPlayerStatus::TEACHER:
-		break;
+	{
+		// if notice is already shown
+		if (m_noticeShown)
+		{
+			// set notice button style hidden and set show hide notice button text
+			m_pNoticeButton->SetStyle(ButtonNoClickHiddenStyle);
+			m_pNoticeButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
 
-		// default break
+			// if show hide notice button text valid
+			if(m_pShowHideNoticeButtonText != nullptr)
+				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
+		}
+
+		// notice not shown
+		else
+		{
+			// show notice and set show hide notice button text
+			m_pNoticeButton->SetStyle(ButtonNoClickShownStyle);
+			m_pNoticeButtonText->SetColorAndOpacity(ButtonTextShownColor);
+
+			// if show hide notice button text valid
+			if (m_pShowHideNoticeButtonText != nullptr)
+				m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
+		}
+
+		// set notice shown
+		m_noticeShown = !m_noticeShown;
+
+		// show or hide notice on clients
+		m_pObject->ShowHideNoticeStudent(m_noticeShown);
+		break;
+	}
+
+	// student
+	case EPlayerStatus::STUDENT:
+	{
+		// if notice is already shown
+		if (_noticeShown)
+			// show notice button
+			m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
+
+		// notice not shown
+		else
+			// show notice button
+			m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
+
+		break;
+	}
+
+	// default break
 	default:
 		break;
 	}
@@ -106,7 +157,7 @@ void UQuestionBase::HideShowObject()
 }
 
 // hide or show question
-void UQuestionBase::HideShowQuestion()
+void UQuestionBase::HideShowQuestion(bool _questionShown)
 {
 	// switch player status
 	switch (((ULTVREGameInstance*)(m_pPlayer->GetGameInstance()))->GetPlayerStatus())
@@ -151,7 +202,36 @@ void UQuestionBase::HideShowQuestion()
 	case EPlayerStatus::TEACHER:
 		break;
 
-		// default break
+	// student
+	case EPlayerStatus::STUDENT:
+	{
+		// if question is already shown
+		if (_questionShown)
+		{
+			// show question button
+			m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
+			
+			// show answer buttons
+			for (UButton* pBtn : m_pAnswerButtons)
+				pBtn->SetVisibility(ESlateVisibility::Visible);
+		}
+
+		// question not shown
+		else
+		{
+			// hide question button
+			m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
+
+			// hide answer buttons
+			for (UButton* pBtn : m_pAnswerButtons)
+				pBtn->SetVisibility(ESlateVisibility::Hidden);
+
+		}
+
+		break;
+	}
+
+	// default break
 	default:
 		break;
 	}
@@ -219,6 +299,10 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 	// if anchor is in show hide object button show or hide object
 	if (CheckPositionInButton(anchor, m_pShowHideObjectButton))
 		HideShowObject();
+
+	// if anchor is in show hide notice button show or hide notice
+	else if (CheckPositionInButton(anchor, m_pShowHideNoticeButton))
+		HideShowNotice(false);
 }
 #pragma endregion
 
