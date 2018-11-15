@@ -98,7 +98,7 @@ void APlayerPawn::Tick(float DeltaTime)
 	}
 	
 	// if hit actor valid and tag correct
-	else if (hit.Actor.IsValid() && hit.Actor->ActorHasTag("LessonObject"))
+	else if (hit.Actor.IsValid() && hit.Actor->ActorHasTag("LessonObject") && status != EPlayerStatus::STUDENT)
 	{
 		targetID = 2;
 	}
@@ -138,8 +138,8 @@ void APlayerPawn::Tick(float DeltaTime)
 				}
 			}
 
-			// if target id is single object target
-			else
+			// if target id is single object target and player status is not student
+			else if(status != EPlayerStatus::STUDENT)
 			{
 				// toggle visibility of question widget
 				((ASingleObject*)(hit.GetActor()))->ToggleQuestionWidget(status);

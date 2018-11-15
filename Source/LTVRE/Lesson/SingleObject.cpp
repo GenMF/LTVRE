@@ -66,6 +66,14 @@ void ASingleObject::ShowHideQuestionStudentClient_Implementation(bool _questionS
 
 		// hide or show question student
 		QuestionStudent->SetVisibility(_questionShown);
+
+		// if question shown set trace visibility
+		if (_questionShown)
+			QuestionStudent->SetCollisionProfileName("TraceVisibility");
+
+		// if question hidden set trace no collision
+		else
+			QuestionStudent->SetCollisionProfileName("NoCollision");
 	}
 }
 #pragma endregion
