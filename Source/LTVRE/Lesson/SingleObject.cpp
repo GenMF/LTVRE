@@ -54,6 +54,20 @@ void ASingleObject::ShowHideNoticeStudentClient_Implementation(bool _noticeShown
 		QuestionStudent->SetVisibility(_noticeShown);
 	}
 }
+
+// show or hide question of student on clients implementation
+void ASingleObject::ShowHideQuestionStudentClient_Implementation(bool _questionShown)
+{
+	// if client
+	if (!HasAuthority())
+	{
+		// hide or show question
+		((UQuestionBase*)QuestionStudent->GetUserWidgetObject())->HideShowQuestion(_questionShown);
+
+		// hide or show question student
+		QuestionStudent->SetVisibility(_questionShown);
+	}
+}
 #pragma endregion
 
 #pragma region public function
@@ -145,6 +159,13 @@ void ASingleObject::ShowHideNoticeStudent(bool _noticeShown)
 {
 	// show or hide notice of student on clients
 	ShowHideNoticeStudentClient(_noticeShown);
+}
+
+// show or hide question of student
+void ASingleObject::ShowHideQuestionStudent(bool _questionShown)
+{
+	// show or hide question of student on clients
+	ShowHideQuestionStudentClient(_questionShown);
 }
 
 // rotate question widgets to location

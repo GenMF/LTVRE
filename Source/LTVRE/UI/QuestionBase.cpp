@@ -198,9 +198,56 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 		break;
 	}
 
-	/// TODO:
+	// teacher
 	case EPlayerStatus::TEACHER:
+	{
+		// if question is already shown
+		if (m_questionShown)
+		{
+			// set question button style hidden and set show hide question button text
+			m_pQuestionButton->SetStyle(ButtonNoClickHiddenStyle);
+			m_pQuestionButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
+
+			// check all answer buttons
+			for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+			{
+				// set style of button and color of button text
+				m_pAnswerButtons[i]->SetStyle(ButtonClickHiddenStyle);
+				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextHiddenColor);
+			}
+
+			// if show hide question button text valid
+			if (m_pShowHideQuestionButtonText != nullptr)
+				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
+		}
+
+		// question not shown
+		else
+		{
+			// show question and set show hide question button text
+			m_pQuestionButton->SetStyle(ButtonNoClickShownStyle);
+			m_pQuestionButtonText->SetColorAndOpacity(ButtonTextShownColor);
+
+			// check all answer buttons
+			for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+			{
+				// set style of button and color of button text
+				m_pAnswerButtons[i]->SetStyle(ButtonClickShownStyle);
+				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextShownColor);
+			}
+
+			// if show hide question button text valid
+			if (m_pShowHideQuestionButtonText != nullptr)
+				m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
+		}
+
+		// set question shown
+		m_questionShown = !m_questionShown;
+
+		// show or hide question on clients
+		m_pObject->ShowHideQuestionStudent(m_questionShown);
 		break;
+	}
 
 	// student
 	case EPlayerStatus::STUDENT:
@@ -225,7 +272,6 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 			// hide answer buttons
 			for (UButton* pBtn : m_pAnswerButtons)
 				pBtn->SetVisibility(ESlateVisibility::Hidden);
-
 		}
 
 		break;
@@ -303,6 +349,10 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 	// if anchor is in show hide notice button show or hide notice
 	else if (CheckPositionInButton(anchor, m_pShowHideNoticeButton))
 		HideShowNotice(false);
+
+	// if anchor is in show hide question button show or hide question and answers
+	else if (CheckPositionInButton(anchor, m_pShowHideQuestionButton))
+		HideShowQuestion(false);
 }
 #pragma endregion
 
