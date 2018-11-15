@@ -35,6 +35,7 @@ APlayerPawn::APlayerPawn()
 	HeadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeadMesh"));
 	HeadMesh->SetupAttachment(Camera);
 	HeadMesh->SetVisibility(false);
+	HeadMesh->SetOwnerNoSee(true);
 	HeadMesh->SetCollisionProfileName("NoCollision");
 
 	// create default widget interaction component
@@ -44,6 +45,7 @@ APlayerPawn::APlayerPawn()
 	// create default text render component
 	NameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("NameText"));
 	NameText->SetupAttachment(pRoot);
+	NameText->SetOwnerNoSee(true);
 
 	// create default settings component
 	Settings = CreateDefaultSubobject<USettingsComponent>(TEXT("Settings"));
@@ -329,16 +331,19 @@ void APlayerPawn::SetCameraRotationClient_Implementation(FRotator rotation)
 }
 
 // set name text on server validate
-bool APlayerPawn::SetNameTextServer_Validate(const FString &_name)
+bool APlayerPawn::SetNameTextServer_Validate(const FString& _name)
 {
 	return true;
 }
 
 // set name text on server implementation
-void APlayerPawn::SetNameTextServer_Implementation(const FString &_name)
+void APlayerPawn::SetNameTextServer_Implementation(const FString& _name)
 {
+	// show head mesh
+	HeadMesh->SetVisibility(true);
+
 	// set text of name text
-	NameText->SetText(_name);
+	NameText->SetText(FText::FromString(_name));
 
 	// array to save all players into
 	TArray<AActor*> pFoundActors;
@@ -348,10 +353,27 @@ void APlayerPawn::SetNameTextServer_Implementation(const FString &_name)
 
 	// check all player
 	for (AActor* pPlayer : pFoundActors)
+	{
 		// if local player
-		if(((APlayerPawn*)pPlayer)->IsLocallyControlled())
+		if (((APlayerPawn*)pPlayer)->IsLocallyControlled())
+		{
 			// rotate name text to server player
 			NameText->SetWorldRotation((pPlayer->GetActorLocation() - NameText->GetComponentLocation()).Rotation());
+
+			// show head mesh on clients
+			((APlayerPawn*)pPlayer)->ShowTeacherComponentsClient(((APlayerPawn*)pPlayer)->Settings->GetName());
+		}
+	}
+}
+
+// show head mesh and name text on clients implementation
+void APlayerPawn::ShowTeacherComponentsClient_Implementation(const FString& _name)
+{
+	// show head mesh
+	HeadMesh->SetVisibility(true);
+
+	// set name text
+	NameText->SetText(FText::FromString(_name));
 }
 #pragma endregion
 
@@ -362,19 +384,14 @@ void APlayerPawn::BeginPlay()
 	Super::BeginPlay();
 
 	// reset name text
-	NameText->SetText("");
+	NameText->SetText(FText::FromString(""));
 
 	// if map is menu return
 	if (GetWorld()->GetMapName() == "Menu")
 		return;
 
-	// if server and not local player show head mesh
-	if (HasAuthority() && !IsLocallyControlled())
-		HeadMesh->SetVisibility(true);
-
-	// if client and local player
+	// if client and local player set name text
 	if (!HasAuthority() && IsLocallyControlled())
-		// set name text on server
 		SetNameTextServer(Settings->GetName());
 }
 #pragma endregion
