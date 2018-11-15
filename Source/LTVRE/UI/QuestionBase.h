@@ -188,7 +188,7 @@ private:
 	/// <summary>
 	/// if answer is already given
 	/// </summary>
-	bool m_answerGiven;
+	int m_answerGiven;
 
 	/// <summary>
 	/// correct answer index
