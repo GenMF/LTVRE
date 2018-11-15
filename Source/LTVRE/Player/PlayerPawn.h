@@ -120,7 +120,14 @@ public:
 	/// set name text on server
 	/// </summary>
 	/// <param name="_name">name to set</param>
-	void SetNameTextServer(const FString &_name);
+	void SetNameTextServer(const FString& _name);
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// show head mesh and name text on clients
+	/// </summary>
+	/// <param name="_name">name to set</param>
+	void ShowTeacherComponentsClient(const FString& _name);
 #pragma endregion
 
 protected:
