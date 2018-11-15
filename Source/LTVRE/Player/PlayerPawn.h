@@ -120,7 +120,8 @@ public:
 	/// set name text on server
 	/// </summary>
 	/// <param name="_name">name to set</param>
-	void SetNameTextServer(const FString& _name);
+	/// <param name="_color">color of text</param>
+	void SetNameTextServer(const FString& _name, FLinearColor _color = FLinearColor::White);
 
 	UFUNCTION(NetMulticast, Reliable)
 	/// <summary>
@@ -128,6 +129,15 @@ public:
 	/// </summary>
 	/// <param name="_name">name to set</param>
 	void ShowTeacherComponentsClient(const FString& _name);
+#pragma endregion
+
+#pragma region public function
+	/// <summary>
+	/// set name text with answer
+	/// </summary>
+	/// <param name="_text">answer text</param>
+	/// <param name="_correct">answer is correct</param>
+	void SetAnswerText(FString _text, bool _correct);
 #pragma endregion
 
 protected:
