@@ -126,7 +126,7 @@ void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 
 		// if random index is 0 set correct answer to current index
 		if (randomIndices[i] == 0)
-			m_correctAnswer = i;
+			CorrectAnswer = i;
 	}
 }
 
@@ -213,4 +213,5 @@ void ASingleObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Out
 	// replicate variable
 	DOREPLIFETIME(ASingleObject, MeshesVisible);
 	DOREPLIFETIME(ASingleObject, LessonObject);
+	DOREPLIFETIME(ASingleObject, CorrectAnswer);
 }

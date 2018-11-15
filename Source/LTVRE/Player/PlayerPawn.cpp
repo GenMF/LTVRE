@@ -340,19 +340,22 @@ void APlayerPawn::SetCameraRotationClient_Implementation(FRotator rotation)
 }
 
 // set name text on server validate
-bool APlayerPawn::SetNameTextServer_Validate(const FString& _name)
+bool APlayerPawn::SetNameTextServer_Validate(const FString& _name, FLinearColor _color = FLinearColor::White)
 {
 	return true;
 }
 
 // set name text on server implementation
-void APlayerPawn::SetNameTextServer_Implementation(const FString& _name)
+void APlayerPawn::SetNameTextServer_Implementation(const FString& _name, FLinearColor _color = FLinearColor::White)
 {
 	// show head mesh
 	HeadMesh->SetVisibility(true);
 
 	// set text of name text
 	NameText->SetText(FText::FromString(_name));
+
+	// set color of text
+	NameText->SetTextRenderColor(_color.ToFColor(true));
 
 	// array to save all players into
 	TArray<AActor*> pFoundActors;
@@ -383,6 +386,27 @@ void APlayerPawn::ShowTeacherComponentsClient_Implementation(const FString& _nam
 
 	// set name text
 	NameText->SetText(FText::FromString(_name));
+}
+#pragma endregion
+
+#pragma region public function
+// set name text with answer
+void APlayerPawn::SetAnswerText(FString _text, bool _correct)
+{
+	// get name from settings
+	FString text = Settings->GetName();
+
+	// append new line and answer text
+	text.Append("\n");
+	text.Append(_text);
+
+	// if correct answer set text on server green
+	if (_correct)
+		SetNameTextServer(text, FLinearColor::Green);
+
+	// if not correct answer set text on server red
+	else
+		SetNameTextServer(text, FLinearColor::Red);
 }
 #pragma endregion
 
@@ -447,7 +471,7 @@ void APlayerPawn::InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj
 	_pWidget->SetNotice(_pSingleObj->LessonObject.Notice);
 
 	// set answers of question practice
-	_pWidget->SetAnswerTexts(_pSingleObj->LessonObject.Answers,	_pSingleObj->GetCorrectAnswer());
+	_pWidget->SetAnswerTexts(_pSingleObj->LessonObject.Answers);
 
 	// rotate widgets to camera
 	_pSingleObj->QuestionWidgetRotateTo(Camera->GetComponentLocation());

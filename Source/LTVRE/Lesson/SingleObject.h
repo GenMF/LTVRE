@@ -44,6 +44,12 @@ public:
 	/// </summary>
 	FLessonObject LessonObject;
 
+	UPROPERTY(Replicated)
+	/// <summary>
+	/// index of correct answer
+	/// </summary>
+	int CorrectAnswer;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
 	/// <summary>
 	/// question practice widget component
@@ -87,12 +93,6 @@ public:
 
 #pragma region public inline function
 	/// <summary>
-	/// get index of correct answer
-	/// </summary>
-	/// <returns>index of correct answer</returns>
-	inline int GetCorrectAnswer() { return m_correctAnswer; }
-
-	/// <summary>
 	/// set player reference
 	/// </summary>
 	/// <param name="_pPlayer">player reference</param>
@@ -132,13 +132,6 @@ public:
 #pragma endregion
 
 private:
-#pragma region private primitive variables
-	/// <summary>
-	/// index of correct answer
-	/// </summary>
-	int m_correctAnswer;
-#pragma endregion
-
 #pragma region private pointer
 	/// <summary>
 	/// player reference

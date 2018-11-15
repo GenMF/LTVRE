@@ -156,8 +156,7 @@ public:
 	/// set answer texts
 	/// </summary>
 	/// <param name="_answers">answer texts</param>
-	/// <param name="_correctIndex">correct answer index</param>
-	void SetAnswerTexts(TArray<FString> _answers, int _correctIndex);
+	void SetAnswerTexts(TArray<FString> _answers);
 
 	/// <summary>
 	/// click on widget at position
@@ -189,7 +188,7 @@ private:
 	/// if answer is already given
 	/// </summary>
 	int m_answerGiven;
-
+	
 	/// <summary>
 	/// correct answer index
 	/// </summary>

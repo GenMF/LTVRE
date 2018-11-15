@@ -296,7 +296,7 @@ void UQuestionBase::ClickAnswer(int Index)
 			FButtonStyle style = ButtonClickShownStyle;
 
 			// if current index is correct answer
-			if (i == m_correctAnswer)
+			if (i == m_pObject->CorrectAnswer)
 			{
 				// set color of style green
 				style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
@@ -334,6 +334,12 @@ void UQuestionBase::ClickAnswer(int Index)
 				style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
 				style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
 				style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+
+				// if answer is correct
+				bool correct = false;
+
+				// if index is correct answer
+				m_pPlayer->SetAnswerText(m_pAnswerButtonsText[i]->GetText().ToString(), Index == m_pObject->CorrectAnswer);
 			}
 
 			// set style of answer button at index
@@ -348,15 +354,12 @@ void UQuestionBase::ClickAnswer(int Index)
 
 #pragma region public function
 // set answer texts
-void UQuestionBase::SetAnswerTexts(TArray<FString> _answers, int _correctIndex)
+void UQuestionBase::SetAnswerTexts(TArray<FString> _answers)
 {
 	// check all answer texts
 	for (int i = 0; i < _answers.Num(); i++)
 		// set answer text of button
 		m_pAnswerButtonsText[i]->SetText(FText::FromString(_answers[i]));
-
-	// set correct answer number
-	m_correctAnswer = _correctIndex;
 }
 
 // click on widget at position
