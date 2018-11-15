@@ -284,6 +284,15 @@ void APlayerPawn::InitializeLesson()
 
 												// initialize question teacher widget
 												InitWidget(pQuestion, pSingleObj);
+
+												// question student widget of object
+												pQuestion = (UQuestionBase*)pSingleObj->QuestionStudent->GetUserWidgetObject();
+
+												// initialize question student widget
+												InitWidget(pQuestion, pSingleObj);
+
+												// hide question and notice button of question student
+												
 											}
 										}
 									}
@@ -390,9 +399,31 @@ void APlayerPawn::BeginPlay()
 	if (GetWorld()->GetMapName() == "Menu")
 		return;
 
-	// if client and local player set name text
+	// if client and local player
 	if (!HasAuthority() && IsLocallyControlled())
+	{
+		// set name text on server
 		SetNameTextServer(Settings->GetName());
+
+		// get all single objects
+		TArray<AActor*> FoundSingleObjects;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), FoundSingleObjects);
+
+		// check all single objects
+		for (AActor* pObj : FoundSingleObjects)
+		{
+			// if single object is a lesson object
+			if (pObj->ActorHasTag("LessonObject"))
+			{
+				// initialize widget
+				InitWidget((UQuestionBase*)(((ASingleObject*)pObj)->QuestionStudent->GetUserWidgetObject()), (ASingleObject*)pObj);
+
+				// hide question and notice button
+				((UQuestionBase*)(((ASingleObject*)pObj)->QuestionStudent->GetUserWidgetObject()))->HideShowNotice(false);
+				((UQuestionBase*)(((ASingleObject*)pObj)->QuestionStudent->GetUserWidgetObject()))->HideShowQuestion(false);
+			}
+		}
+	}
 }
 #pragma endregion
 
@@ -410,12 +441,15 @@ void APlayerPawn::InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj
 	_pWidget->GetReferences();
 
 	// set question of question practice
-	_pWidget->SetQuestion(_pSingleObj->GetLessonObjectQuestion());
+	_pWidget->SetQuestion(_pSingleObj->LessonObject.Question);
 
 	// set notice of question practice
-	_pWidget->SetNotice(_pSingleObj->GetLessonObjectNotice());
+	_pWidget->SetNotice(_pSingleObj->LessonObject.Notice);
 
 	// set answers of question practice
-	_pWidget->SetAnswerTexts(_pSingleObj->GetLessonObjectAnswers(),	_pSingleObj->GetCorrectAnswer());
+	_pWidget->SetAnswerTexts(_pSingleObj->LessonObject.Answers,	_pSingleObj->GetCorrectAnswer());
+
+	// rotate widgets to camera
+	_pSingleObj->QuestionWidgetRotateTo(Camera->GetComponentLocation());
 }
 #pragma endregion

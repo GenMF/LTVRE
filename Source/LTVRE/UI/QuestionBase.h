@@ -101,7 +101,8 @@ public:
 	/// <summary>
 	/// hide or show notice
 	/// </summary>
-	void HideShowNotice();
+	/// <param name="_noticeShown">notice shown</paramn>
+	void HideShowNotice(bool _noticeShown);
 
 	UFUNCTION(BlueprintCallable, Category = "Question base")
 	/// <summary>
@@ -113,7 +114,8 @@ public:
 	/// <summary>
 	/// hide or show question
 	/// </summary>
-	void HideShowQuestion();
+	/// <param name="_questionShown">question shown</paramn>
+	void HideShowQuestion(bool _questionShown);
 
 	UFUNCTION(BlueprintCallable, Category = "Question base")
 	/// <summary>

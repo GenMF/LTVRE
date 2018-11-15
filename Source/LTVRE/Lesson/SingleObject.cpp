@@ -1,6 +1,7 @@
 #pragma region project includes
 #include "SingleObject.h"
 #include "Player/PlayerPawn.h"
+#include "UI/QuestionBase.h"
 #pragma endregion
 
 #pragma region UE4 includes
@@ -14,9 +15,6 @@ ASingleObject::ASingleObject()
 {
 	// set replicates in network
 	bReplicates = true;
-
-	// actor can tick
-	PrimaryActorTick.bCanEverTick = true;
 
 	// create root scene component
 	USceneComponent* pRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -34,22 +32,27 @@ ASingleObject::ASingleObject()
 	QuestionTeacher = CreateDefaultSubobject<UWidgetComponent>(TEXT("QuestionTeacher"));
 	QuestionTeacher->SetupAttachment(pRoot);
 	InitWidget(QuestionTeacher, "QuestionTeacher");
+
+	// create default widget component and initialize
+	QuestionStudent = CreateDefaultSubobject<UWidgetComponent>(TEXT("QuestionStudent"));
+	QuestionStudent->SetupAttachment(pRoot);
+	InitWidget(QuestionStudent, "QuestionStudent");
 }
 #pragma endregion
 
-#pragma region public override function
-// called every frame
-void ASingleObject::Tick(float DeltaTime)
+#pragma region UFUNCTION
+// show or hide notice of student on clients implementation
+void ASingleObject::ShowHideNoticeStudentClient_Implementation(bool _noticeShown)
 {
-	Super::Tick(DeltaTime);
+	// if client
+	if (!HasAuthority())
+	{
+		// hide or show notice
+		((UQuestionBase*)QuestionStudent->GetUserWidgetObject())->HideShowNotice(_noticeShown);
 
-	// if player not valid return
-	if (!m_pPlayer)
-		return;
-
-	// set rotation from question widgets to player camera
-	QuestionPractice->SetWorldRotation((m_pPlayer->GetActorLocation() - QuestionPractice->GetComponentLocation()).Rotation());
-	QuestionTeacher->SetWorldRotation((m_pPlayer->GetActorLocation() - QuestionTeacher->GetComponentLocation()).Rotation());
+		// hide or show question student
+		QuestionStudent->SetVisibility(_noticeShown);
+	}
 }
 #pragma endregion
 
@@ -58,14 +61,14 @@ void ASingleObject::Tick(float DeltaTime)
 void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 {
 	// set lesson object
-	m_lessonObject = _lessonObject;
+	LessonObject = _lessonObject;
 
 	// array of numbers
 	TArray<int> indices;
 	TArray<int> randomIndices;
 
 	// check all answers and add numbers
-	for (int i = 0; i < m_lessonObject.Answers.Num(); i++)
+	for (int i = 0; i < LessonObject.Answers.Num(); i++)
 		indices.Add(i);
 
 	// while random indices not all set
@@ -88,16 +91,16 @@ void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 	}
 
 	// save old answers
-	TArray<FString> oldAnswers = m_lessonObject.Answers;
+	TArray<FString> oldAnswers = LessonObject.Answers;
 
 	// clear answers in lesson object
-	m_lessonObject.Answers.Empty();
+	LessonObject.Answers.Empty();
 
 	// check all random indices
 	for (int i = 0; i < randomIndices.Num(); i++)
 	{
 		// add random answer to lesson object answers
-		m_lessonObject.Answers.Add(oldAnswers[randomIndices[i]]);
+		LessonObject.Answers.Add(oldAnswers[randomIndices[i]]);
 
 		// if random index is 0 set correct answer to current index
 		if (randomIndices[i] == 0)
@@ -136,6 +139,22 @@ void ASingleObject::ToggleQuestionWidget(EPlayerStatus _status)
 		break;
 	}
 }
+
+// show or hide notice of student
+void ASingleObject::ShowHideNoticeStudent(bool _noticeShown)
+{
+	// show or hide notice of student on clients
+	ShowHideNoticeStudentClient(_noticeShown);
+}
+
+// rotate question widgets to location
+void ASingleObject::QuestionWidgetRotateTo(FVector _location)
+{
+	// set rotation from question widgets to location
+	QuestionPractice->SetWorldRotation((_location - QuestionPractice->GetComponentLocation()).Rotation());
+	QuestionTeacher->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
+	QuestionStudent->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
+}
 #pragma endregion
 
 #pragma region private function
@@ -164,4 +183,5 @@ void ASingleObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Out
 
 	// replicate variable
 	DOREPLIFETIME(ASingleObject, MeshesVisible);
+	DOREPLIFETIME(ASingleObject, LessonObject);
 }

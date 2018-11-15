@@ -31,20 +31,18 @@ public:
 	ASingleObject();
 #pragma endregion
 
-#pragma region public override function
-	/// <summary>
-	/// update every frame
-	/// </summary>
-	/// <param name="DeltaTime">time since last frame</param>
-	virtual void Tick(float DeltaTime) override;
-#pragma endregion
-
 #pragma region UPROPERTY
 	UPROPERTY(ReplicatedUsing = HideShowMeshes, BlueprintReadWrite, Category = "Single object")
 	/// <summary>
 	/// if meshes are visible or not
 	/// </summary>
 	bool MeshesVisible = true;
+
+	UPROPERTY(Replicated)
+	/// <summary>
+	/// lesson object informations
+	/// </summary>
+	FLessonObject LessonObject;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
 	/// <summary>
@@ -57,44 +55,27 @@ public:
 	/// question teacher widget component
 	/// </summary>
 	UWidgetComponent* QuestionTeacher;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
+	/// <summary>
+	/// question student widget component
+	/// </summary>
+	UWidgetComponent* QuestionStudent;
 #pragma endregion
 
 #pragma region UFUNCTION
-	UFUNCTION(BlueprintCallable, Category = "Single object")
-	/// <summary>
-	/// get notice of lesson object
-	/// </summary>
-	/// <returns>notice of lesson object</returns>
-	FORCEINLINE FString GetLessonObjectNotice()
-	{
-		return m_lessonObject.Notice;
-	}
-
-	UFUNCTION(BlueprintCallable, Category = "Single object")
-	/// <summary>
-	/// get question of lesson object
-	/// </summary>
-	/// <returns>notice of lesson object</returns>
-	FORCEINLINE FString GetLessonObjectQuestion()
-	{
-		return m_lessonObject.Question;
-	}
-
-	UFUNCTION(BlueprintCallable, Category = "Single object")
-	/// <summary>
-	/// get answers of lesson object
-	/// </summary>
-	/// <returns>answers of lesson object</returns>
-	FORCEINLINE TArray<FString> GetLessonObjectAnswers()
-	{
-		return m_lessonObject.Answers;
-	}
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Single object")
 	/// <summary>
 	/// hide or show static meshes in blueprint
 	/// </summary>
 	void HideShowMeshes();
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// show or hide notice of student on clients
+	/// </summary>
+	/// <param name="_noticeShown">notice shown</paramn>
+	void ShowHideNoticeStudentClient(bool _noticeShown);
 #pragma endregion
 
 #pragma region public inline function
@@ -123,6 +104,18 @@ public:
 	/// </summary>
 	/// <param name="_status">player status</param>
 	void ToggleQuestionWidget(EPlayerStatus _status);
+
+	/// <summary>
+	/// show or hide notice of student
+	/// </summary>
+	/// <param name="_noticeShown">notice shown</param>
+	void ShowHideNoticeStudent(bool _noticeShown);
+
+	/// <summary>
+	/// rotate question widgets to location
+	/// </summary>
+	/// <param name="_location">location to rotate to</param>
+	void QuestionWidgetRotateTo(FVector _location);
 #pragma endregion
 
 private:
@@ -131,13 +124,6 @@ private:
 	/// index of correct answer
 	/// </summary>
 	int m_correctAnswer;
-#pragma endregion
-
-#pragma region private variables
-	/// <summary>
-	/// lesson object informations
-	/// </summary>
-	FLessonObject m_lessonObject;
 #pragma endregion
 
 #pragma region private pointer
