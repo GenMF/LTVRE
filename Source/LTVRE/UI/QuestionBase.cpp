@@ -226,6 +226,10 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 				// set style of button and color of button text
 				m_pAnswerButtons[i]->SetStyle(ButtonClickHiddenStyle);
 				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextHiddenColor);
+
+				// if current answer is correct answer set color of answer text green
+				if (i == m_pObject->CorrectAnswer)
+					m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor(0.0f, 1.0f, 0.0f, 0.5f));
 			}
 
 			// if show hide question button text valid
@@ -246,6 +250,10 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 				// set style of button and color of button text
 				m_pAnswerButtons[i]->SetStyle(ButtonClickShownStyle);
 				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextShownColor);
+
+				// if current answer is correct answer set color of answer text green
+				if (i == m_pObject->CorrectAnswer)
+					m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor::Green);
 			}
 
 			// if show hide question button text valid
