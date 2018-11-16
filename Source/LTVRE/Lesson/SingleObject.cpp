@@ -50,8 +50,9 @@ void ASingleObject::ShowHideNoticeStudentClient_Implementation(bool _noticeShown
 		// hide or show notice
 		((UQuestionBase*)QuestionStudent->GetUserWidgetObject())->HideShowNotice(_noticeShown);
 
-		// hide or show question student
-		QuestionStudent->SetVisibility(_noticeShown);
+		// if question student not visible show widget
+		if (!QuestionStudent->IsVisible())
+			QuestionStudent->SetVisibility(true);
 	}
 }
 
@@ -64,8 +65,9 @@ void ASingleObject::ShowHideQuestionStudentClient_Implementation(bool _questionS
 		// hide or show question
 		((UQuestionBase*)QuestionStudent->GetUserWidgetObject())->HideShowQuestion(_questionShown);
 
-		// hide or show question student
-		QuestionStudent->SetVisibility(_questionShown);
+		// if question student not visible show widget
+		if(!QuestionStudent->IsVisible())
+			QuestionStudent->SetVisibility(true);
 
 		// if question shown set trace visibility
 		if (_questionShown)
@@ -75,6 +77,17 @@ void ASingleObject::ShowHideQuestionStudentClient_Implementation(bool _questionS
 		else
 			QuestionStudent->SetCollisionProfileName("NoCollision");
 	}
+}
+
+// show correct answer for student on clients implementation
+void ASingleObject::ShowCorrectAnswerClient_Implementation()
+{
+	// if server return
+	if (HasAuthority())
+		return;
+
+	// show correct answer on question student
+	((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->ShowCorrectAnswer();
 }
 #pragma endregion
 
@@ -183,6 +196,13 @@ void ASingleObject::QuestionWidgetRotateTo(FVector _location)
 	QuestionPractice->SetWorldRotation((_location - QuestionPractice->GetComponentLocation()).Rotation());
 	QuestionTeacher->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
 	QuestionStudent->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
+}
+
+// show correct answer for students
+void ASingleObject::ShowCorrectAnswer()
+{
+	// show correct answer student on clients
+	ShowCorrectAnswerClient();
 }
 #pragma endregion
 
