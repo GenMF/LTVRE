@@ -87,6 +87,9 @@ void APlayerPawn::Tick(float DeltaTime)
 
 	// save trace target to id (0 = no valid target, 1 = question widget target, 2 = single object target)
 	int targetID = 0;
+
+	// target question base
+	UQuestionBase* pTargetQuestionBase = nullptr;
 	
 	// if hit component valid and tag correct
 	if (hit.Component.IsValid() &&
@@ -94,7 +97,11 @@ void APlayerPawn::Tick(float DeltaTime)
 		(hit.Component->ComponentHasTag("QuestionTeacher") && status == EPlayerStatus::TEACHER) ||
 		(hit.Component->ComponentHasTag("QuestionStudent") && status == EPlayerStatus::STUDENT)))
 	{
+		// set target id 1
 		targetID = 1;
+
+		// get question base
+		pTargetQuestionBase = (UQuestionBase*)(((UWidgetComponent*)hit.GetComponent())->GetUserWidgetObject());
 	}
 	
 	// if hit actor valid and tag correct
@@ -114,8 +121,28 @@ void APlayerPawn::Tick(float DeltaTime)
 			// release widget interaction click
 			WidgetInteraction->ReleasePointerKey(FKey("LeftMouseButton"));
 
-		// increase click timer
-		m_clickTimer += DeltaTime;
+		// check clickable true
+		if (targetID == 1 && pTargetQuestionBase != nullptr &&
+			pTargetQuestionBase->CheckClickable(((UWidgetComponent*)hit.GetComponent())->GetDrawSize(),
+			hit.GetComponent()->GetComponentTransform(), hit.Location, status))
+		{
+			// increase click timer
+			m_clickTimer += DeltaTime;
+		}
+
+		// if trace target is object
+		else if (targetID == 2)
+		{
+			// increase click timer
+			m_clickTimer += DeltaTime;
+		}
+
+		// if not clickable
+		else
+		{
+			// reset click timer
+			m_clickTimer = 0.0f;
+		}
 
 		// if click timer lower than time to click return
 		if (m_clickTimer >= ClickTime)

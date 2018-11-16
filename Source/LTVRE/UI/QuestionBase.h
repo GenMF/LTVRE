@@ -5,6 +5,10 @@
 #include "Blueprint/UserWidget.h"
 #include "Styling/SlateStyle.h"
 #include "Components/TextBlock.h"
+#pragma endregion
+
+#pragma region project includes
+#include "Utility/Enums.h"
 #include "QuestionBase.generated.h"
 #pragma endregion
 
@@ -162,6 +166,16 @@ public:
 	/// show correct answer
 	/// </summary>
 	void ShowCorrectAnswer();
+
+	/// <summary>
+	/// check if trace target on widget can be clicked
+	/// </summary>
+	/// <param name="_widgetSize">size of widget</param>
+	/// <param name="_widgetTransform">world transform of widget</param>
+	/// <param name="_hitLocation">position</param>
+	/// <param name="_status">status of player</param>
+	/// <returns>if trace target can be clicked</returns>
+	bool CheckClickable(FVector2D _widgetSize, FTransform _widgetTransform, FVector _hitLocation, EPlayerStatus _status);
 
 	/// <summary>
 	/// click on widget at position
