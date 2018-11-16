@@ -86,6 +86,12 @@ public:
 	/// time until click activate
 	/// </summary>
 	float ClickTime = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Pawn")
+	/// <summary>
+	/// spawn distance of students to teacher
+	/// </summary>
+	float SpawnDistance = 150.0f;
 #pragma endregion
 
 #pragma region UFUNCTION
@@ -129,6 +135,19 @@ public:
 	/// </summary>
 	/// <param name="_name">name to set</param>
 	void ShowTeacherComponentsClient(const FString& _name);
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// set location on clients
+	/// </summary>
+	/// <param name="_location">location to set</param>
+	void SetLocationClient(FVector _location);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	/// <summary>
+	/// check all single objects on server
+	/// </summary>
+	void CheckAllSingleObjectsServer();
 #pragma endregion
 
 #pragma region public function
@@ -138,6 +157,13 @@ public:
 	/// <param name="_text">answer text</param>
 	/// <param name="_correct">answer is correct</param>
 	void SetAnswerText(FString _text, bool _correct);
+
+	/// <summary>
+	/// initialize question widget
+	/// </summary>
+	/// <param name="_pWidget">widget reference</param>
+	/// <param name="_pSingleObj">single object reference</param>
+	void InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj);
 #pragma endregion
 
 protected:
@@ -166,14 +192,5 @@ private:
 	/// interaction widget reference
 	/// </summary>
 	UInteraction* m_pInteraction;
-#pragma endregion
-
-#pragma region private function
-	/// <summary>
-	/// initialize question widget
-	/// </summary>
-	/// <param name="_pWidget">widget reference</param>
-	/// <param name="_pSingleObj">single object reference</param>
-	void InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj);
 #pragma endregion
 };
