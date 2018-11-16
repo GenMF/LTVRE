@@ -95,6 +95,12 @@ public:
 	/// show correct answer for student on clients
 	/// </summary>
 	void ShowCorrectAnswerClient();
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// check all players to init widget on clients
+	/// </summary>
+	void CheckAllPlayersForInitClient();
 #pragma endregion
 
 #pragma region public inline function
@@ -140,6 +146,11 @@ public:
 	/// show correct answer for students
 	/// </summary>
 	void ShowCorrectAnswer();
+
+	/// <summary>
+	/// check all players to init widget
+	/// </summary>
+	void CheckAllPlayersForInit();
 #pragma endregion
 
 private:

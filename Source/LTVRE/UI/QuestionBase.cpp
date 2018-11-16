@@ -165,6 +165,10 @@ void UQuestionBase::HideShowObject()
 // hide or show question
 void UQuestionBase::HideShowQuestion(bool _questionShown)
 {
+	// if player reference not valid return
+	if (m_pPlayer == nullptr)
+		return;
+
 	// switch player status
 	switch (((ULTVREGameInstance*)(m_pPlayer->GetGameInstance()))->GetPlayerStatus())
 	{

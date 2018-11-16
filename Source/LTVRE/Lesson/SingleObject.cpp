@@ -6,6 +6,7 @@
 
 #pragma region UE4 includes
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "UnrealNetwork.h"
 #pragma endregion
 
@@ -88,6 +89,33 @@ void ASingleObject::ShowCorrectAnswerClient_Implementation()
 
 	// show correct answer on question student
 	((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->ShowCorrectAnswer();
+}
+
+// check all players to init widget on clients implementation
+void ASingleObject::CheckAllPlayersForInitClient_Implementation()
+{
+	// if server return
+	if (HasAuthority())
+		return;
+
+	// get all actor objects
+	TArray<AActor*> pFoundPlayers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
+
+	// check all player
+	for (AActor* pPlayer : pFoundPlayers)
+	{
+		// if player is local player
+		if (((APlayerPawn*)pPlayer)->IsLocallyControlled())
+		{
+			// initialize widget
+			((APlayerPawn*)pPlayer)->InitWidget((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()), this);
+
+			// hide question and notice button
+			((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowNotice(false);
+			((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowQuestion(false);
+		}
+	}
 }
 #pragma endregion
 
@@ -203,6 +231,13 @@ void ASingleObject::ShowCorrectAnswer()
 {
 	// show correct answer student on clients
 	ShowCorrectAnswerClient();
+}
+
+// check all players to init widget
+void ASingleObject::CheckAllPlayersForInit()
+{
+	// check all player to init widget on clients
+	CheckAllPlayersForInitClient();
 }
 #pragma endregion
 

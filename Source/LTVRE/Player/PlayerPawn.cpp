@@ -414,6 +414,32 @@ void APlayerPawn::ShowTeacherComponentsClient_Implementation(const FString& _nam
 	// set name text
 	NameText->SetText(FText::FromString(_name));
 }
+
+// set location on clients implementation
+void APlayerPawn::SetLocationClient_Implementation(FVector _location)
+{
+	SetActorLocation(_location);
+}
+
+// check all single objects on server validate
+bool APlayerPawn::CheckAllSingleObjectsServer_Validate()
+{
+	return true;
+}
+
+// check all single objects on server implementation
+void APlayerPawn::CheckAllSingleObjectsServer_Implementation()
+{
+	// get all actor objects
+	TArray<AActor*> pFoundSingleObjects;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), pFoundSingleObjects);
+
+	// check all single objects
+	for (AActor* pObj : pFoundSingleObjects)
+		// if single object is a lesson object
+		if (pObj->ActorHasTag("LessonObject"))
+			((ASingleObject*)pObj)->CheckAllPlayersForInit();
+}
 #pragma endregion
 
 #pragma region public function
@@ -435,50 +461,7 @@ void APlayerPawn::SetAnswerText(FString _text, bool _correct)
 	else
 		SetNameTextServer(text, FLinearColor::Red);
 }
-#pragma endregion
 
-#pragma region protected override function
-// called at begin play
-void APlayerPawn::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// reset name text
-	NameText->SetText(FText::FromString(""));
-
-	// if map is menu return
-	if (GetWorld()->GetMapName() == "Menu")
-		return;
-
-	// if client and local player
-	if (!HasAuthority() && IsLocallyControlled())
-	{
-		// set name text on server
-		SetNameTextServer(Settings->GetName());
-
-		// get all single objects
-		TArray<AActor*> FoundSingleObjects;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), FoundSingleObjects);
-
-		// check all single objects
-		for (AActor* pObj : FoundSingleObjects)
-		{
-			// if single object is a lesson object
-			if (pObj->ActorHasTag("LessonObject"))
-			{
-				// initialize widget
-				InitWidget((UQuestionBase*)(((ASingleObject*)pObj)->QuestionStudent->GetUserWidgetObject()), (ASingleObject*)pObj);
-
-				// hide question and notice button
-				((UQuestionBase*)(((ASingleObject*)pObj)->QuestionStudent->GetUserWidgetObject()))->HideShowNotice(false);
-				((UQuestionBase*)(((ASingleObject*)pObj)->QuestionStudent->GetUserWidgetObject()))->HideShowQuestion(false);
-			}
-		}
-	}
-}
-#pragma endregion
-
-#pragma region private function
 // initialize question widget
 void APlayerPawn::InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj)
 {
@@ -502,5 +485,97 @@ void APlayerPawn::InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj
 
 	// rotate widgets to camera
 	_pSingleObj->QuestionWidgetRotateTo(Camera->GetComponentLocation());
+}
+#pragma endregion
+
+#pragma region protected override function
+// called at begin play
+void APlayerPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// reset name text
+	NameText->SetText(FText::FromString(""));
+
+	// if map is menu return
+	if (GetWorld()->GetMapName() == "Menu")
+		return;
+
+	// if client
+	if (!HasAuthority())
+	{
+		// check all single objects on server
+		CheckAllSingleObjectsServer();
+
+		// if local player set name text on server
+		if(IsLocallyControlled())
+			// set name text on server
+			SetNameTextServer(Settings->GetName());
+	}
+
+	// if server
+	else
+	{
+		// calculate position of player
+		// student 1 to 4 start at degree 0 and in 90 degree steps
+		// student 5 to 8 start at degree 45 and in 90 degree steps
+		// student 9 to 16 start at degree 22.5 and in 45 degree steps
+		// student 17 to 32 start at degree 11.25 and in 22.5 degree steps
+		// student 33 to 64 start at degree 5.625 and in 11.25 degree steps
+
+		// get all player
+		TArray<AActor*> FoundPlayer;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayer);
+
+		// if player number less than 1 or 1 return
+		if (FoundPlayer.Num() <= 1)
+			return;
+
+		// degree for current player
+		float degree = 0.0f;
+
+		// if player count is between 2 and 5
+		if (FoundPlayer.Num() >= 2 && FoundPlayer.Num() <= 5)
+			// calculate degree for current player
+			degree = ((FoundPlayer.Num() - 2) % 4) * 90.0f;
+
+		// if player count is between 6 and 9
+		else if (FoundPlayer.Num() >= 6 && FoundPlayer.Num() <= 9)
+			// calculate degree for current player
+			degree = 45.0f + ((FoundPlayer.Num() - 2) % 4) * 90.0f;
+
+		// if player count is between 10 and 17
+		else if (FoundPlayer.Num() >= 10 && FoundPlayer.Num() <= 17)
+			// calculate degree for current player
+			degree = 22.5f + ((FoundPlayer.Num() - 2) % 8) * 45.0f;
+
+		// if player count is between 18 and 33
+		else if (FoundPlayer.Num() >= 18 && FoundPlayer.Num() <= 33)
+			// calculate degree for current player
+			degree = 11.25f + ((FoundPlayer.Num() - 2) % 16) * 22.5f;
+
+		// if player count is between 34 and 65
+		else if (FoundPlayer.Num() >= 34 && FoundPlayer.Num() <= 65)
+			// calculate degree for current player
+			degree = 5.625f + ((FoundPlayer.Num() - 2) % 32) * 11.25f;
+
+		// location of teacher
+		FVector location = FVector();
+
+		// check all players
+		for (AActor* pPlayer : FoundPlayer)
+			// if current player is local player
+			if (((APawn*)pPlayer)->IsLocallyControlled())
+				// save location of teacher
+				location = pPlayer->GetActorLocation();
+
+		// set x and y location by degree and spawn distance
+		location.X += SpawnDistance * FMath::Sin(FMath::DegreesToRadians(degree));
+		location.Y += SpawnDistance * FMath::Cos(FMath::DegreesToRadians(degree));
+		location.Z -= 25.0f;
+
+		// set location on clients
+		SetLocationClient(location);
+	}
 }
 #pragma endregion
