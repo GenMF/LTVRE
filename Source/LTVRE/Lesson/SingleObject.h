@@ -89,6 +89,12 @@ public:
 	/// </summary>
 	/// <param name="_questionShown">question shown</paramn>
 	void ShowHideQuestionStudentClient(bool _questionShown);
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// show correct answer for student on clients
+	/// </summary>
+	void ShowCorrectAnswerClient();
 #pragma endregion
 
 #pragma region public inline function
@@ -129,6 +135,11 @@ public:
 	/// </summary>
 	/// <param name="_location">location to rotate to</param>
 	void QuestionWidgetRotateTo(FVector _location);
+
+	/// <summary>
+	/// show correct answer for students
+	/// </summary>
+	void ShowCorrectAnswer();
 #pragma endregion
 
 private:

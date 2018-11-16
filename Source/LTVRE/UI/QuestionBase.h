@@ -159,6 +159,11 @@ public:
 	void SetAnswerTexts(TArray<FString> _answers);
 
 	/// <summary>
+	/// show correct answer
+	/// </summary>
+	void ShowCorrectAnswer();
+
+	/// <summary>
 	/// click on widget at position
 	/// </summary>
 	/// <param name="_widgetSize">size of widget</param>
@@ -188,11 +193,6 @@ private:
 	/// if answer is already given
 	/// </summary>
 	int m_answerGiven;
-	
-	/// <summary>
-	/// correct answer index
-	/// </summary>
-	int m_correctAnswer;
 #pragma endregion
 
 #pragma region private pointer

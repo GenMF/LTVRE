@@ -348,7 +348,7 @@ void UQuestionBase::ClickAnswer(int Index)
 	}
 
 	// set answer given to number
-	m_answerGiven = Index + 1;
+	m_answerGiven = Index;
 }
 #pragma endregion
 
@@ -360,6 +360,47 @@ void UQuestionBase::SetAnswerTexts(TArray<FString> _answers)
 	for (int i = 0; i < _answers.Num(); i++)
 		// set answer text of button
 		m_pAnswerButtonsText[i]->SetText(FText::FromString(_answers[i]));
+}
+
+// show correct answer
+void UQuestionBase::ShowCorrectAnswer()
+{
+	// if player not valid return
+	if (m_pPlayer == nullptr)
+		return;
+
+	// if player not local player return
+	if (!m_pPlayer->IsLocallyControlled())
+		return;
+
+	// check all answer buttons
+	for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+	{
+		// button style to set
+		FButtonStyle style = ButtonClickShownStyle;
+
+		// if current index is given answer and not correct answer
+		if (i == m_answerGiven && i != m_pObject->CorrectAnswer)
+		{
+			// set color of style green
+			style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+			style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+			style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+
+		// if current index is correct answer
+		else if (i == m_pObject->CorrectAnswer)
+		{
+			// set color of style green
+			style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+			style.Hovered.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+			style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+		}
+
+
+		// set style of answer button at index
+		m_pAnswerButtons[i]->SetStyle(style);
+	}
 }
 
 // click on widget at position
@@ -379,6 +420,11 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 	// if anchor is in show hide question button show or hide question and answers
 	else if (m_pShowHideQuestionButton != nullptr && CheckPositionInButton(anchor, m_pShowHideQuestionButton))
 		HideShowQuestion(false);
+
+	// if anchor is in question button show correct answer
+	else if (m_pQuestionButton != nullptr && CheckPositionInButton(anchor, m_pQuestionButton) &&
+		((ULTVREGameInstance*)m_pPlayer->GetGameInstance())->GetPlayerStatus() == EPlayerStatus::TEACHER)
+		m_pObject->ShowCorrectAnswer();
 
 	// if player status is not student return
 	if (((ULTVREGameInstance*)m_pPlayer->GetGameInstance())->GetPlayerStatus() != EPlayerStatus::STUDENT)
