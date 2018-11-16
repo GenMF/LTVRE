@@ -63,9 +63,12 @@ void UQuestionBase::HideShowNotice(bool _noticeShown)
 		// if notice is already shown
 		if (m_noticeShown)
 		{
-			// hide notice and set show hide notice button text
+			// hide notice
 			m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
-			m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
+
+			// if show hide notice button text valid set show hide notice button text
+			if(m_pShowHideNoticeButtonText != nullptr)
+				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
 		}
 
 		// notice not shown
@@ -73,7 +76,10 @@ void UQuestionBase::HideShowNotice(bool _noticeShown)
 		{
 			// show notice and set show hide notice button text
 			m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
-			m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
+
+			// if show hide notice button text valid set show hide notice button text
+			if (m_pShowHideNoticeButtonText != nullptr)
+				m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
 		}
 
 		// set notice shown
@@ -170,7 +176,10 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 		{
 			// hide notice and set show hide notice button text
 			m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
-			m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
+
+			// if show hide question button text valid
+			if (m_pShowHideQuestionButtonText != nullptr)
+				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
 
 			// check all answer buttons and hide
 			for (UButton* pBtn : m_pAnswerButtons)
@@ -182,7 +191,10 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 		{
 			// show notice and set show hide notice button text
 			m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
-			m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
+
+			// if show hide question button text valid
+			if (m_pShowHideQuestionButtonText != nullptr)
+				m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
 
 			// check all answer buttons
 			for (UButton* pBtn : m_pAnswerButtons)
@@ -401,6 +413,39 @@ void UQuestionBase::ShowCorrectAnswer()
 		// set style of answer button at index
 		m_pAnswerButtons[i]->SetStyle(style);
 	}
+}
+
+// check if trace target on widget can be clicked
+bool UQuestionBase::CheckClickable(FVector2D _widgetSize, FTransform _widgetTransform, FVector _hitLocation, EPlayerStatus _status)
+{
+	// get relative location to ui
+	FVector2D anchor = CalculatePositionRelativeToWidget(_widgetSize, _widgetTransform, _hitLocation);
+
+	// if player status is practice
+	if (_status == EPlayerStatus::PRACTICE)
+		// return if trace target hit any answer button, show or hide notice or show or hide
+		return ((CheckPositionInButton(anchor, m_pAnswerButtons[0]) || CheckPositionInButton(anchor, m_pAnswerButtons[1]) ||
+		CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
+		m_pQuestionButton->GetVisibility() == ESlateVisibility::Visible) ||
+		CheckPositionInButton(anchor, m_pShowHideNoticeButton) || CheckPositionInButton(anchor, m_pShowHideQuestionButton);
+
+	// if player status is student
+	else if (_status == EPlayerStatus::STUDENT)
+		// return if trace target hit any answer button
+		return (CheckPositionInButton(anchor, m_pAnswerButtons[0]) || CheckPositionInButton(anchor, m_pAnswerButtons[1]) ||
+		CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
+		m_pQuestionButton->GetVisibility() == ESlateVisibility::Visible;
+
+	// if player status is teacher
+	else if (_status == EPlayerStatus::TEACHER)
+		// return if trace target hit question, show hide notice, show hide object or show hide question button
+		return (CheckPositionInButton(anchor, m_pQuestionButton) && m_questionShown) || 
+		CheckPositionInButton(anchor, m_pShowHideNoticeButton) || CheckPositionInButton(anchor, m_pShowHideObjectButton) ||
+		CheckPositionInButton(anchor, m_pShowHideQuestionButton);
+
+	// else return true
+	else
+		return true;
 }
 
 // click on widget at position
