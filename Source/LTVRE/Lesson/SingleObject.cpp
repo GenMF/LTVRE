@@ -6,7 +6,9 @@
 
 #pragma region UE4 includes
 #include "Components/WidgetComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 #include "UnrealNetwork.h"
 #pragma endregion
 
@@ -42,96 +44,138 @@ ASingleObject::ASingleObject()
 #pragma endregion
 
 #pragma region UFUNCTION
-// show or hide notice of student on clients implementation
-void ASingleObject::ShowHideNoticeStudentClient_Implementation(bool _noticeShown)
+// hide or show notice
+void ASingleObject::HideShowNotice()
 {
-	// if client
-	if (!HasAuthority())
+	/// <summary>
+	/// TODO
+	/// </summary>
+	InitReferences();
+
+	// if server
+	if (HasAuthority())
 	{
-		// hide or show notice
-		((UQuestionBase*)QuestionStudent->GetUserWidgetObject())->HideShowNotice(_noticeShown);
+		// if practice show or hide notice at question practice
+		if (m_playerStatus == EPlayerStatus::PRACTICE)
+			((UQuestionBase*)(QuestionPractice->GetUserWidgetObject()))->HideShowNotice(NoticeVisible, m_playerStatus);
 
-		// if question student not visible show widget
-		if (!QuestionStudent->IsVisible())
-			QuestionStudent->SetVisibility(true);
-	}
-}
-
-// show or hide question of student on clients implementation
-void ASingleObject::ShowHideQuestionStudentClient_Implementation(bool _questionShown)
-{
-	// if client
-	if (!HasAuthority())
-	{
-		// hide or show question
-		((UQuestionBase*)QuestionStudent->GetUserWidgetObject())->HideShowQuestion(_questionShown);
-
-		// if question student not visible show widget
-		if(!QuestionStudent->IsVisible())
-			QuestionStudent->SetVisibility(true);
-
-		// if question shown set trace visibility
-		if (_questionShown)
-			QuestionStudent->SetCollisionProfileName("TraceVisibility");
-
-		// if question hidden set trace no collision
+		// if teacher show or hide notice at question teacher
 		else
-			QuestionStudent->SetCollisionProfileName("NoCollision");
+			((UQuestionBase*)(QuestionTeacher->GetUserWidgetObject()))->HideShowNotice(NoticeVisible, m_playerStatus);
+	}
+
+	// if client
+	else
+	{
+		// show or hide notice at question student
+		((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowNotice(NoticeVisible, EPlayerStatus::STUDENT);
 	}
 }
 
-// show correct answer for student on clients implementation
+// hide or show question
+void ASingleObject::HideShowQuestion()
+{
+	/// <summary>
+	/// TODO
+	/// </summary>
+	InitReferences();
+
+	// if server
+	if (HasAuthority())
+	{
+		// if practice show or hide question at question practice
+		if (m_playerStatus == EPlayerStatus::PRACTICE)
+			((UQuestionBase*)(QuestionPractice->GetUserWidgetObject()))->HideShowQuestion(QuestionVisible, m_playerStatus);
+
+		// if teacher show or hide question at question teacher
+		else
+			((UQuestionBase*)(QuestionTeacher->GetUserWidgetObject()))->HideShowQuestion(QuestionVisible, m_playerStatus);
+	}
+
+	// if client
+	else
+	{
+		// show or hide question at question student
+		((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowQuestion(QuestionVisible, EPlayerStatus::STUDENT);
+	}
+}
+
+// set lesson object texts
+void ASingleObject::SetLessonObjectTexts()
+{
+	/// <summary>
+	/// TODO
+	/// </summary>
+	InitReferences();
+
+	// set texts of widgets
+	((UQuestionBase*)(QuestionPractice->GetUserWidgetObject()))->SetTexts(LessonObject);
+	((UQuestionBase*)(QuestionTeacher->GetUserWidgetObject()))->SetTexts(LessonObject);
+	((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->SetTexts(LessonObject);
+}
+
+// check all players on clients implementation
+void ASingleObject::CheckPlayersClient_Implementation()
+{
+	// if server return
+	if (HasAuthority())
+		return;
+
+	// array to save all players into
+	TArray<AActor*> pFoundActors;
+
+	// get all players and save it to the array
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
+
+	// check all players
+	for (AActor* pObj : pFoundActors)
+	{
+		// if not local player continue
+		if (!((APlayerPawn*)pObj)->IsLocallyControlled())
+			continue;
+
+		// rotate widgets to player camera
+		QuestionWidgetRotateTo(((APlayerPawn*)pObj)->Camera->GetComponentLocation());
+
+		// question student visible
+		QuestionStudent->SetVisibility(true);
+
+		// question student set collision profile
+		QuestionStudent->SetCollisionProfileName("TraceVisibility");
+	}
+}
+
+// show correct answer on clients implementation
 void ASingleObject::ShowCorrectAnswerClient_Implementation()
 {
 	// if server return
 	if (HasAuthority())
 		return;
 
-	// show correct answer on question student
+	// show correct answer on question student widget
 	((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->ShowCorrectAnswer();
-}
-
-// check all players to init widget on clients implementation
-void ASingleObject::CheckAllPlayersForInitClient_Implementation()
-{
-	// if server return
-	if (HasAuthority())
-		return;
-
-	// get all actor objects
-	TArray<AActor*> pFoundPlayers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
-
-	// check all player
-	for (AActor* pPlayer : pFoundPlayers)
-	{
-		// if player is local player
-		if (((APlayerPawn*)pPlayer)->IsLocallyControlled())
-		{
-			// initialize widget
-			((APlayerPawn*)pPlayer)->InitWidget((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()), this);
-
-			// hide question and notice button
-			((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowNotice(false);
-			((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowQuestion(false);
-		}
-	}
 }
 #pragma endregion
 
 #pragma region public function
+// rotate question widgets to location
+void ASingleObject::QuestionWidgetRotateTo(FVector _location)
+{
+	// set rotation from question widgets to location
+	QuestionPractice->SetWorldRotation((_location - QuestionPractice->GetComponentLocation()).Rotation());
+	QuestionTeacher->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
+	QuestionStudent->SetWorldRotation((_location - QuestionStudent->GetComponentLocation()).Rotation());
+}
+
 // set lesson object
 void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 {
-	// set lesson object
-	LessonObject = _lessonObject;
-
 	// array of numbers
 	TArray<int> indices;
 	TArray<int> randomIndices;
 
 	// check all answers and add numbers
-	for (int i = 0; i < LessonObject.Answers.Num(); i++)
+	for (int i = 0; i < _lessonObject.Answers.Num(); i++)
 		indices.Add(i);
 
 	// while random indices not all set
@@ -149,95 +193,39 @@ void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 				alreadyInArray = true;
 
 		// if not already in array add random index to new random indices
-		if(!alreadyInArray)
+		if (!alreadyInArray)
 			randomIndices.Add(randIndex);
 	}
 
 	// save old answers
-	TArray<FString> oldAnswers = LessonObject.Answers;
+	TArray<FString> oldAnswers = _lessonObject.Answers;
 
 	// clear answers in lesson object
-	LessonObject.Answers.Empty();
+	_lessonObject.Answers.Empty();
 
 	// check all random indices
 	for (int i = 0; i < randomIndices.Num(); i++)
 	{
 		// add random answer to lesson object answers
-		LessonObject.Answers.Add(oldAnswers[randomIndices[i]]);
+		_lessonObject.Answers.Add(oldAnswers[randomIndices[i]]);
 
 		// if random index is 0 set correct answer to current index
 		if (randomIndices[i] == 0)
 			CorrectAnswer = i;
 	}
+
+	// set lesson object
+	LessonObject = _lessonObject;
+
+	// set texts of question widgets
+	SetLessonObjectTexts();
 }
 
-// toggle question widget visibility
-void ASingleObject::ToggleQuestionWidget(EPlayerStatus _status)
-{
-	// switch player status
-	switch (_status)
-	{
-	// practice status
-	case EPlayerStatus::PRACTICE:
-	{
-		// toggle question practice widget visibility
-		QuestionPractice->ToggleVisibility();
-
-		// set collision preset of question practice widget
-		QuestionPractice->SetCollisionProfileName("TraceVisibility");
-		break;
-	}
-
-	// practice status
-	case EPlayerStatus::TEACHER:
-		// toggle question teacher widget visibility
-		QuestionTeacher->ToggleVisibility();
-
-		// set collision preset of question teacher widget
-		QuestionTeacher->SetCollisionProfileName("TraceVisibility");
-		break;
-
-	// default
-	default:
-		break;
-	}
-}
-
-// show or hide notice of student
-void ASingleObject::ShowHideNoticeStudent(bool _noticeShown)
-{
-	// show or hide notice of student on clients
-	ShowHideNoticeStudentClient(_noticeShown);
-}
-
-// show or hide question of student
-void ASingleObject::ShowHideQuestionStudent(bool _questionShown)
-{
-	// show or hide question of student on clients
-	ShowHideQuestionStudentClient(_questionShown);
-}
-
-// rotate question widgets to location
-void ASingleObject::QuestionWidgetRotateTo(FVector _location)
-{
-	// set rotation from question widgets to location
-	QuestionPractice->SetWorldRotation((_location - QuestionPractice->GetComponentLocation()).Rotation());
-	QuestionTeacher->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
-	QuestionStudent->SetWorldRotation((_location - QuestionTeacher->GetComponentLocation()).Rotation());
-}
-
-// show correct answer for students
+// show correct answer
 void ASingleObject::ShowCorrectAnswer()
 {
-	// show correct answer student on clients
+	// show correct answer on clients
 	ShowCorrectAnswerClient();
-}
-
-// check all players to init widget
-void ASingleObject::CheckAllPlayersForInit()
-{
-	// check all player to init widget on clients
-	CheckAllPlayersForInitClient();
 }
 #pragma endregion
 
@@ -249,15 +237,37 @@ void ASingleObject::InitWidget(UWidgetComponent* _pWidget, FString _tag)
 	_pWidget->SetDrawSize(FVector2D(1600.0f, 900.0f));
 	_pWidget->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 
-	// set no collision and hide widget
-	_pWidget->SetCollisionProfileName("NoCollision");
+	// hide widget
 	_pWidget->SetVisibility(false);
+
+	// set no collision
+	_pWidget->SetCollisionProfileName("NoCollision");
 
 	// set transparent blend mode
 	_pWidget->SetBlendMode(EWidgetBlendMode::Transparent);
 
 	// add tag
 	_pWidget->ComponentTags.Add(*_tag);
+}
+
+// initialize references of widget
+void ASingleObject::InitReferences()
+{
+	// set object reference of question widgets
+	if (QuestionPractice->GetUserWidgetObject() != nullptr)
+		((UQuestionBase*)(QuestionPractice->GetUserWidgetObject()))->SetObject(this);
+	if (QuestionTeacher->GetUserWidgetObject() != nullptr)
+		((UQuestionBase*)(QuestionTeacher->GetUserWidgetObject()))->SetObject(this);
+	if (QuestionStudent->GetUserWidgetObject() != nullptr)
+		((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->SetObject(this);
+
+	// get references of question widgets
+	if (QuestionPractice->GetUserWidgetObject() != nullptr)
+		((UQuestionBase*)(QuestionPractice->GetUserWidgetObject()))->GetReferences();
+	if (QuestionTeacher->GetUserWidgetObject() != nullptr)
+		((UQuestionBase*)(QuestionTeacher->GetUserWidgetObject()))->GetReferences();
+	if (QuestionStudent->GetUserWidgetObject() != nullptr)
+		((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->GetReferences();
 }
 #pragma endregion
 
@@ -266,7 +276,9 @@ void ASingleObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// replicate variable
-	DOREPLIFETIME(ASingleObject, MeshesVisible);
-	DOREPLIFETIME(ASingleObject, LessonObject);
 	DOREPLIFETIME(ASingleObject, CorrectAnswer);
+	DOREPLIFETIME(ASingleObject, MeshesVisible);
+	DOREPLIFETIME(ASingleObject, NoticeVisible);
+	DOREPLIFETIME(ASingleObject, QuestionVisible);
+	DOREPLIFETIME(ASingleObject, LessonObject);
 }

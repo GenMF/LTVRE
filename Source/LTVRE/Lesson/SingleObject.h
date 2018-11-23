@@ -32,23 +32,35 @@ public:
 #pragma endregion
 
 #pragma region UPROPERTY
+	UPROPERTY(Replicated)
+	/// <summary>
+	/// index of correct answer
+	/// </summary>
+	int CorrectAnswer = -1;
+
 	UPROPERTY(ReplicatedUsing = HideShowMeshes, BlueprintReadWrite, Category = "Single object")
 	/// <summary>
 	/// if meshes are visible or not
 	/// </summary>
 	bool MeshesVisible = true;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = HideShowNotice)
+	/// <summary>
+	/// if notice is visible or not
+	/// </summary>
+	bool NoticeVisible = true;
+
+	UPROPERTY(ReplicatedUsing = HideShowQuestion)
+	/// <summary>
+	/// if question is visible or not
+	/// </summary>
+	bool QuestionVisible = true;
+
+	UPROPERTY(ReplicatedUsing = SetLessonObjectTexts)
 	/// <summary>
 	/// lesson object informations
 	/// </summary>
-	FLessonObject LessonObject;
-
-	UPROPERTY(Replicated)
-	/// <summary>
-	/// index of correct answer
-	/// </summary>
-	int CorrectAnswer;
+	FLessonObject LessonObject = FLessonObject();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Single object")
 	/// <summary>
@@ -76,66 +88,69 @@ public:
 	/// </summary>
 	void HideShowMeshes();
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION()
 	/// <summary>
-	/// show or hide notice of student on clients
+	/// hide or show notice
 	/// </summary>
-	/// <param name="_noticeShown">notice shown</paramn>
-	void ShowHideNoticeStudentClient(bool _noticeShown);
+	void HideShowNotice();
+
+	UFUNCTION()
+	/// <summary>
+	/// hide or show question
+	/// </summary>
+	void HideShowQuestion();
+
+	UFUNCTION()
+	/// <summary>
+	/// set lesson object texts
+	/// </summary>
+	void SetLessonObjectTexts();
 
 	UFUNCTION(NetMulticast, Reliable)
 	/// <summary>
-	/// show or hide question of student on clients
+	/// check all players on clients
 	/// </summary>
-	/// <param name="_questionShown">question shown</paramn>
-	void ShowHideQuestionStudentClient(bool _questionShown);
+	void CheckPlayersClient();
 
 	UFUNCTION(NetMulticast, Reliable)
 	/// <summary>
-	/// show correct answer for student on clients
+	/// show correct answer on clients
 	/// </summary>
 	void ShowCorrectAnswerClient();
-
-	UFUNCTION(NetMulticast, Reliable)
-	/// <summary>
-	/// check all players to init widget on clients
-	/// </summary>
-	void CheckAllPlayersForInitClient();
 #pragma endregion
 
 #pragma region public inline function
 	/// <summary>
-	/// set player reference
+	/// get player statue
 	/// </summary>
-	/// <param name="_pPlayer">player reference</param>
-	inline void SetPlayer(APlayerPawn* _pPlayer) { m_pPlayer = _pPlayer; }
+	/// <returns>player status</returns>
+	inline EPlayerStatus GetPlayerStatus() { return m_playerStatus; }
+
+	/// <summary>
+	/// set player status
+	/// </summary>
+	/// <param name="_status">status to set</param>
+	inline void SetPlayerStatus(EPlayerStatus _status) { m_playerStatus = _status; }
+
+	/// <summary>
+	/// get given answer
+	/// </summary>
+	/// <returns>given answer index</returns>
+	inline int GetAnswerGiven() { return m_answerGiven; }
+
+	/// <summary>
+	/// set given answer
+	/// </summary>
+	/// <param name="_index">index to set as given answer</param>
+	inline void SetAnswerGiven(int _index) { m_answerGiven = _index; }
+
+	/// <summary>
+	/// check all players
+	/// </summary>
+	inline void CheckPlayers() { CheckPlayersClient(); }
 #pragma endregion
 
 #pragma region public function
-	/// <summary>
-	/// set lesson object
-	/// </summary>
-	/// <param name="_lessonObject">lesson object to set</param>
-	void SetLessonObject(FLessonObject _lessonObject);
-
-	/// <summary>
-	/// toggle question widget visibility
-	/// </summary>
-	/// <param name="_status">player status</param>
-	void ToggleQuestionWidget(EPlayerStatus _status);
-
-	/// <summary>
-	/// show or hide notice of student
-	/// </summary>
-	/// <param name="_noticeShown">notice shown</param>
-	void ShowHideNoticeStudent(bool _noticeShown);
-
-	/// <summary>
-	/// show or hide question of student
-	/// </summary>
-	/// <param name="_questionShown">question shown</param>
-	void ShowHideQuestionStudent(bool _questionShown);
-
 	/// <summary>
 	/// rotate question widgets to location
 	/// </summary>
@@ -143,22 +158,30 @@ public:
 	void QuestionWidgetRotateTo(FVector _location);
 
 	/// <summary>
-	/// show correct answer for students
+	/// set lesson object
 	/// </summary>
-	void ShowCorrectAnswer();
+	/// <param name="_lessonObject">lesson object to set</param>
+	void SetLessonObject(FLessonObject _lessonObject);
 
 	/// <summary>
-	/// check all players to init widget
+	/// show correct answer
 	/// </summary>
-	void CheckAllPlayersForInit();
+	void ShowCorrectAnswer();
 #pragma endregion
 
 private:
-#pragma region private pointer
+#pragma region private primitive variable
 	/// <summary>
-	/// player reference
+	/// answer index given
 	/// </summary>
-	APlayerPawn* m_pPlayer;
+	int m_answerGiven = -1;
+#pragma endregion
+
+#pragma region private variable
+	/// <summary>
+	/// player status
+	/// </summary>
+	EPlayerStatus m_playerStatus = EPlayerStatus::MENU;
 #pragma endregion
 
 #pragma region private function
@@ -168,5 +191,10 @@ private:
 	/// <param name="_pWidget">widget reference</param>
 	/// <param name="_tag">tag to set</param>
 	void InitWidget(UWidgetComponent* _pWidget, FString _tag);
+
+	/// <summary>
+	/// initialize references of widget
+	/// </summary>
+	void InitReferences();
 #pragma endregion
 };

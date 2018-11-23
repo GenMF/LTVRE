@@ -153,23 +153,40 @@ void APlayerPawn::Tick(float DeltaTime)
 				// click widget interaction
 				WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
 
-				// if not practice click on widget
-				if (status != EPlayerStatus::PRACTICE)
-				{
-					// get question base from hit component
-					UQuestionBase* pQuestionBase = (UQuestionBase*)(((UWidgetComponent*)(hit.GetComponent()))->GetUserWidgetObject());
+				// get question base from hit component
+				UQuestionBase* pQuestionBase = (UQuestionBase*)(((UWidgetComponent*)(hit.GetComponent()))->GetUserWidgetObject());
 
-					// click at question base widget
-					pQuestionBase->ClickOnWidget(((UWidgetComponent*)(hit.GetComponent()))->GetDrawSize(),
-						hit.GetComponent()->GetComponentTransform(), hit.Location);
-				}
+				// click at question base widget
+				pQuestionBase->ClickOnWidget(((UWidgetComponent*)(hit.GetComponent()))->GetDrawSize(),
+					hit.GetComponent()->GetComponentTransform(), hit.Location);
 			}
 
 			// if target id is single object target and player status is not student
 			else if(status != EPlayerStatus::STUDENT)
 			{
-				// toggle visibility of question widget
-				((ASingleObject*)(hit.GetActor()))->ToggleQuestionWidget(status);
+				// save widget component
+				UWidgetComponent* pSingObj;
+
+				// if player status is practice
+				if (status == EPlayerStatus::PRACTICE)
+					// widget component from question practice
+					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionPractice;
+
+				// if player status is teacher
+				else
+					// widget component from question teacher
+					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionTeacher;
+
+				// toggle question widget
+				pSingObj->ToggleVisibility();
+
+				// if question widget visible set trace visible
+				if (pSingObj->IsVisible())
+					pSingObj->SetCollisionProfileName("TraceVisibility");
+
+				// if question widget not visible set no trace
+				else
+					pSingObj->SetCollisionProfileName("NoCollision");
 			}
 
 			// reset click timer
@@ -214,10 +231,6 @@ void APlayerPawn::Tick(float DeltaTime)
 // initialize lesson in vr level
 void APlayerPawn::InitializeLesson()
 {
-	// if not local player return
-	if (!IsLocallyControlled())
-		return;
-
 	// get current lesson
 	FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
 
@@ -291,35 +304,29 @@ void APlayerPawn::InitializeLesson()
 											// if current question is equal with current object question
 											if (lessonObj.Name == objGrp.Objects[j].QuestionName)
 											{
-												// set player reference of current object actor
-												pSingleObj->SetPlayer(this);
-
-												// set question of current object actor
-												pSingleObj->SetLessonObject(lessonObj);
-
+												// set player status of object
+												pSingleObj->SetPlayerStatus(((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus());
+												
 												// hide meshes
 												pSingleObj->MeshesVisible = false;
-
-												// question practice widget of object
-												UQuestionBase* pQuestion = (UQuestionBase*)pSingleObj->QuestionPractice->GetUserWidgetObject();
-
-												// initialize question practice widget
-												InitWidget(pQuestion, pSingleObj);
-
-												// question teacher widget of object
-												pQuestion = (UQuestionBase*)pSingleObj->QuestionTeacher->GetUserWidgetObject();
-
-												// initialize question teacher widget
-												InitWidget(pQuestion, pSingleObj);
-
-												// question student widget of object
-												pQuestion = (UQuestionBase*)pSingleObj->QuestionStudent->GetUserWidgetObject();
-
-												// initialize question student widget
-												InitWidget(pQuestion, pSingleObj);
-
-												// hide question and notice button of question student
 												
+												// set lesson object of object
+												pSingleObj->SetLessonObject(lessonObj);
+
+												// notice visible false
+												pSingleObj->NoticeVisible = false;
+
+												// hide notice at question widget
+												pSingleObj->HideShowNotice();
+
+												// question visible false
+												pSingleObj->QuestionVisible = false;
+
+												// hide question at question widget
+												pSingleObj->HideShowQuestion();
+
+												// rotate widgets to player camera
+												pSingleObj->QuestionWidgetRotateTo(Camera->GetComponentLocation());
 											}
 										}
 									}
@@ -342,6 +349,27 @@ void APlayerPawn::SetInteraction(UInteraction* Interaction)
 	// set percentage and image percentage
 	m_pInteraction->SetPercentage(0.0f);
 	m_pInteraction->SetImagePercentage();
+}
+
+// initialize single objects on server validate
+bool APlayerPawn::InitSingleObjectsServer_Validate()
+{
+	return true;
+}
+
+// initialize single objects on server implementation
+void APlayerPawn::InitSingleObjectsServer_Implementation()
+{
+	// array to save all single objects into
+	TArray<AActor*> pFoundActors;
+
+	// get all single object and save it to the array
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), pFoundActors);
+
+	// check all single objects
+	for (AActor* pObj : pFoundActors)
+		// check all players at single object
+		((ASingleObject*)pObj)->CheckPlayers();
 }
 
 // set rotation on server validate
@@ -420,26 +448,6 @@ void APlayerPawn::SetLocationClient_Implementation(FVector _location)
 {
 	SetActorLocation(_location);
 }
-
-// check all single objects on server validate
-bool APlayerPawn::CheckAllSingleObjectsServer_Validate()
-{
-	return true;
-}
-
-// check all single objects on server implementation
-void APlayerPawn::CheckAllSingleObjectsServer_Implementation()
-{
-	// get all actor objects
-	TArray<AActor*> pFoundSingleObjects;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), pFoundSingleObjects);
-
-	// check all single objects
-	for (AActor* pObj : pFoundSingleObjects)
-		// if single object is a lesson object
-		if (pObj->ActorHasTag("LessonObject"))
-			((ASingleObject*)pObj)->CheckAllPlayersForInit();
-}
 #pragma endregion
 
 #pragma region public function
@@ -461,31 +469,6 @@ void APlayerPawn::SetAnswerText(FString _text, bool _correct)
 	else
 		SetNameTextServer(text, FLinearColor::Red);
 }
-
-// initialize question widget
-void APlayerPawn::InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj)
-{
-	// set player reference of widget
-	_pWidget->SetPlayer(this);
-
-	// set object reference of widget
-	_pWidget->SetObject(_pSingleObj);
-
-	// get references
-	_pWidget->GetReferences();
-
-	// set question of question practice
-	_pWidget->SetQuestion(_pSingleObj->LessonObject.Question);
-
-	// set notice of question practice
-	_pWidget->SetNotice(_pSingleObj->LessonObject.Notice);
-
-	// set answers of question practice
-	_pWidget->SetAnswerTexts(_pSingleObj->LessonObject.Answers);
-
-	// rotate widgets to camera
-	_pSingleObj->QuestionWidgetRotateTo(Camera->GetComponentLocation());
-}
 #pragma endregion
 
 #pragma region protected override function
@@ -504,18 +487,24 @@ void APlayerPawn::BeginPlay()
 	// if client
 	if (!HasAuthority())
 	{
-		// check all single objects on server
-		CheckAllSingleObjectsServer();
-
 		// if local player set name text on server
-		if(IsLocallyControlled())
+		if (IsLocallyControlled())
+		{
 			// set name text on server
 			SetNameTextServer(Settings->GetName());
+
+			// initialize all single objects on server
+			InitSingleObjectsServer();
+		}
 	}
 
 	// if server
 	else
 	{
+		// if local player initialize lesson
+		if (IsLocallyControlled())
+			InitializeLesson();
+
 		// calculate position of player
 		// student 1 to 4 start at degree 0 and in 90 degree steps
 		// student 5 to 8 start at degree 45 and in 90 degree steps
