@@ -97,6 +97,14 @@ void ASingleObject::HideShowQuestion()
 	{
 		// show or hide question at question student
 		((UQuestionBase*)(QuestionStudent->GetUserWidgetObject()))->HideShowQuestion(QuestionVisible, EPlayerStatus::STUDENT);
+
+		// if question hidden set trace target none
+		if (!QuestionVisible)
+			QuestionStudent->SetCollisionProfileName("NoCollision");
+
+		// if question shown set trace target visibility
+		else if (QuestionVisible)
+			QuestionStudent->SetCollisionProfileName("TraceVisibility");
 	}
 }
 
