@@ -107,6 +107,12 @@ public:
 	/// </summary>
 	void SetInteraction(UInteraction* Interaction);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	/// <summary>
+	/// initialize single objects on server
+	/// </summary>
+	void InitSingleObjectsServer();
+
 	UFUNCTION(Server, Unreliable, WithValidation)
 	/// <summary>
 	/// set camera rotation on server
@@ -142,12 +148,6 @@ public:
 	/// </summary>
 	/// <param name="_location">location to set</param>
 	void SetLocationClient(FVector _location);
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	/// <summary>
-	/// check all single objects on server
-	/// </summary>
-	void CheckAllSingleObjectsServer();
 #pragma endregion
 
 #pragma region public function
@@ -157,13 +157,6 @@ public:
 	/// <param name="_text">answer text</param>
 	/// <param name="_correct">answer is correct</param>
 	void SetAnswerText(FString _text, bool _correct);
-
-	/// <summary>
-	/// initialize question widget
-	/// </summary>
-	/// <param name="_pWidget">widget reference</param>
-	/// <param name="_pSingleObj">single object reference</param>
-	void InitWidget(UQuestionBase* _pWidget, ASingleObject* _pSingleObj);
 #pragma endregion
 
 protected:

@@ -8,7 +8,7 @@
 #pragma endregion
 
 #pragma region project includes
-#include "Utility/Enums.h"
+#include "Utility/Structs.h"
 #include "QuestionBase.generated.h"
 #pragma endregion
 
@@ -97,36 +97,19 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Question base")
 	/// <summary>
-	/// hide all elements
-	/// </summary>
-	void HideAll();
-
-	UFUNCTION(BlueprintCallable, Category = "Question base")
-	/// <summary>
 	/// hide or show notice
 	/// </summary>
 	/// <param name="_noticeShown">notice shown</paramn>
-	void HideShowNotice(bool _noticeShown);
-
-	UFUNCTION(BlueprintCallable, Category = "Question base")
-	/// <summary>
-	/// hide or show object
-	/// </summary>
-	void HideShowObject();
+	/// <param name="_statue">player statue</paramn>
+	void HideShowNotice(bool _noticeShown, EPlayerStatus _status);
 
 	UFUNCTION(BlueprintCallable, Category = "Question base")
 	/// <summary>
 	/// hide or show question
 	/// </summary>
 	/// <param name="_questionShown">question shown</paramn>
-	void HideShowQuestion(bool _questionShown);
-
-	UFUNCTION(BlueprintCallable, Category = "Question base")
-	/// <summary>
-	/// click answer at index
-	/// </summary>
-	/// <param name="Index">index to click</param>
-	void ClickAnswer(int Index);
+	/// <param name="_statue">player statue</paramn>
+	void HideShowQuestion(bool _questionShown, EPlayerStatus _status);
 #pragma endregion
 
 #pragma region public inline function
@@ -135,32 +118,14 @@ public:
 	/// </summary>
 	/// <param name="_pObj">object reference</param>
 	inline void SetObject(ASingleObject* _pObj) { m_pObject = _pObj; }
-
-	/// <summary>
-	/// set player reference
-	/// </summary>
-	/// <param name="_pPlayer">player reference</param>
-	inline void SetPlayer(APlayerPawn* _pPlayer) { m_pPlayer = _pPlayer; }
-
-	/// <summary>
-	/// set notice text
-	/// </summary>
-	/// <param name="_notice">text to set</param>
-	inline void SetNotice(FString _notice) { m_pNoticeButtonText->SetText(FText::FromString(_notice)); }
-
-	/// <summary>
-	/// set question text
-	/// </summary>
-	/// <param name="_question">text to set</param>
-	inline void SetQuestion(FString _question) { m_pQuestionButtonText->SetText(FText::FromString(_question)); }
 #pragma endregion
 
 #pragma region public function
 	/// <summary>
-	/// set answer texts
+	/// set texts from lesson object
 	/// </summary>
-	/// <param name="_answers">answer texts</param>
-	void SetAnswerTexts(TArray<FString> _answers);
+	/// <param name="_lessonObj">lesson object</param>
+	void SetTexts(FLessonObject _lessonObj);
 
 	/// <summary>
 	/// show correct answer
@@ -187,28 +152,6 @@ public:
 #pragma endregion
 
 private:
-#pragma region private primitive variable
-	/// <summary>
-	/// notice is shown
-	/// </summary>
-	bool m_noticeShown;
-
-	/// <summary>
-	/// object is shown
-	/// </summary>
-	bool m_objectShown;
-
-	/// <summary>
-	/// question and answers are shown
-	/// </summary>
-	bool m_questionShown;
-
-	/// <summary>
-	/// if answer is already given
-	/// </summary>
-	int m_answerGiven;
-#pragma endregion
-
 #pragma region private pointer
 	/// <summary>
 	/// notice button
@@ -274,11 +217,6 @@ private:
 	/// object
 	/// </summary>
 	ASingleObject* m_pObject;
-
-	/// <summary>
-	/// player reference
-	/// </summary>
-	APlayerPawn* m_pPlayer;
 #pragma endregion
 
 #pragma region private function

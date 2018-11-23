@@ -33,46 +33,17 @@ void UQuestionBase::SetReferences(UButton* NoticeBtn, UTextBlock* NoticeBtnTxt,
 	m_pShowHideQuestionButtonText = ShowHideQuestionBtnTxt;
 }
 
-// hide all elements
-void UQuestionBase::HideAll()
-{
-	// set bools to true to switch it in functions
-	m_noticeShown = true;
-	m_questionShown = true;
-	m_objectShown = true;
-
-	// hide notice, question and object
-	HideShowNotice(false);
-	HideShowQuestion(false);
-	HideShowObject();
-}
-
 // hide or show notice
-void UQuestionBase::HideShowNotice(bool _noticeShown)
+void UQuestionBase::HideShowNotice(bool _noticeShown, EPlayerStatus _status)
 {
-	// if player null return
-	if (m_pPlayer == nullptr)
-		return;
-
 	// switch player status
-	switch (((ULTVREGameInstance*)(m_pPlayer->GetGameInstance()))->GetPlayerStatus())
+	switch (_status)
 	{
 	// practice
 	case EPlayerStatus::PRACTICE:
 	{
 		// if notice is already shown
-		if (m_noticeShown)
-		{
-			// hide notice
-			m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
-
-			// if show hide notice button text valid set show hide notice button text
-			if(m_pShowHideNoticeButtonText != nullptr)
-				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
-		}
-
-		// notice not shown
-		else
+		if (_noticeShown)
 		{
 			// show notice and set show hide notice button text
 			m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
@@ -82,8 +53,16 @@ void UQuestionBase::HideShowNotice(bool _noticeShown)
 				m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
 		}
 
-		// set notice shown
-		m_noticeShown = !m_noticeShown;
+		// notice not shown
+		else
+		{
+			// hide notice
+			m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
+
+			// if show hide notice button text valid set show hide notice button text
+			if (m_pShowHideNoticeButtonText != nullptr)
+				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
+		}
 		break;
 	}
 
@@ -91,19 +70,7 @@ void UQuestionBase::HideShowNotice(bool _noticeShown)
 	case EPlayerStatus::TEACHER:
 	{
 		// if notice is already shown
-		if (m_noticeShown)
-		{
-			// set notice button style hidden and set show hide notice button text
-			m_pNoticeButton->SetStyle(ButtonNoClickHiddenStyle);
-			m_pNoticeButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
-
-			// if show hide notice button text valid
-			if(m_pShowHideNoticeButtonText != nullptr)
-				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
-		}
-
-		// notice not shown
-		else
+		if (_noticeShown)
 		{
 			// show notice and set show hide notice button text
 			m_pNoticeButton->SetStyle(ButtonNoClickShownStyle);
@@ -114,11 +81,17 @@ void UQuestionBase::HideShowNotice(bool _noticeShown)
 				m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
 		}
 
-		// set notice shown
-		m_noticeShown = !m_noticeShown;
+		// notice not shown
+		else
+		{
+			// set notice button style hidden and set show hide notice button text
+			m_pNoticeButton->SetStyle(ButtonNoClickHiddenStyle);
+			m_pNoticeButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
 
-		// show or hide notice on clients
-		m_pObject->ShowHideNoticeStudent(m_noticeShown);
+			// if show hide notice button text valid
+			if (m_pShowHideNoticeButtonText != nullptr)
+				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
+		}
 		break;
 	}
 
@@ -144,54 +117,17 @@ void UQuestionBase::HideShowNotice(bool _noticeShown)
 	}
 }
 
-// hide or show object
-void UQuestionBase::HideShowObject()
-{
-	// if object shown set button text to show object
-	if (m_objectShown && m_pShowHideObjectButtonText)
-		m_pShowHideObjectButtonText->SetText(FText::FromString("show object"));
-	
-	// if object not shown set button text to hide object
-	else if(m_pShowHideObjectButtonText)
-		m_pShowHideObjectButtonText->SetText(FText::FromString("hide object"));
-
-	// toggle object shown
-	m_objectShown = !m_objectShown;
-
-	// set meshes of single object visible
-	m_pObject->MeshesVisible = m_objectShown;
-}
-
 // hide or show question
-void UQuestionBase::HideShowQuestion(bool _questionShown)
+void UQuestionBase::HideShowQuestion(bool _questionShown, EPlayerStatus _status)
 {
-	// if player reference not valid return
-	if (m_pPlayer == nullptr)
-		return;
-
 	// switch player status
-	switch (((ULTVREGameInstance*)(m_pPlayer->GetGameInstance()))->GetPlayerStatus())
+	switch (_status)
 	{
 		// practice
 	case EPlayerStatus::PRACTICE:
 	{
 		// if question is already shown
-		if (m_questionShown)
-		{
-			// hide notice and set show hide notice button text
-			m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
-
-			// if show hide question button text valid
-			if (m_pShowHideQuestionButtonText != nullptr)
-				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
-
-			// check all answer buttons and hide
-			for (UButton* pBtn : m_pAnswerButtons)
-				pBtn->SetVisibility(ESlateVisibility::Hidden);
-		}
-
-		// question not shown
-		else
+		if (_questionShown)
 		{
 			// show notice and set show hide notice button text
 			m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
@@ -209,8 +145,20 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 			}
 		}
 
-		// set question shown
-		m_questionShown = !m_questionShown;
+		// question not shown
+		else
+		{
+			// hide notice and set show hide notice button text
+			m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
+
+			// if show hide question button text valid
+			if (m_pShowHideQuestionButtonText != nullptr)
+				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
+
+			// check all answer buttons and hide
+			for (UButton* pBtn : m_pAnswerButtons)
+				pBtn->SetVisibility(ESlateVisibility::Hidden);
+		}
 		break;
 	}
 
@@ -218,31 +166,7 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 	case EPlayerStatus::TEACHER:
 	{
 		// if question is already shown
-		if (m_questionShown)
-		{
-			// set question button style hidden and set show hide question button text
-			m_pQuestionButton->SetStyle(ButtonNoClickHiddenStyle);
-			m_pQuestionButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
-
-			// check all answer buttons
-			for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-			{
-				// set style of button and color of button text
-				m_pAnswerButtons[i]->SetStyle(ButtonClickHiddenStyle);
-				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextHiddenColor);
-
-				// if current answer is correct answer set color of answer text green
-				if (i == m_pObject->CorrectAnswer)
-					m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor(0.0f, 1.0f, 0.0f, 0.5f));
-			}
-
-			// if show hide question button text valid
-			if (m_pShowHideQuestionButtonText != nullptr)
-				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
-		}
-
-		// question not shown
-		else
+		if (_questionShown)
 		{
 			// show question and set show hide question button text
 			m_pQuestionButton->SetStyle(ButtonNoClickShownStyle);
@@ -265,11 +189,29 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 				m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
 		}
 
-		// set question shown
-		m_questionShown = !m_questionShown;
+		// question not shown
+		else
+		{
+			// set question button style hidden and set show hide question button text
+			m_pQuestionButton->SetStyle(ButtonNoClickHiddenStyle);
+			m_pQuestionButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
 
-		// show or hide question on clients
-		m_pObject->ShowHideQuestionStudent(m_questionShown);
+			// check all answer buttons
+			for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+			{
+				// set style of button and color of button text
+				m_pAnswerButtons[i]->SetStyle(ButtonClickHiddenStyle);
+				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextHiddenColor);
+
+				// if current answer is correct answer set color of answer text green
+				if (i == m_pObject->CorrectAnswer)
+					m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor(0.0f, 1.0f, 0.0f, 0.5f));
+			}
+
+			// if show hide question button text valid
+			if (m_pShowHideQuestionButtonText != nullptr)
+				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
+		}
 		break;
 	}
 
@@ -306,114 +248,34 @@ void UQuestionBase::HideShowQuestion(bool _questionShown)
 		break;
 	}
 }
-
-// click answer at index
-void UQuestionBase::ClickAnswer(int Index)
-{
-	// is answer not given and practice
-	if (!m_answerGiven && ((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus() == EPlayerStatus::PRACTICE)
-	{
-		// check all answer buttons
-		for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-		{
-			// button style to set
-			FButtonStyle style = ButtonClickShownStyle;
-
-			// if current index is correct answer
-			if (i == m_pObject->CorrectAnswer)
-			{
-				// set color of style green
-				style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
-				style.Hovered.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
-				style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
-			}
-
-			// if current index is clicked index
-			else if (i == Index)
-			{
-				// set color of style red
-				style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-				style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-				style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-			}
-
-			// set style of answer button at index
-			m_pAnswerButtons[i]->SetStyle(style);
-		}
-	}
-
-	// is answer not given and student
-	if (!m_answerGiven && ((ULTVREGameInstance*)m_pPlayer->GetGameInstance())->GetPlayerStatus() == EPlayerStatus::STUDENT)
-	{
-		// check all answer buttons
-		for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-		{
-			// button style to set
-			FButtonStyle style = ButtonClickShownStyle;
-
-			// if current index is clicked index
-			if (i == Index)
-			{
-				// set color of style yellow
-				style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-				style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-				style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-
-				// if answer is correct
-				bool correct = false;
-
-				// if index is correct answer
-				m_pPlayer->SetAnswerText(m_pAnswerButtonsText[i]->GetText().ToString(), Index == m_pObject->CorrectAnswer);
-			}
-
-			// set style of answer button at index
-			m_pAnswerButtons[i]->SetStyle(style);
-		}
-	}
-
-	// set answer given to number
-	m_answerGiven = Index;
-}
 #pragma endregion
 
 #pragma region public function
-// set answer texts
-void UQuestionBase::SetAnswerTexts(TArray<FString> _answers)
+// set texts from lesson object
+void UQuestionBase::SetTexts(FLessonObject _lessonObj)
 {
-	// check all answer texts
-	for (int i = 0; i < _answers.Num(); i++)
-		// set answer text of button
-		m_pAnswerButtonsText[i]->SetText(FText::FromString(_answers[i]));
+	// set notice button text
+	m_pNoticeButtonText->SetText(FText::FromString(_lessonObj.Notice));
+
+	// set question button text
+	m_pQuestionButtonText->SetText(FText::FromString(_lessonObj.Question));
+
+	// set answer button texts
+	for (int i = 0; i < _lessonObj.Answers.Num(); i++)
+		m_pAnswerButtonsText[i]->SetText(FText::FromString(_lessonObj.Answers[i]));
 }
 
 // show correct answer
 void UQuestionBase::ShowCorrectAnswer()
 {
-	// if player not valid return
-	if (m_pPlayer == nullptr)
-		return;
-
-	// if player not local player return
-	if (!m_pPlayer->IsLocallyControlled())
-		return;
-
-	// check all answer buttons
+	// check all buttons
 	for (int i = 0; i < m_pAnswerButtons.Num(); i++)
 	{
 		// button style to set
 		FButtonStyle style = ButtonClickShownStyle;
 
-		// if current index is given answer and not correct answer
-		if (i == m_answerGiven && i != m_pObject->CorrectAnswer)
-		{
-			// set color of style green
-			style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-			style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-			style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-		}
-
-		// if current index is correct answer
-		else if (i == m_pObject->CorrectAnswer)
+		// if current button is correct answer
+		if (i == m_pObject->CorrectAnswer)
 		{
 			// set color of style green
 			style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
@@ -421,8 +283,16 @@ void UQuestionBase::ShowCorrectAnswer()
 			style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
 		}
 
+		// if current button is given answer or given answer is -1
+		else if (i == m_pObject->GetAnswerGiven() || m_pObject->GetAnswerGiven() == -1)
+		{
+			// set color of style red
+			style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+			style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+			style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+		}
 
-		// set style of answer button at index
+		// set style of current answer button
 		m_pAnswerButtons[i]->SetStyle(style);
 	}
 }
@@ -437,23 +307,23 @@ bool UQuestionBase::CheckClickable(FVector2D _widgetSize, FTransform _widgetTran
 	if (_status == EPlayerStatus::PRACTICE)
 		// return if trace target hit any answer button, show or hide notice or show or hide
 		return ((CheckPositionInButton(anchor, m_pAnswerButtons[0]) || CheckPositionInButton(anchor, m_pAnswerButtons[1]) ||
-		CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
-		m_pQuestionButton->GetVisibility() == ESlateVisibility::Visible) ||
-		CheckPositionInButton(anchor, m_pShowHideNoticeButton) || CheckPositionInButton(anchor, m_pShowHideQuestionButton);
+			CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
+			m_pObject->QuestionVisible) || CheckPositionInButton(anchor, m_pShowHideNoticeButton) || 
+			CheckPositionInButton(anchor, m_pShowHideQuestionButton);
 
 	// if player status is student
 	else if (_status == EPlayerStatus::STUDENT)
 		// return if trace target hit any answer button
 		return (CheckPositionInButton(anchor, m_pAnswerButtons[0]) || CheckPositionInButton(anchor, m_pAnswerButtons[1]) ||
-		CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
-		m_pQuestionButton->GetVisibility() == ESlateVisibility::Visible;
+			CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
+			m_pObject->QuestionVisible;
 
 	// if player status is teacher
 	else if (_status == EPlayerStatus::TEACHER)
 		// return if trace target hit question, show hide notice, show hide object or show hide question button
-		return (CheckPositionInButton(anchor, m_pQuestionButton) && m_questionShown) || 
-		CheckPositionInButton(anchor, m_pShowHideNoticeButton) || CheckPositionInButton(anchor, m_pShowHideObjectButton) ||
-		CheckPositionInButton(anchor, m_pShowHideQuestionButton);
+		return (CheckPositionInButton(anchor, m_pQuestionButton) && m_pObject->QuestionVisible) || 
+			CheckPositionInButton(anchor, m_pShowHideNoticeButton) || CheckPositionInButton(anchor, m_pShowHideObjectButton) || 
+			CheckPositionInButton(anchor, m_pShowHideQuestionButton);
 
 	// else return true
 	else
@@ -468,31 +338,101 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 
 	// if anchor is in show hide object button show or hide object
 	if (m_pShowHideObjectButton != nullptr && CheckPositionInButton(anchor, m_pShowHideObjectButton))
-		HideShowObject();
+	{
+		// show or hide meshes
+		m_pObject->MeshesVisible = !m_pObject->MeshesVisible;
+
+		// if meshes visible set show hide object button text to hide object
+		if (m_pObject->MeshesVisible)
+			m_pShowHideObjectButtonText->SetText(FText::FromString("hide object"));
+
+		// if meshes not visible set show hide object button text to show object
+		else
+			m_pShowHideObjectButtonText->SetText(FText::FromString("show object"));
+	}
 
 	// if anchor is in show hide notice button show or hide notice
 	else if (m_pShowHideNoticeButton != nullptr && CheckPositionInButton(anchor, m_pShowHideNoticeButton))
-		HideShowNotice(false);
+	{
+		// show or hide notice
+		m_pObject->NoticeVisible = !m_pObject->NoticeVisible;
+
+		// call rep notify
+		m_pObject->HideShowNotice();
+	}
 
 	// if anchor is in show hide question button show or hide question and answers
 	else if (m_pShowHideQuestionButton != nullptr && CheckPositionInButton(anchor, m_pShowHideQuestionButton))
-		HideShowQuestion(false);
+	{
+		// show or hide question
+		m_pObject->QuestionVisible = !m_pObject->QuestionVisible;
+
+		// call rep notify
+		m_pObject->HideShowQuestion();
+	}
 
 	// if anchor is in question button show correct answer
-	else if (m_pQuestionButton != nullptr && CheckPositionInButton(anchor, m_pQuestionButton) &&
-		((ULTVREGameInstance*)m_pPlayer->GetGameInstance())->GetPlayerStatus() == EPlayerStatus::TEACHER)
+	else if (m_pQuestionButton != nullptr && CheckPositionInButton(anchor, m_pQuestionButton))
+	{
 		m_pObject->ShowCorrectAnswer();
+	}
 
-	// if player status is not student return
-	if (((ULTVREGameInstance*)m_pPlayer->GetGameInstance())->GetPlayerStatus() != EPlayerStatus::STUDENT)
-		return;
+	// if no other button clicked check answer buttons
+	else
+	{
+		// check all answer buttons
+		for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+		{
+			// if anchor is in answer button and no answer given set given answer
+			if (CheckPositionInButton(anchor, m_pAnswerButtons[i]) && m_pObject->GetAnswerGiven() < 0)
+			{
+				// set given answer at index
+				m_pObject->SetAnswerGiven(i);
 
-	// check all answer buttons
-	for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-		// if anchor is in answer button click answer
-		if (CheckPositionInButton(anchor, m_pAnswerButtons[i]))
-			// click answer at index
-			ClickAnswer(i);
+				// if practice
+				if (m_pObject->GetPlayerStatus() == EPlayerStatus::PRACTICE)
+				{
+					// button style to set
+					FButtonStyle style = ButtonClickShownStyle;
+
+					// set color of style green
+					style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+					style.Hovered.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+					style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+					
+					// set style of answer button
+					m_pAnswerButtons[m_pObject->CorrectAnswer]->SetStyle(style);
+
+					// if given answer is not correct answer
+					if (i != m_pObject->CorrectAnswer)
+					{
+						// set color of style red
+						style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+						style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+						style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+
+						// set style of answer button
+						m_pAnswerButtons[i]->SetStyle(style);
+					}
+				}
+
+				// if student
+				else
+				{
+					// button style to set
+					FButtonStyle style = ButtonClickShownStyle;
+
+					// set color of style green
+					style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+					style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+					style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+
+					// set style of answer button
+					m_pAnswerButtons[i]->SetStyle(style);
+				}
+			}
+		}
+	}			
 }
 #pragma endregion
 
