@@ -6,6 +6,7 @@
 #pragma endregion
 
 #pragma region UE4 includes
+#include "Components/WidgetComponent.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanelSlot.h"
 #pragma endregion
@@ -316,7 +317,7 @@ bool UQuestionBase::CheckClickable(FVector2D _widgetSize, FTransform _widgetTran
 		// return if trace target hit any answer button
 		return (CheckPositionInButton(anchor, m_pAnswerButtons[0]) || CheckPositionInButton(anchor, m_pAnswerButtons[1]) ||
 			CheckPositionInButton(anchor, m_pAnswerButtons[2]) || CheckPositionInButton(anchor, m_pAnswerButtons[3])) &&
-			m_pObject->QuestionVisible;
+			m_pQuestionButton->IsVisible();
 
 	// if player status is teacher
 	else if (_status == EPlayerStatus::TEACHER)

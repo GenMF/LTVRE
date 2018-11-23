@@ -481,7 +481,7 @@ void APlayerPawn::BeginPlay()
 	NameText->SetText(FText::FromString(""));
 
 	// if map is menu return
-	if (GetWorld()->GetMapName() == "Menu")
+	if (GetWorld()->GetMapName().Contains("Menu"))
 		return;
 
 	// if client
