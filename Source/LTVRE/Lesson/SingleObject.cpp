@@ -126,7 +126,7 @@ void ASingleObject::SetLessonObjectTexts()
 void ASingleObject::CheckPlayersClient_Implementation()
 {
 	// if server return
-	if (HasAuthority())
+	if (m_playerStatus == EPlayerStatus::PRACTICE || m_playerStatus == EPlayerStatus::TEACHER)
 		return;
 
 	// array to save all players into
