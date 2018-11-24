@@ -107,12 +107,6 @@ public:
 	/// </summary>
 	void SetInteraction(UInteraction* Interaction);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	/// <summary>
-	/// initialize single objects on server
-	/// </summary>
-	void InitSingleObjectsServer();
-
 	UFUNCTION(Server, Unreliable, WithValidation)
 	/// <summary>
 	/// set camera rotation on server
@@ -135,12 +129,18 @@ public:
 	/// <param name="_color">color of text</param>
 	void SetNameTextServer(const FString& _name, FLinearColor _color = FLinearColor::White);
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	/// <summary>
 	/// show head mesh and name text on clients
 	/// </summary>
 	/// <param name="_name">name to set</param>
 	void ShowTeacherComponentsClient(const FString& _name);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	/// <summary>
+	/// student correctly initialized called to server
+	/// </summary>
+	void StudentInitializedServer();
 
 	UFUNCTION(NetMulticast, Reliable)
 	/// <summary>
@@ -148,6 +148,20 @@ public:
 	/// </summary>
 	/// <param name="_location">location to set</param>
 	void SetLocationClient(FVector _location);
+#pragma endregion
+
+#pragma region public inline function
+	/// <summary>
+	/// if player is teacher
+	/// </summary>
+	/// <returns>is teacher or not</returns>
+	inline bool IsTeacher() { return m_isTeacher; }
+
+	/// <summary>
+	/// set initialize student
+	/// </summary>
+	/// <param name="_initStudent">student has to be initialized</param>
+	inline void SetInitStudent(bool _initStudent) { m_initStudent = _initStudent; }
 #pragma endregion
 
 #pragma region public function
@@ -170,6 +184,16 @@ protected:
 private:
 #pragma region private primitive variable
 	/// <summary>
+	/// if this player is teacher
+	/// </summary>
+	bool m_isTeacher = false;
+
+	/// <summary>
+	/// student has to be initialized
+	/// </summary>
+	bool m_initStudent = false;
+
+	/// <summary>
 	/// time until click
 	/// </summary>
 	float m_clickTimer;
@@ -185,5 +209,18 @@ private:
 	/// interaction widget reference
 	/// </summary>
 	UInteraction* m_pInteraction;
+#pragma endregion
+
+#pragma region private function
+	/// <summary>
+	/// initialize student on server
+	/// </summary>
+	/// <returns>student initialized</returns>
+	bool InitStudent();
+
+	/// <summary>
+	/// trace from camera forward
+	/// </summary>
+	void TraceForward();
 #pragma endregion
 };
