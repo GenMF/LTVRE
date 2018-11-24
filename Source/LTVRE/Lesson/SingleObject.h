@@ -31,6 +31,14 @@ public:
 	ASingleObject();
 #pragma endregion
 
+#pragma region public override function
+	/// <summary>
+	/// update every frame
+	/// </summary>
+	/// <param name="DeltaTime">time since last frame</param>
+	virtual void Tick(float DeltaTime) override;
+#pragma endregion
+
 #pragma region UPROPERTY
 	UPROPERTY(Replicated)
 	/// <summary>

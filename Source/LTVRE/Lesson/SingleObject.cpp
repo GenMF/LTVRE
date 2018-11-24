@@ -43,12 +43,58 @@ ASingleObject::ASingleObject()
 }
 #pragma endregion
 
+#pragma region public override function
+// update every frame
+void ASingleObject::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// initialize references
+	InitReferences();
+
+	// if server disable tick and return
+	if (HasAuthority())
+	{
+		SetActorTickEnabled(false);
+		return;
+	}
+
+	// get all player
+	TArray<AActor*> FoundPlayers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+
+	// check all players
+	for (AActor* pActor : FoundPlayers)
+	{
+		// get player reference
+		APlayerPawn* pPlayer = (APlayerPawn*)pActor;
+
+		// if current player is local player
+		if (pPlayer->IsLocallyControlled())
+		{
+			// show question student widget
+			QuestionStudent->SetVisibility(true);
+
+			// if question shown set trace target visibility
+			if (QuestionVisible)
+				QuestionStudent->SetCollisionProfileName("TraceVisibility");
+
+			// rotate widgets to player
+			QuestionWidgetRotateTo(pPlayer->Camera->GetComponentLocation());
+
+			// disable tick
+			SetActorTickEnabled(false);
+		}
+	}
+}
+#pragma endregion
+
 #pragma region UFUNCTION
 // hide or show notice
 void ASingleObject::HideShowNotice()
 {
 	/// <summary>
-	/// TODO
+	/// TODO:
 	/// </summary>
 	InitReferences();
 
@@ -76,7 +122,7 @@ void ASingleObject::HideShowNotice()
 void ASingleObject::HideShowQuestion()
 {
 	/// <summary>
-	/// TODO
+	/// TODO:
 	/// </summary>
 	InitReferences();
 
@@ -112,7 +158,7 @@ void ASingleObject::HideShowQuestion()
 void ASingleObject::SetLessonObjectTexts()
 {
 	/// <summary>
-	/// TODO
+	/// TODO:
 	/// </summary>
 	InitReferences();
 

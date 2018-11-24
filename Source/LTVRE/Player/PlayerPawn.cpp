@@ -67,163 +67,9 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// if map is menu or not local player return
-	if (GetWorld()->GetMapName() == "Menu" || !IsLocallyControlled())
-		return;
-
-	// hit result
-	FHitResult hit;
-
-	// trace from camera forward
-	GetWorld()->LineTraceSingleByChannel(
-		hit,
-		Camera->GetComponentLocation(),
-		Camera->GetComponentLocation() + Camera->GetForwardVector() * 10000,
-		ECollisionChannel::ECC_Visibility
-	);
-
-	// save player status
-	EPlayerStatus status = ((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus();
-
-	// save trace target to id (0 = no valid target, 1 = question widget target, 2 = single object target)
-	int targetID = 0;
-
-	// target question base
-	UQuestionBase* pTargetQuestionBase = nullptr;
-	
-	// if hit component valid and tag correct
-	if (hit.Component.IsValid() &&
-		((hit.Component->ComponentHasTag("QuestionPractice") && status == EPlayerStatus::PRACTICE) ||
-		(hit.Component->ComponentHasTag("QuestionTeacher") && status == EPlayerStatus::TEACHER) ||
-		(hit.Component->ComponentHasTag("QuestionStudent") && status == EPlayerStatus::STUDENT)))
-	{
-		// set target id 1
-		targetID = 1;
-
-		// get question base
-		pTargetQuestionBase = (UQuestionBase*)(((UWidgetComponent*)hit.GetComponent())->GetUserWidgetObject());
-	}
-	
-	// if hit actor valid and tag correct
-	else if (hit.Actor.IsValid() && hit.Actor->ActorHasTag("LessonObject") && status != EPlayerStatus::STUDENT)
-	{
-		targetID = 2;
-	}
-
-	// if target id valid
-	if (targetID)
-	{
-		// set trace target
-		m_pTraceTarget = hit.GetActor();
-
-		// if target id is question widget target
-		if(targetID == 1)
-			// release widget interaction click
-			WidgetInteraction->ReleasePointerKey(FKey("LeftMouseButton"));
-
-		// check clickable true
-		if (targetID == 1 && pTargetQuestionBase != nullptr &&
-			pTargetQuestionBase->CheckClickable(((UWidgetComponent*)hit.GetComponent())->GetDrawSize(),
-			hit.GetComponent()->GetComponentTransform(), hit.Location, status))
-		{
-			// increase click timer
-			m_clickTimer += DeltaTime;
-		}
-
-		// if trace target is object
-		else if (targetID == 2)
-		{
-			// increase click timer
-			m_clickTimer += DeltaTime;
-		}
-
-		// if not clickable
-		else
-		{
-			// reset click timer
-			m_clickTimer = 0.0f;
-		}
-
-		// if click timer lower than time to click return
-		if (m_clickTimer >= ClickTime)
-		{
-			// if target id is question widget target
-			if (targetID == 1)
-			{
-				// click widget interaction
-				WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
-
-				// get question base from hit component
-				UQuestionBase* pQuestionBase = (UQuestionBase*)(((UWidgetComponent*)(hit.GetComponent()))->GetUserWidgetObject());
-
-				// click at question base widget
-				pQuestionBase->ClickOnWidget(((UWidgetComponent*)(hit.GetComponent()))->GetDrawSize(),
-					hit.GetComponent()->GetComponentTransform(), hit.Location);
-			}
-
-			// if target id is single object target and player status is not student
-			else if(status != EPlayerStatus::STUDENT)
-			{
-				// save widget component
-				UWidgetComponent* pSingObj;
-
-				// if player status is practice
-				if (status == EPlayerStatus::PRACTICE)
-					// widget component from question practice
-					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionPractice;
-
-				// if player status is teacher
-				else
-					// widget component from question teacher
-					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionTeacher;
-
-				// toggle question widget
-				pSingObj->ToggleVisibility();
-
-				// if question widget visible set trace visible
-				if (pSingObj->IsVisible())
-					pSingObj->SetCollisionProfileName("TraceVisibility");
-
-				// if question widget not visible set no trace
-				else
-					pSingObj->SetCollisionProfileName("NoCollision");
-			}
-
-			// reset click timer
-			m_clickTimer = 0.0f;
-		}
-	}
-
-	// if trace target valid
-	else if(m_pTraceTarget != nullptr)
-	{
-		// set trace target null and click timer 0
-		m_pTraceTarget = nullptr;
-		m_clickTimer = 0.0f;
-
-		// set percentage 0 and set image percentage
-		m_pInteraction->SetPercentage(0.0f);
-		m_pInteraction->SetImagePercentage();
-	}
-
-	// if interaction reference valid
-	if (m_pInteraction)
-	{
-		// set percentage of interaction widget
-		m_pInteraction->SetPercentage(m_clickTimer / ClickTime * 100.0f);
-
-		// set image percentage of interaction widget
-		m_pInteraction->SetImagePercentage();
-	}
-
-	// if server set camera rotation on clients
-	if (HasAuthority())
-		SetCameraRotationClient(Camera->RelativeRotation);
-
-	// if client set camera rotation on server
-	else
-		SetCameraRotationServer(Camera->RelativeRotation);
-
+	// if student initialized trace from camera forward
+	if(InitStudent())
+		TraceForward();
 }
 #pragma endregion
 
@@ -231,6 +77,9 @@ void APlayerPawn::Tick(float DeltaTime)
 // initialize lesson in vr level
 void APlayerPawn::InitializeLesson()
 {
+	// set this player to teacher
+	m_isTeacher = true;
+
 	// get current lesson
 	FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
 
@@ -351,27 +200,6 @@ void APlayerPawn::SetInteraction(UInteraction* Interaction)
 	m_pInteraction->SetImagePercentage();
 }
 
-// initialize single objects on server validate
-bool APlayerPawn::InitSingleObjectsServer_Validate()
-{
-	return true;
-}
-
-// initialize single objects on server implementation
-void APlayerPawn::InitSingleObjectsServer_Implementation()
-{
-	// array to save all single objects into
-	TArray<AActor*> pFoundActors;
-
-	// get all single object and save it to the array
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), pFoundActors);
-
-	// check all single objects
-	for (AActor* pObj : pFoundActors)
-		// check all players at single object
-		((ASingleObject*)pObj)->CheckPlayers();
-}
-
 // set rotation on server validate
 bool APlayerPawn::SetCameraRotationServer_Validate(FRotator rotation)
 {
@@ -412,23 +240,21 @@ void APlayerPawn::SetNameTextServer_Implementation(const FString& _name, FLinear
 	// set color of text
 	NameText->SetTextRenderColor(_color.ToFColor(true));
 
-	// array to save all players into
-	TArray<AActor*> pFoundActors;
+	// get all player
+	TArray<AActor*> FoundPlayers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
 
-	// get all players and save it to the array
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
-
-	// check all player
-	for (AActor* pPlayer : pFoundActors)
+	// check all players
+	for (AActor* pPlayer : FoundPlayers)
 	{
-		// if local player
-		if (((APlayerPawn*)pPlayer)->IsLocallyControlled())
+		// if teacher
+		if (((APlayerPawn*)pPlayer)->IsTeacher())
 		{
-			// rotate name text to server player
-			NameText->SetWorldRotation((pPlayer->GetActorLocation() - NameText->GetComponentLocation()).Rotation());
+			// save text render component of current player
+			UCameraComponent* pCamera = ((APlayerPawn*)pPlayer)->Camera;
 
-			// show head mesh on clients
-			((APlayerPawn*)pPlayer)->ShowTeacherComponentsClient(((APlayerPawn*)pPlayer)->Settings->GetName());
+			// rotate text to this
+			NameText->SetWorldRotation((pCamera->GetComponentLocation() - NameText->GetComponentLocation()).Rotation());
 		}
 	}
 }
@@ -441,6 +267,27 @@ void APlayerPawn::ShowTeacherComponentsClient_Implementation(const FString& _nam
 
 	// set name text
 	NameText->SetText(FText::FromString(_name));
+}
+
+// student correctly initialized called to server validate
+bool APlayerPawn::StudentInitializedServer_Validate()
+{
+	return true;
+}
+
+// student correctly initialized called to server implementation
+void APlayerPawn::StudentInitializedServer_Implementation()
+{
+	// get all player
+	TArray<AActor*> FoundPlayers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+
+	// check all players
+	for (AActor* pPlayer : FoundPlayers)
+		// if teacher
+		if (((APlayerPawn*)pPlayer)->IsTeacher())
+			// set init student of teacher
+			((APlayerPawn*)pPlayer)->SetInitStudent(false);
 }
 
 // set location on clients implementation
@@ -489,13 +336,8 @@ void APlayerPawn::BeginPlay()
 	{
 		// if local player set name text on server
 		if (IsLocallyControlled())
-		{
 			// set name text on server
 			SetNameTextServer(Settings->GetName());
-
-			// initialize all single objects on server
-			InitSingleObjectsServer();
-		}
 	}
 
 	// if server
@@ -513,46 +355,46 @@ void APlayerPawn::BeginPlay()
 		// student 33 to 64 start at degree 5.625 and in 11.25 degree steps
 
 		// get all player
-		TArray<AActor*> FoundPlayer;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayer);
+		TArray<AActor*> FoundPlayers;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
 
 		// if player number less than 1 or 1 return
-		if (FoundPlayer.Num() <= 1)
+		if (FoundPlayers.Num() <= 1)
 			return;
 
 		// degree for current player
 		float degree = 0.0f;
 
 		// if player count is between 2 and 5
-		if (FoundPlayer.Num() >= 2 && FoundPlayer.Num() <= 5)
+		if (FoundPlayers.Num() >= 2 && FoundPlayers.Num() <= 5)
 			// calculate degree for current player
-			degree = ((FoundPlayer.Num() - 2) % 4) * 90.0f;
+			degree = ((FoundPlayers.Num() - 2) % 4) * 90.0f;
 
 		// if player count is between 6 and 9
-		else if (FoundPlayer.Num() >= 6 && FoundPlayer.Num() <= 9)
+		else if (FoundPlayers.Num() >= 6 && FoundPlayers.Num() <= 9)
 			// calculate degree for current player
-			degree = 45.0f + ((FoundPlayer.Num() - 2) % 4) * 90.0f;
+			degree = 45.0f + ((FoundPlayers.Num() - 2) % 4) * 90.0f;
 
 		// if player count is between 10 and 17
-		else if (FoundPlayer.Num() >= 10 && FoundPlayer.Num() <= 17)
+		else if (FoundPlayers.Num() >= 10 && FoundPlayers.Num() <= 17)
 			// calculate degree for current player
-			degree = 22.5f + ((FoundPlayer.Num() - 2) % 8) * 45.0f;
+			degree = 22.5f + ((FoundPlayers.Num() - 2) % 8) * 45.0f;
 
 		// if player count is between 18 and 33
-		else if (FoundPlayer.Num() >= 18 && FoundPlayer.Num() <= 33)
+		else if (FoundPlayers.Num() >= 18 && FoundPlayers.Num() <= 33)
 			// calculate degree for current player
-			degree = 11.25f + ((FoundPlayer.Num() - 2) % 16) * 22.5f;
+			degree = 11.25f + ((FoundPlayers.Num() - 2) % 16) * 22.5f;
 
 		// if player count is between 34 and 65
-		else if (FoundPlayer.Num() >= 34 && FoundPlayer.Num() <= 65)
+		else if (FoundPlayers.Num() >= 34 && FoundPlayers.Num() <= 65)
 			// calculate degree for current player
-			degree = 5.625f + ((FoundPlayer.Num() - 2) % 32) * 11.25f;
+			degree = 5.625f + ((FoundPlayers.Num() - 2) % 32) * 11.25f;
 
 		// location of teacher
 		FVector location = FVector();
 
 		// check all players
-		for (AActor* pPlayer : FoundPlayer)
+		for (AActor* pPlayer : FoundPlayers)
 			// if current player is local player
 			if (((APawn*)pPlayer)->IsLocallyControlled())
 				// save location of teacher
@@ -566,5 +408,251 @@ void APlayerPawn::BeginPlay()
 		// set location on clients
 		SetLocationClient(location);
 	}
+}
+#pragma endregion
+
+#pragma region private function
+// initialize student on server
+bool APlayerPawn::InitStudent()
+{
+	// if map is menu or client and not local player disable update and return false
+	if (GetWorld()->GetMapName().Contains("Menu") || (!HasAuthority() && !IsLocallyControlled()))
+	{
+		SetActorTickEnabled(false);
+		return false;
+	}
+
+	// if server
+	if (HasAuthority())
+	{
+		// if teacher
+		if (m_isTeacher)
+		{
+			// if student has to be initialized
+			if(m_initStudent)
+				// show teacher component on clients
+				ShowTeacherComponentsClient(Settings->GetName());
+
+			// return true
+			return true;
+		}
+
+		// not the teacher
+		else
+		{
+			// get all player
+			TArray<AActor*> FoundPlayers;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+
+			// check all players
+			for (AActor* pPlayer : FoundPlayers)
+				// if teacher
+				if (((APlayerPawn*)pPlayer)->IsTeacher())
+					// set init student of teacher
+					((APlayerPawn*)pPlayer)->SetInitStudent(true);
+
+			// disable tick
+			SetActorTickEnabled(false);
+
+			// return false
+			return false;
+		}
+	}
+
+	// client and local player and if student not initialized
+	else if(!m_initStudent)
+	{
+		// get all player
+		TArray<AActor*> FoundPlayers;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+
+		// if any player found
+		if (!FoundPlayers.Num())
+			return false;
+
+		// check all players
+		for (AActor* pPlayer : FoundPlayers)
+		{
+			// if name text of player is not empty
+			if (!((APlayerPawn*)pPlayer)->NameText->Text.IsEmpty())
+			{
+				// set init student true
+				m_initStudent = true;
+
+				// save text render component of current player
+				UTextRenderComponent* pNameText = ((APlayerPawn*)pPlayer)->NameText;
+
+				// rotate text to this
+				pNameText->SetWorldRotation((Camera->GetComponentLocation() - pNameText->GetComponentLocation()).Rotation());
+			}
+		}
+
+		// if student initialized set initialized on server
+		if (m_initStudent)
+			StudentInitializedServer();
+
+		// return false
+		return false;
+	}
+	
+	// client and local player and student initialized return true
+	return true;
+}
+
+// trace from camera forward
+void APlayerPawn::TraceForward()
+{
+	// hit result
+	FHitResult hit;
+
+	// trace from camera forward
+	GetWorld()->LineTraceSingleByChannel(
+		hit,
+		Camera->GetComponentLocation(),
+		Camera->GetComponentLocation() + Camera->GetForwardVector() * 10000,
+		ECollisionChannel::ECC_Visibility
+	);
+
+	// save player status
+	EPlayerStatus status = ((ULTVREGameInstance*)GetGameInstance())->GetPlayerStatus();
+
+	// save trace target to id (0 = no valid target, 1 = question widget target, 2 = single object target)
+	int targetID = 0;
+
+	// target question base
+	UQuestionBase* pTargetQuestionBase = nullptr;
+
+	// if hit component valid and tag correct
+	if (hit.Component.IsValid() &&
+		((hit.Component->ComponentHasTag("QuestionPractice") && status == EPlayerStatus::PRACTICE) ||
+		(hit.Component->ComponentHasTag("QuestionTeacher") && status == EPlayerStatus::TEACHER) ||
+			(hit.Component->ComponentHasTag("QuestionStudent") && status == EPlayerStatus::STUDENT)))
+	{
+		// set target id 1
+		targetID = 1;
+
+		// get question base
+		pTargetQuestionBase = (UQuestionBase*)(((UWidgetComponent*)hit.GetComponent())->GetUserWidgetObject());
+	}
+
+	// if hit actor valid and tag correct
+	else if (hit.Actor.IsValid() && hit.Actor->ActorHasTag("LessonObject") && status != EPlayerStatus::STUDENT)
+	{
+		targetID = 2;
+	}
+
+	// if target id valid
+	if (targetID)
+	{
+		// set trace target
+		m_pTraceTarget = hit.GetActor();
+
+		// if target id is question widget target
+		if (targetID == 1)
+			// release widget interaction click
+			WidgetInteraction->ReleasePointerKey(FKey("LeftMouseButton"));
+
+		// check clickable true
+		if (targetID == 1 && pTargetQuestionBase != nullptr &&
+			pTargetQuestionBase->CheckClickable(((UWidgetComponent*)hit.GetComponent())->GetDrawSize(),
+				hit.GetComponent()->GetComponentTransform(), hit.Location, status))
+		{
+			// increase click timer
+			m_clickTimer += GetWorld()->GetDeltaSeconds();
+		}
+
+		// if trace target is object
+		else if (targetID == 2)
+		{
+			// increase click timer
+			m_clickTimer += GetWorld()->GetDeltaSeconds();
+		}
+
+		// if not clickable
+		else
+		{
+			// reset click timer
+			m_clickTimer = 0.0f;
+		}
+
+		// if click timer lower than time to click return
+		if (m_clickTimer >= ClickTime)
+		{
+			// if target id is question widget target
+			if (targetID == 1)
+			{
+				// click widget interaction
+				WidgetInteraction->PressPointerKey(FKey("LeftMouseButton"));
+
+				// get question base from hit component
+				UQuestionBase* pQuestionBase = (UQuestionBase*)(((UWidgetComponent*)(hit.GetComponent()))->GetUserWidgetObject());
+
+				// click at question base widget
+				pQuestionBase->ClickOnWidget(((UWidgetComponent*)(hit.GetComponent()))->GetDrawSize(),
+					hit.GetComponent()->GetComponentTransform(), hit.Location);
+			}
+
+			// if target id is single object target and player status is not student
+			else if (status != EPlayerStatus::STUDENT)
+			{
+				// save widget component
+				UWidgetComponent* pSingObj;
+
+				// if player status is practice
+				if (status == EPlayerStatus::PRACTICE)
+					// widget component from question practice
+					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionPractice;
+
+				// if player status is teacher
+				else
+					// widget component from question teacher
+					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionTeacher;
+
+				// toggle question widget
+				pSingObj->ToggleVisibility();
+
+				// if question widget visible set trace visible
+				if (pSingObj->IsVisible())
+					pSingObj->SetCollisionProfileName("TraceVisibility");
+
+				// if question widget not visible set no trace
+				else
+					pSingObj->SetCollisionProfileName("NoCollision");
+			}
+
+			// reset click timer
+			m_clickTimer = 0.0f;
+		}
+	}
+
+	// if trace target valid
+	else if (m_pTraceTarget != nullptr)
+	{
+		// set trace target null and click timer 0
+		m_pTraceTarget = nullptr;
+		m_clickTimer = 0.0f;
+
+		// set percentage 0 and set image percentage
+		m_pInteraction->SetPercentage(0.0f);
+		m_pInteraction->SetImagePercentage();
+	}
+
+	// if interaction reference valid
+	if (m_pInteraction)
+	{
+		// set percentage of interaction widget
+		m_pInteraction->SetPercentage(m_clickTimer / ClickTime * 100.0f);
+
+		// set image percentage of interaction widget
+		m_pInteraction->SetImagePercentage();
+	}
+
+	// if server set camera rotation on clients
+	if (HasAuthority())
+		SetCameraRotationClient(Camera->RelativeRotation);
+
+	// if client set camera rotation on server
+	else
+		SetCameraRotationServer(Camera->RelativeRotation);
 }
 #pragma endregion
