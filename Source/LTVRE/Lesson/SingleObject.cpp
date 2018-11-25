@@ -275,6 +275,26 @@ void ASingleObject::SetLessonObject(FLessonObject _lessonObject)
 	SetLessonObjectTexts();
 }
 
+// set given answer
+void ASingleObject::SetAnswerGiven(int _index)
+{
+	// set given answer
+	m_answerGiven = _index;
+
+	// array to save all players into
+	TArray<AActor*> pFoundActors;
+
+	// get all players and save it to the array
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
+
+	// check all players
+	for (AActor* pObj : pFoundActors)
+		// if local player continue
+		if (((APlayerPawn*)pObj)->IsLocallyControlled())
+			// set answer text of player
+			((APlayerPawn*)pObj)->SetAnswerText(LessonObject.Answers[_index], _index == CorrectAnswer);
+}
+
 // show correct answer
 void ASingleObject::ShowCorrectAnswer()
 {

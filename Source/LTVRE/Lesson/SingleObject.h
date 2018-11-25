@@ -147,12 +147,6 @@ public:
 	inline int GetAnswerGiven() { return m_answerGiven; }
 
 	/// <summary>
-	/// set given answer
-	/// </summary>
-	/// <param name="_index">index to set as given answer</param>
-	inline void SetAnswerGiven(int _index) { m_answerGiven = _index; }
-
-	/// <summary>
 	/// check all players
 	/// </summary>
 	inline void CheckPlayers() { CheckPlayersClient(); }
@@ -170,6 +164,12 @@ public:
 	/// </summary>
 	/// <param name="_lessonObject">lesson object to set</param>
 	void SetLessonObject(FLessonObject _lessonObject);
+
+	/// <summary>
+	/// set given answer
+	/// </summary>
+	/// <param name="_index">index to set as given answer</param>
+	void SetAnswerGiven(int _index);
 
 	/// <summary>
 	/// show correct answer
