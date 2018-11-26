@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Styling/SlateStyle.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
 #pragma endregion
 
@@ -118,6 +119,20 @@ public:
 	/// </summary>
 	/// <param name="_pObj">object reference</param>
 	inline void SetObject(ASingleObject* _pObj) { m_pObject = _pObj; }
+
+	/// <summary>
+	/// remove question
+	/// </summary>
+	inline void RemoveQuestion()
+	{
+		// if show hide question valid
+		if (m_pShowHideQuestionButton)
+		{
+			// remove show hide question button and text
+			m_pShowHideQuestionButton->RemoveFromParent();
+			m_pShowHideQuestionButtonText->RemoveFromParent();
+		}
+	}
 #pragma endregion
 
 #pragma region public function

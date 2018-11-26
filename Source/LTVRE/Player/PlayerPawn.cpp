@@ -722,28 +722,36 @@ void APlayerPawn::TraceForward()
 			else if (status != EPlayerStatus::STUDENT)
 			{
 				// save widget component
-				UWidgetComponent* pSingObj;
+				UWidgetComponent* pWidgetComp;
 
 				// if player status is practice
 				if (status == EPlayerStatus::PRACTICE)
+				{
 					// widget component from question practice
-					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionPractice;
+					pWidgetComp = ((ASingleObject*)hit.GetActor())->QuestionPractice;
+
+					// if lesson is not answerable remove show hide question button
+					if (((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson().Availability != ELessonAvailability::ANSWERABLE)
+						((UQuestionBase*)(pWidgetComp->GetUserWidgetObject()))->RemoveQuestion();
+				}
 
 				// if player status is teacher
 				else
+				{
 					// widget component from question teacher
-					pSingObj = ((ASingleObject*)hit.GetActor())->QuestionTeacher;
+					pWidgetComp = ((ASingleObject*)hit.GetActor())->QuestionTeacher;
+				}
 
 				// toggle question widget
-				pSingObj->ToggleVisibility();
+				pWidgetComp->ToggleVisibility();
 
 				// if question widget visible set trace visible
-				if (pSingObj->IsVisible())
-					pSingObj->SetCollisionProfileName("TraceVisibility");
+				if (pWidgetComp->IsVisible())
+					pWidgetComp->SetCollisionProfileName("TraceVisibility");
 
 				// if question widget not visible set no trace
 				else
-					pSingObj->SetCollisionProfileName("NoCollision");
+					pWidgetComp->SetCollisionProfileName("NoCollision");
 			}
 
 			// reset click timer
