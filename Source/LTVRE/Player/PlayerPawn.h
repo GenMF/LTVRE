@@ -14,6 +14,7 @@ class UCameraComponent;
 class USettingsComponent;
 class ULessonsComponent;
 class UWidgetInteractionComponent;
+class UWidgetComponent;
 class UTextRenderComponent;
 class UInteraction;
 class UQuestionBase;
@@ -68,6 +69,12 @@ public:
 	/// text render component of player name
 	/// </summary>
 	UTextRenderComponent* NameText;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
+	/// <summary>
+	/// menu widget component of player
+	/// </summary>
+	UWidgetComponent* MenuWidget;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Pawn")
 	/// <summary>

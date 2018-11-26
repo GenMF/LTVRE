@@ -47,6 +47,12 @@ APlayerPawn::APlayerPawn()
 	NameText->SetupAttachment(pRoot);
 	NameText->SetOwnerNoSee(true);
 
+	// create default text render component
+	MenuWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Menuwidget"));
+	MenuWidget->SetupAttachment(pRoot);
+	MenuWidget->SetOnlyOwnerSee(true);
+	MenuWidget->ComponentTags.Add("MenuWidget");
+
 	// create default settings component
 	Settings = CreateDefaultSubobject<USettingsComponent>(TEXT("Settings"));
 
@@ -68,7 +74,7 @@ void APlayerPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// if student initialized trace from camera forward
-	if(InitStudent())
+	if (InitStudent())
 		TraceForward();
 }
 #pragma endregion
@@ -413,8 +419,13 @@ void APlayerPawn::BeginPlay()
 	{
 		// if local player set name text on server
 		if (IsLocallyControlled())
+		{
 			// set name text on server
 			SetNameTextServer(Settings->GetName());
+
+			// set visibility of menu widget
+			MenuWidget->SetCollisionProfileName("TraceVisibility");
+		}
 	}
 
 	// if server
@@ -422,7 +433,12 @@ void APlayerPawn::BeginPlay()
 	{
 		// if local player initialize lesson
 		if (IsLocallyControlled())
+		{
 			InitializeLesson();
+
+			// set visibility of menu widget
+			MenuWidget->SetCollisionProfileName("TraceVisibility");
+		}
 
 		// calculate position of player
 		// student 1 to 4 start at degree 0 and in 90 degree steps
@@ -618,6 +634,12 @@ void APlayerPawn::TraceForward()
 		targetID = 2;
 	}
 
+	// if hit component valid and tag is menu widget
+	else if (hit.Component.IsValid() && hit.Component->ComponentHasTag("MenuWidget"))
+	{
+		targetID = 3;
+	}
+
 	// if target id valid
 	if (targetID)
 	{
@@ -639,7 +661,7 @@ void APlayerPawn::TraceForward()
 		}
 
 		// if trace target is object
-		else if (targetID == 2)
+		else if (targetID == 2 || targetID == 3)
 		{
 			// increase click timer
 			m_clickTimer += GetWorld()->GetDeltaSeconds();
@@ -667,6 +689,17 @@ void APlayerPawn::TraceForward()
 				// click at question base widget
 				pQuestionBase->ClickOnWidget(((UWidgetComponent*)(hit.GetComponent()))->GetDrawSize(),
 					hit.GetComponent()->GetComponentTransform(), hit.Location);
+			}
+
+			// if target is 3
+			else if (targetID == 3)
+			{
+				// get player controller
+				APlayerController* pPlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+				
+				// if player controller valid disconnect from lesson
+				if (pPlayerController)
+					pPlayerController->ConsoleCommand(TEXT("disconnect"), true);
 			}
 
 			// if target id is single object target and player status is not student
