@@ -464,6 +464,10 @@ FVector2D UQuestionBase::CalculatePositionRelativeToWidget(FVector2D _widgetSize
 // check if position is in button
 bool UQuestionBase::CheckPositionInButton(FVector2D _position, UButton* _pButton)
 {
+	// if slot not valid
+	if (!((UCanvasPanelSlot*)(_pButton->Slot)))
+		return false;
+
 	// get anchors from button
 	FAnchors anchors = ((UCanvasPanelSlot*)(_pButton->Slot))->GetAnchors();
 
