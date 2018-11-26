@@ -372,10 +372,17 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 		m_pObject->HideShowQuestion();
 	}
 
-	// if anchor is in question button show correct answer
+	// if anchor is in question button
 	else if (m_pQuestionButton != nullptr && CheckPositionInButton(anchor, m_pQuestionButton))
 	{
+		// show correct answer
 		m_pObject->ShowCorrectAnswer();
+
+		// set answerable of question false
+		m_pObject->Answerable = false;
+
+		// set question buttontext  green to show that correct answer is shown
+		m_pQuestionButtonText->SetColorAndOpacity(FLinearColor::Green);
 	}
 
 	// if no other button clicked check answer buttons
@@ -387,6 +394,10 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 			// if anchor is in answer button and no answer given set given answer
 			if (CheckPositionInButton(anchor, m_pAnswerButtons[i]) && m_pObject->GetAnswerGiven() < 0)
 			{
+				// if not answerable continue
+				if (!m_pObject->Answerable)
+					continue;
+
 				// set given answer at index
 				m_pObject->SetAnswerGiven(i);
 

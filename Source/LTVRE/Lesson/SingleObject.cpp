@@ -350,6 +350,7 @@ void ASingleObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// replicate variable
+	DOREPLIFETIME(ASingleObject, Answerable);
 	DOREPLIFETIME(ASingleObject, CorrectAnswer);
 	DOREPLIFETIME(ASingleObject, MeshesVisible);
 	DOREPLIFETIME(ASingleObject, NoticeVisible);

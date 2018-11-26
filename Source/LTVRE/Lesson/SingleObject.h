@@ -42,6 +42,12 @@ public:
 #pragma region UPROPERTY
 	UPROPERTY(Replicated)
 	/// <summary>
+	/// if question can be answered
+	/// </summary>
+	bool Answerable = true;
+
+	UPROPERTY(Replicated)
+	/// <summary>
 	/// index of correct answer
 	/// </summary>
 	int CorrectAnswer = -1;
