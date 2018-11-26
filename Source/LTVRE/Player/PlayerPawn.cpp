@@ -500,6 +500,22 @@ void APlayerPawn::BeginPlay()
 
 		// set location on clients
 		SetLocationClient(location);
+
+		// if local player return
+		if (IsLocallyControlled())
+			return;
+
+		// get all objects
+		TArray<AActor*> FoundObjects;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), FoundObjects);
+
+		// check all object
+		for (AActor* pObj : FoundObjects)
+		{
+			// set no collision for question widgets
+			((ASingleObject*)pObj)->QuestionTeacher->SetCollisionProfileName("NoCollision");
+			((ASingleObject*)pObj)->QuestionPractice->SetCollisionProfileName("NoCollision");
+		}
 	}
 }
 #pragma endregion
