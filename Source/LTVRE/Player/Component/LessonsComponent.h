@@ -280,11 +280,56 @@ public:
 	void DeleteCurrentQuestion();
 #pragma endregion
 
+#pragma region public inline function
+	/// <summary>
+	/// set lesson name of lesson result
+	/// </summary>
+	/// <param name="_name">name to set</param>
+	inline void SetResultLessonName(FString _name) { m_lessonResult.m_LessonName = _name; }
+
+	/// <summary>
+	/// set start date and time of lesson
+	/// </summary>
+	/// <param name="_date">date as string to set</param>
+	inline void SetResultLessonDate(FString _date) { m_lessonResult.m_LessonDate = _date; }
+
+	/// <summary>
+	/// set teacher name of result lesson
+	/// </summary>
+	/// <param name="_name">name of teacher to set</param>
+	inline void SetResultLessonTeacher(FString _name) { m_lessonResult.m_TeacherName = _name; }
+#pragma endregion
+
 #pragma region public function
 	/// <summary>
 	/// load Lessons.xml
 	/// </summary>
 	void LoadLessons();
+
+	/// <summary>
+	/// add question to result lesson
+	/// </summary>
+	/// <param name="_lessonObj">lesson object to add</param>
+	void AddResultLessonQuestion(FLessonObject _lessonObj);
+
+	/// <summary>
+	/// add student to result lesson
+	/// </summary>
+	/// <param name="_name">name of student to add</param>
+	void AddResultLessonStudent(FString _name);
+
+	/// <summary>
+	/// set given answer of student in result lesson
+	/// </summary>
+	/// <param name="_studentName">student name</param>
+	/// <param name="_objName">object name</param>
+	/// <param name="_answer">answer</param>
+	void SetResultQuestionGivenAnswer(FString _studentName, FString _objName, FString _answer);
+
+	/// <summary>
+	/// save result of lesson
+	/// </summary>
+	void SaveLessonResult();
 #pragma endregion
 
 private:
@@ -333,6 +378,11 @@ private:
 	/// lesson categories that player can edit
 	/// </summary>
 	TArray<ELessonCategory> m_categories;
+
+	/// <summary>
+	/// result of current lesson
+	/// </summary>
+	FLessonResult m_lessonResult;
 # pragma endregion
 
 #pragma region private function
