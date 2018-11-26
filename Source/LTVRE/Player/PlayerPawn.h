@@ -127,7 +127,8 @@ public:
 	/// </summary>
 	/// <param name="_name">name to set</param>
 	/// <param name="_color">color of text</param>
-	void SetNameTextServer(const FString& _name, FLinearColor _color = FLinearColor::White);
+	/// <param name="_objName">name of object from given answer</param>
+	void SetNameTextServer(const FString& _name, FLinearColor _color = FLinearColor::White, const FString& _objName = "");
 
 	UFUNCTION(NetMulticast, Unreliable)
 	/// <summary>
@@ -168,9 +169,10 @@ public:
 	/// <summary>
 	/// set name text with answer
 	/// </summary>
+	/// <param name="_objName">name of object</param>
 	/// <param name="_text">answer text</param>
 	/// <param name="_correct">answer is correct</param>
-	void SetAnswerText(FString _text, bool _correct);
+	void SetAnswerGiven(FString _objName, FString _text, bool _correct);
 #pragma endregion
 
 protected:

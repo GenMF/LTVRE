@@ -399,6 +399,65 @@ void ULessonsComponent::LoadLessons()
 	m_objectGroups = ftlp.m_LessonObjectGroups;
 	m_lessons = ftlp.m_Lessons;
 }
+
+// add question to result lesson
+void ULessonsComponent::AddResultLessonQuestion(FLessonObject _lessonObj)
+{
+	// add new result question
+	m_lessonResult.m_Questions.Add(FResultQuestion());
+
+	// set lesson object of added result question
+	m_lessonResult.m_Questions[m_lessonResult.m_Questions.Num() - 1].m_Question = _lessonObj;
+}
+
+// add student to result lesson
+void ULessonsComponent::AddResultLessonStudent(FString _name)
+{
+	// check all result questions
+	for (int i = 0; i < m_lessonResult.m_Questions.Num(); i++)
+	{
+		// add new student and answer
+		m_lessonResult.m_Questions[i].m_StudentsAnswer.Add(FResultStudentAnswer());
+
+		// set name of added student
+		m_lessonResult.m_Questions[i].m_StudentsAnswer[m_lessonResult.m_Questions[i].m_StudentsAnswer.Num() - 1].m_Name = _name;
+	}
+}
+
+// set given answer of student in result lesson
+void ULessonsComponent::SetResultQuestionGivenAnswer(FString _studentName, FString _objName, FString _answer)
+{
+	// check all result questions
+	for (int i = 0; i < m_lessonResult.m_Questions.Num(); i++)
+		// if question object equal answered object
+		if (m_lessonResult.m_Questions[i].m_Question.ObjectName == _objName)
+			// check all student answers of question
+			for (int j = 0; j < m_lessonResult.m_Questions[i].m_StudentsAnswer.Num(); j++)
+				// if name of student is equal with given name
+				if (m_lessonResult.m_Questions[i].m_StudentsAnswer[j].m_Name == _studentName)
+					// set answer of current student
+					m_lessonResult.m_Questions[i].m_StudentsAnswer[j].m_GivenAnswer = _answer;
+}
+
+// save result of lesson
+void ULessonsComponent::SaveLessonResult()
+{
+	// file to write into
+	ofstream file;
+
+	// open file
+	file.open(TCHAR_TO_ANSI(*Helper::GetAbsoluteFileName(FString(m_lessonResult.m_LessonDate).Append(".xml"))));
+
+	// if file could not be opened return
+	if (!file.is_open())
+		return;
+
+	// write lesson result to file
+	file << TCHAR_TO_ANSI(*Helper::StructToStringXML(m_lessonResult));
+
+	// close file
+	file.close();
+}
 #pragma endregion
 
 #pragma region private function

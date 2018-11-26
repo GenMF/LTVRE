@@ -223,4 +223,62 @@ struct FLesson
 	/// </summary>
 	FLessonMap Map;
 };
+
+/// <summary>
+/// answer of student
+/// </summary>
+struct FResultStudentAnswer
+{
+	/// <summary>
+	/// name of student
+	/// </summary>
+	FString m_Name;
+
+	/// <summary>
+	/// given answer
+	/// </summary>
+	FString m_GivenAnswer = "";
+};
+
+/// <summary>
+/// question in result
+/// </summary>
+struct FResultQuestion
+{
+	/// <summary>
+	/// question information
+	/// </summary>
+	FLessonObject m_Question;
+
+	/// <summary>
+	/// students answer
+	/// </summary>
+	TArray<FResultStudentAnswer> m_StudentsAnswer;
+};
+
+/// <summary>
+/// result of current lesson
+/// </summary>
+struct FLessonResult
+{
+	/// <summary>
+	/// name of lesson
+	/// </summary>
+	FString m_LessonName;
+
+	/// <summary>
+	/// start time and date of lesson
+	/// </summary>
+	FString m_LessonDate;
+
+	/// <summary>
+	/// name of teacher
+	/// </summary>
+	FString m_TeacherName;
+
+	/// <summary>
+	/// all questions
+	/// </summary>
+	TArray<FResultQuestion> m_Questions;
+};
 #pragma endregion

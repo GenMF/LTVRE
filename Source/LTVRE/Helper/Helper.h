@@ -79,6 +79,68 @@ public:
 
 #pragma region lesson
 	/// <summary>
+	/// convert lesson recult struct to string in xml format
+	/// </summary>
+	/// <param name="_lessonResult">lesson result to convert</param>
+	/// <param name="_tabs">number of tabs</param>
+	/// <returns>string in xml format</returns>
+	static FString StructToStringXML(FLessonResult _lessonResult, int _tabs = 0)
+	{
+		// string to return
+		FString text = "";
+
+		// name of lesson element
+		text.Append(Element("Lesson", _lessonResult.m_LessonName, _tabs));
+
+		// teacher name of lesson element
+		text.Append(Element("Teacher", _lessonResult.m_TeacherName, _tabs));
+
+		// date of lesson
+		text.Append(Element("Date", _lessonResult.m_LessonDate, _tabs));
+
+		// check all questions
+		for (FResultQuestion resQuestion : _lessonResult.m_Questions)
+		{
+			// question open element
+			text.Append(OpenElement("Question", _tabs));
+
+			// notice element
+			text.Append(Element("Notice", resQuestion.m_Question.Notice, _tabs + 1));
+
+			// question element
+			text.Append(Element("Question", resQuestion.m_Question.Question, _tabs + 1));
+
+			// check all answer
+			for (int i = 0; i < resQuestion.m_Question.Answers.Num(); i++)
+				// add answer element
+				text.Append(Element(FString("Answer").Append(FString::FromInt(i + 1)), 
+					resQuestion.m_Question.Answers[i], _tabs + 1));
+
+			// check all student answers
+			for (FResultStudentAnswer resStudentAnswer : resQuestion.m_StudentsAnswer)
+			{
+				// student open element
+				text.Append(OpenElement("Student", _tabs + 1));
+
+				// student name element
+				text.Append(Element("Name", resStudentAnswer.m_Name, _tabs + 2));
+
+				// answer element
+				text.Append(Element("Answer", resStudentAnswer.m_GivenAnswer, _tabs + 2));
+
+				// student close element
+				text.Append(CloseElement("Student", _tabs + 1));
+			}
+
+			// question close element
+			text.Append(CloseElement("Question", _tabs));
+		}
+
+		// return full string
+		return text;
+	}
+
+	/// <summary>
 	/// convert lesson struct to string in xml format
 	/// </summary>
 	/// <param name="_lesson">lesson to convert</param>

@@ -83,6 +83,34 @@ void APlayerPawn::InitializeLesson()
 	// get current lesson
 	FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
 
+	// set lesson name of result lesson
+	Lessons->SetResultLessonName(lesson.Name);
+
+	// set teacher name of result lesson
+	Lessons->SetResultLessonTeacher(Settings->GetName());
+
+	// date string and date
+	FString date = "";
+	FDateTime dateTime = FDateTime::Now();
+
+	// append month, day and year
+	date.Append(FString::FromInt(dateTime.GetDay()));
+	date.Append("_");
+	date.Append(FString::FromInt(dateTime.GetMonth()));
+	date.Append("_");
+	date.Append(FString::FromInt(dateTime.GetYear()));
+	date.Append("_");
+
+	// append hour, minutes and seconds
+	date.Append(FString::FromInt(dateTime.GetHour()));
+	date.Append("_");
+	date.Append(FString::FromInt(dateTime.GetMinute()));
+	date.Append("_");
+	date.Append(FString::FromInt(dateTime.GetSecond()));
+
+	// set date of result lesson
+	Lessons->SetResultLessonDate(date);
+
 	// get all place object group actors
 	TArray<AActor*> FoundPlaceObjectGroup;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALocationObjectGroup::StaticClass(), FoundPlaceObjectGroup);
@@ -176,6 +204,15 @@ void APlayerPawn::InitializeLesson()
 
 												// rotate widgets to player camera
 												pSingleObj->QuestionWidgetRotateTo(Camera->GetComponentLocation());
+
+												// lesson object for result lesson
+												FLessonObject resLesson = lessonObj;
+
+												// set object name of result question
+												resLesson.ObjectName = pSingleObj->GetName();
+
+												// add result question
+												Lessons->AddResultLessonQuestion(resLesson);
 											}
 										}
 									}
@@ -223,13 +260,13 @@ void APlayerPawn::SetCameraRotationClient_Implementation(FRotator rotation)
 }
 
 // set name text on server validate
-bool APlayerPawn::SetNameTextServer_Validate(const FString& _name, FLinearColor _color = FLinearColor::White)
+bool APlayerPawn::SetNameTextServer_Validate(const FString& _name, FLinearColor _color, const FString& _objName)
 {
 	return true;
 }
 
 // set name text on server implementation
-void APlayerPawn::SetNameTextServer_Implementation(const FString& _name, FLinearColor _color = FLinearColor::White)
+void APlayerPawn::SetNameTextServer_Implementation(const FString& _name, FLinearColor _color, const FString& _objName)
 {
 	// show head mesh
 	HeadMesh->SetVisibility(true);
@@ -255,6 +292,46 @@ void APlayerPawn::SetNameTextServer_Implementation(const FString& _name, FLinear
 
 			// rotate text to this
 			NameText->SetWorldRotation((pCamera->GetComponentLocation() - NameText->GetComponentLocation()).Rotation());
+
+			// if object name is given
+			if (_objName != "")
+			{
+				// split name in name and answer
+				// given is name, than \n and answer
+
+				// name and answer text
+				FString name = "";
+				FString answer = "";
+
+				// name is set
+				bool nameSet = false;
+
+				// check all chars in name
+				for (int i = 0; i < _name.Len(); i++)
+					// if name set add char to answer
+					if (nameSet)
+						answer += _name[i];
+
+				// if answer not set and current char is not new line
+					else if (_name[i] != '\n')
+						name += _name[i];
+
+				// if new line set name set true
+					else
+						nameSet = true;
+
+				// set given answer of student at result lesson
+				((APlayerPawn*)pPlayer)->Lessons->SetResultQuestionGivenAnswer(name, _objName, answer);
+
+				// save lesson result to file
+				((APlayerPawn*)pPlayer)->Lessons->SaveLessonResult();
+
+				// return
+				return;
+			}
+
+			// add student to result lesson of teacher
+			((APlayerPawn*)pPlayer)->Lessons->AddResultLessonStudent(_name);
 		}
 	}
 }
@@ -299,7 +376,7 @@ void APlayerPawn::SetLocationClient_Implementation(FVector _location)
 
 #pragma region public function
 // set name text with answer
-void APlayerPawn::SetAnswerText(FString _text, bool _correct)
+void APlayerPawn::SetAnswerGiven(FString _objName, FString _text, bool _correct)
 {
 	// get name from settings
 	FString text = Settings->GetName();
@@ -310,11 +387,11 @@ void APlayerPawn::SetAnswerText(FString _text, bool _correct)
 
 	// if correct answer set text on server green
 	if (_correct)
-		SetNameTextServer(text, FLinearColor::Green);
+		SetNameTextServer(text, FLinearColor::Green, _objName);
 
 	// if not correct answer set text on server red
 	else
-		SetNameTextServer(text, FLinearColor::Red);
+		SetNameTextServer(text, FLinearColor::Red, _objName);
 }
 #pragma endregion
 

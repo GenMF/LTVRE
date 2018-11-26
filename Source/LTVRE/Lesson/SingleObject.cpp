@@ -292,7 +292,7 @@ void ASingleObject::SetAnswerGiven(int _index)
 		// if local player continue
 		if (((APlayerPawn*)pObj)->IsLocallyControlled())
 			// set answer text of player
-			((APlayerPawn*)pObj)->SetAnswerText(LessonObject.Answers[_index], _index == CorrectAnswer);
+			((APlayerPawn*)pObj)->SetAnswerGiven(GetName(), LessonObject.Answers[_index], _index == CorrectAnswer);
 }
 
 // show correct answer
