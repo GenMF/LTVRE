@@ -307,6 +307,12 @@ public:
 	void LoadLessons();
 
 	/// <summary>
+	/// add lesson
+	/// </summary>
+	/// <param name="_lesson"></param>
+	void AddLesson(FLesson _lesson);
+
+	/// <summary>
 	/// add question to result lesson
 	/// </summary>
 	/// <param name="_lessonObj">lesson object to add</param>

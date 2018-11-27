@@ -6,6 +6,7 @@
 #pragma endregion
 
 #pragma region project includes
+#include "Utility/Structs.h"
 #include "PlayerPawn.generated.h"  
 #pragma endregion
 
@@ -114,6 +115,13 @@ public:
 	/// </summary>
 	void SetInteraction(UInteraction* Interaction);
 
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// add lesson to list
+	/// </summary>
+	/// <param name="_lesson">lesson to add</param>
+	void AddLessonClient(FLesson _lesson);
+
 	UFUNCTION(Server, Unreliable, WithValidation)
 	/// <summary>
 	/// set camera rotation on server
@@ -173,6 +181,12 @@ public:
 #pragma endregion
 
 #pragma region public function
+	/// <summary>
+	/// add lesson to clients
+	/// </summary>
+	/// <param name="_lesson">lesson to add</param>
+	void AddLessonToClients(FLesson _lesson);
+
 	/// <summary>
 	/// set name text with answer
 	/// </summary>
