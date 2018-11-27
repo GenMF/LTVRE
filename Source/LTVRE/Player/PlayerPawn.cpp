@@ -243,6 +243,14 @@ void APlayerPawn::SetInteraction(UInteraction* Interaction)
 	m_pInteraction->SetImagePercentage();
 }
 
+// add lesson to list
+void APlayerPawn::AddLessonClient_Implementation(FLesson _lesson)
+{
+	// if student add lesson to lessons component
+	if (!m_isTeacher)
+		Lessons->AddLesson(_lesson);
+}
+
 // set rotation on server validate
 bool APlayerPawn::SetCameraRotationServer_Validate(FRotator rotation)
 {
@@ -381,6 +389,13 @@ void APlayerPawn::SetLocationClient_Implementation(FVector _location)
 #pragma endregion
 
 #pragma region public function
+// add lesson to clients
+void APlayerPawn::AddLessonToClients(FLesson _lesson)
+{
+	// add lesson to clients
+	AddLessonClient(_lesson);
+}
+
 // set name text with answer
 void APlayerPawn::SetAnswerGiven(FString _objName, FString _text, bool _correct)
 {
@@ -710,6 +725,21 @@ void APlayerPawn::TraceForward()
 			// if target is 3
 			else if (targetID == 3)
 			{
+				// get all players
+				TArray<AActor*> FoundPlayers;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+
+				// get lesson from teacher
+				FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
+
+				// set creator of lesson to teacher name
+				lesson.Creator = Settings->GetName();
+
+				// check all players
+				for (AActor* pPlayer : FoundPlayers)
+					// add lesson to clients
+					((APlayerPawn*)pPlayer)->AddLessonToClients(lesson);
+
 				// get player controller
 				APlayerController* pPlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 				

@@ -400,6 +400,16 @@ void ULessonsComponent::LoadLessons()
 	m_lessons = ftlp.m_Lessons;
 }
 
+// add lesson
+void ULessonsComponent::AddLesson(FLesson _lesson)
+{
+	// add lesson
+	m_lessons.Add(_lesson);
+
+	// save lessons
+	SaveLesson();
+}
+
 // add question to result lesson
 void ULessonsComponent::AddResultLessonQuestion(FLessonObject _lessonObj)
 {
