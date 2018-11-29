@@ -73,9 +73,15 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// if student initialized trace from camera forward
+	// if student initialized
 	if (InitStudent())
+	{
+		// trace from camera forward
 		TraceForward();
+
+		// set rotation of menu widget
+		MenuWidget->SetRelativeRotation(FRotator(90.0f, 0.0f, -Camera->RelativeRotation.Yaw + 180.0f));
+	}
 }
 #pragma endregion
 
@@ -745,7 +751,14 @@ void APlayerPawn::TraceForward()
 				
 				// if player controller valid disconnect from lesson
 				if (pPlayerController)
+				{
+					// disconnect from server
 					pPlayerController->ConsoleCommand(TEXT("disconnect"), true);
+
+					// if server destroy session
+					if (m_isTeacher)
+						DestroySession();
+				}
 			}
 
 			// if target id is single object target and player status is not student
