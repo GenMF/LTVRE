@@ -103,6 +103,12 @@ public:
 #pragma endregion
 
 #pragma region UFUNCTION
+	UFUNCTION(BlueprintImplementableEvent, Category = "Single object")
+	/// <summary>
+	/// hide or show static meshes in blueprint
+	/// </summary>
+	void DestroySession();
+
 	UFUNCTION(BlueprintCallable, Category = "Player Pawn")
 	/// <summary>
 	/// initialize lesson in vr level
