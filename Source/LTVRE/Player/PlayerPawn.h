@@ -170,6 +170,12 @@ public:
 	/// </summary>
 	/// <param name="_location">location to set</param>
 	void SetLocationClient(FVector _location);
+
+	UFUNCTION(NetMulticast, Reliable)
+	/// <summary>
+	/// disconnect student on clients
+	/// </summary>
+	void DisconnectStudentClient();
 #pragma endregion
 
 #pragma region public inline function
@@ -184,6 +190,11 @@ public:
 	/// </summary>
 	/// <param name="_initStudent">student has to be initialized</param>
 	inline void SetInitStudent(bool _initStudent) { m_initStudent = _initStudent; }
+
+	/// <summary>
+	/// disconnect student
+	/// </summary>
+	inline void DisconnectStudent() { DisconnectStudentClient(); }
 #pragma endregion
 
 #pragma region public function
