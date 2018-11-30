@@ -79,7 +79,7 @@ public:
 
 #pragma region lesson
 	/// <summary>
-	/// convert lesson recult struct to string in xml format
+	/// convert lesson result struct to string in xml format
 	/// </summary>
 	/// <param name="_lessonResult">lesson result to convert</param>
 	/// <param name="_tabs">number of tabs</param>
@@ -98,11 +98,66 @@ public:
 		// date of lesson
 		text.Append(Element("Date", _lessonResult.m_LessonDate, _tabs));
 
+		// if questions available and at least one student
+		if (_lessonResult.m_Questions.Num() > 0 && _lessonResult.m_Questions[0].m_StudentsAnswer.Num() > 0)
+		{
+			// question count
+			int questionCount = _lessonResult.m_Questions.Num();
+
+			// check all result student answers
+			for (int i = 0; i < _lessonResult.m_Questions[0].m_StudentsAnswer.Num(); i++)
+			{
+				// add student result open element
+				text.Append(OpenElement("StudentResult", _tabs));
+
+				// add student name element
+				text.Append(Element("Name", _lessonResult.m_Questions[0].m_StudentsAnswer[i].m_Name, _tabs + 1));
+
+				// current student correct answer count
+				int correctAnswers = 0;
+
+				// check all questions
+				for (FResultQuestion resQuestion : _lessonResult.m_Questions)
+					// if first answer equal student answer increase correct answer count
+					if (resQuestion.m_Question.Answers[0] == resQuestion.m_StudentsAnswer[i].m_GivenAnswer)
+						correctAnswers++;
+
+				// if correct answer higher than 0 calculate percentage and save in correct answer
+				if (correctAnswers)
+					correctAnswers = (int)(100.0f * correctAnswers / questionCount);
+
+				// add percentage element
+				text.Append(Element("Percentage", FString::FromInt(correctAnswers), _tabs + 1));
+
+				// add student result close element
+				text.Append(CloseElement("StudentResult", _tabs));
+			}
+		}
+
 		// check all questions
 		for (FResultQuestion resQuestion : _lessonResult.m_Questions)
 		{
 			// question open element
 			text.Append(OpenElement("Question", _tabs));
+
+			// get student count
+			int studentCount = resQuestion.m_StudentsAnswer.Num();
+
+			// number of correct answers
+			int correctAnswers = 0;
+
+			// check all result student answers
+			for (FResultStudentAnswer resStudentAnswer : resQuestion.m_StudentsAnswer)
+				// if answer given equal first answer increase correct answer count
+				if (resQuestion.m_Question.Answers[0] == resStudentAnswer.m_GivenAnswer)
+					correctAnswers++;
+
+			// if correct answer higher than 0 calculate percentage and save in correct answer
+			if (correctAnswers)
+				correctAnswers = (int)(100.0f * correctAnswers / studentCount);
+
+			// add percentage element
+			text.Append(Element("Percentage", FString::FromInt(correctAnswers), _tabs + 1));
 
 			// notice element
 			text.Append(Element("Notice", resQuestion.m_Question.Notice, _tabs + 1));
@@ -112,9 +167,17 @@ public:
 
 			// check all answer
 			for (int i = 0; i < resQuestion.m_Question.Answers.Num(); i++)
+			{
+				// element text
+				FString elementText = FString("Answer").Append(FString::FromInt(i + 1)); ;
+
+				// if first answer add correct to element
+				if (i == 0)
+					elementText.Append("(correct)");
+
 				// add answer element
-				text.Append(Element(FString("Answer").Append(FString::FromInt(i + 1)), 
-					resQuestion.m_Question.Answers[i], _tabs + 1));
+				text.Append(Element(elementText, resQuestion.m_Question.Answers[i], _tabs + 1));
+			}
 
 			// check all student answers
 			for (FResultStudentAnswer resStudentAnswer : resQuestion.m_StudentsAnswer)
