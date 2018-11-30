@@ -392,6 +392,27 @@ void APlayerPawn::SetLocationClient_Implementation(FVector _location)
 {
 	SetActorLocation(_location);
 }
+
+// disconnect student on clients
+void APlayerPawn::DisconnectStudentClient_Implementation()
+{
+	// if not local player return
+	if (!IsLocallyControlled())
+		return;
+
+	// get player controller
+	APlayerController* pPlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	// if player controller valid disconnect from lesson
+	if (pPlayerController)
+	{
+		// disconnect from server
+		pPlayerController->ConsoleCommand(TEXT("disconnect"), true);
+
+		// destroy session
+		DestroySession();
+	}
+}
 #pragma endregion
 
 #pragma region public function
@@ -752,12 +773,37 @@ void APlayerPawn::TraceForward()
 				// if player controller valid disconnect from lesson
 				if (pPlayerController)
 				{
+					// if teacher
+					if (m_isTeacher)
+					{
+						// check all players
+						for (AActor* pPlayer : FoundPlayers)
+						{
+							if (((APlayerPawn*)pPlayer) == this)
+								continue;
+
+							((APlayerPawn*)pPlayer)->DisconnectStudent();
+						}
+					}
+
+					// timer to disconnect save
+					float timer = 1.0f;
+
+					// until only one player left of save timer under 0
+					while (FoundPlayers.Num() > 1 && timer > 0)
+					{
+						// get all players
+						UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+
+						// decrease timer
+						timer -= GetWorld()->GetDeltaSeconds();
+					}
+
 					// disconnect from server
 					pPlayerController->ConsoleCommand(TEXT("disconnect"), true);
 
-					// if server destroy session
-					if (m_isTeacher)
-						DestroySession();
+					// destroy session
+					DestroySession();
 				}
 			}
 
