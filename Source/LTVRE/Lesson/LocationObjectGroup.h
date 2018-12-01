@@ -26,8 +26,8 @@ public:
 	ALocationObjectGroup()
 	{
 		// simple sphere component to see the object
-		USphereComponent* Root = CreateDefaultSubobject<USphereComponent>(TEXT("Root"));
-		RootComponent = Root;
+		USphereComponent* pRoot = CreateDefaultSubobject<USphereComponent>(TEXT("Root"));
+		RootComponent = pRoot;
 	}
 #pragma endregion
 

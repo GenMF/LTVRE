@@ -214,7 +214,7 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 		m_currentObjectGroup.Objects.Add(FObjectGroupObject());
 
 	// object group object to set
-	FObjectGroupObject objGrpObj;
+	FObjectGroupObject objGrpObj = FObjectGroupObject();
 
 	// set name of object group object
 	objGrpObj.Name = LessonObjectName;
@@ -382,8 +382,8 @@ void ULessonsComponent::LoadLessons()
 	FileToLessonParser ftlp;
 
 	// error saves
-	FText errorText;
-	int errorNumber;
+	FText errorText = FText::FromString("");
+	int errorNumber = 0;
 
 	// parse xml file into file to string parser
 	if (!FFastXml::ParseXmlFile(&ftlp, *Helper::GetAbsoluteFileName("Lessons.xml"),

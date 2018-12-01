@@ -24,7 +24,7 @@ struct FPlayerSettings
 	/// <summary>
 	/// type of player
 	/// </summary>
-	EPlayerType Type;
+	EPlayerType Type = EPlayerType::STUDENT;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Player settings")
 	/// <summary>
@@ -59,25 +59,25 @@ struct FLessonObject
 	/// <summary>
 	/// name of object
 	/// </summary>
-	FString Name;
+	FString Name = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// object name of object
 	/// </summary>
-	FString ObjectName;
+	FString ObjectName = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// notice to this object
 	/// </summary>
-	FString Notice;
+	FString Notice = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
 	/// question to this object
 	/// </summary>
-	FString Question;
+	FString Question = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object")
 	/// <summary>
@@ -98,13 +98,13 @@ struct FObjectGroupObject
 	/// <summary>
 	/// name of lesson object
 	/// </summary>
-	FString Name;
+	FString Name = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Object group object")
 	/// <summary>
 	/// question name of object
 	/// </summary>
-	FString QuestionName;
+	FString QuestionName = "";
 };
 
 USTRUCT(BlueprintType)
@@ -119,13 +119,13 @@ struct FLessonObjectGroup
 	/// <summary>
 	/// name of object group
 	/// </summary>
-	FString Name;
+	FString Name = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
 	/// name of picture of object group
 	/// </summary>
-	FString ObjectName;
+	FString ObjectName = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson object group")
 	/// <summary>
@@ -152,7 +152,7 @@ struct FLessonMap
 	/// <summary>
 	/// name of picture of map
 	/// </summary>
-	FString Picture;
+	FString Picture = "";
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson map 2D")
 	/// <summary>
@@ -197,7 +197,7 @@ struct FLesson
 	/// <summary>
 	/// name of lesson
 	/// </summary>
-	FString Name;
+	FString Name = "";
 	
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
@@ -209,19 +209,19 @@ struct FLesson
 	/// <summary>
 	/// availability of lesson
 	/// </summary>
-	ELessonAvailability Availability;
+	ELessonAvailability Availability = ELessonAvailability::INVISIBLE;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
 	/// category of lesson
 	/// </summary>
-	ELessonCategory Category;
+	ELessonCategory Category = ELessonCategory::NONE;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Lesson")
 	/// <summary>
 	/// map of lesson
 	/// </summary>
-	FLessonMap Map;
+	FLessonMap Map = FLessonMap();
 };
 
 /// <summary>
@@ -232,7 +232,7 @@ struct FResultStudentAnswer
 	/// <summary>
 	/// name of student
 	/// </summary>
-	FString m_Name;
+	FString m_Name = "";
 
 	/// <summary>
 	/// given answer
@@ -248,7 +248,7 @@ struct FResultQuestion
 	/// <summary>
 	/// question information
 	/// </summary>
-	FLessonObject m_Question;
+	FLessonObject m_Question = FLessonObject();
 
 	/// <summary>
 	/// students answer
@@ -264,17 +264,17 @@ struct FLessonResult
 	/// <summary>
 	/// name of lesson
 	/// </summary>
-	FString m_LessonName;
+	FString m_LessonName = "";
 
 	/// <summary>
 	/// start time and date of lesson
 	/// </summary>
-	FString m_LessonDate;
+	FString m_LessonDate = "";
 
 	/// <summary>
 	/// name of teacher
 	/// </summary>
-	FString m_TeacherName;
+	FString m_TeacherName = "";
 
 	/// <summary>
 	/// all questions

@@ -381,7 +381,7 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 		// set answerable of question false
 		m_pObject->Answerable = false;
 
-		// set question buttontext  green to show that correct answer is shown
+		// set question button text  green to show that correct answer is shown
 		m_pQuestionButtonText->SetColorAndOpacity(FLinearColor::Green);
 	}
 
