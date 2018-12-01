@@ -298,11 +298,11 @@ void APlayerPawn::SetNameTextServer_Implementation(const FString& _name, FLinear
 	NameText->SetTextRenderColor(_color.ToFColor(true));
 
 	// get all player
-	TArray<AActor*> FoundPlayers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+	TArray<AActor*> pFoundPlayers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 	// check all players
-	for (AActor* pPlayer : FoundPlayers)
+	for (AActor* pPlayer : pFoundPlayers)
 	{
 		// if teacher
 		if (((APlayerPawn*)pPlayer)->IsTeacher())
@@ -376,11 +376,11 @@ bool APlayerPawn::StudentInitializedServer_Validate()
 void APlayerPawn::StudentInitializedServer_Implementation()
 {
 	// get all player
-	TArray<AActor*> FoundPlayers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+	TArray<AActor*> pFoundPlayers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 	// check all players
-	for (AActor* pPlayer : FoundPlayers)
+	for (AActor* pPlayer : pFoundPlayers)
 		// if teacher
 		if (((APlayerPawn*)pPlayer)->IsTeacher())
 			// set init student of teacher
@@ -490,46 +490,46 @@ void APlayerPawn::BeginPlay()
 		// student 33 to 64 start at degree 5.625 and in 11.25 degree steps
 
 		// get all player
-		TArray<AActor*> FoundPlayers;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+		TArray<AActor*> pFoundPlayers;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 		// if player number less than 1 or 1 return
-		if (FoundPlayers.Num() <= 1)
+		if (pFoundPlayers.Num() <= 1)
 			return;
 
 		// degree for current player
 		float degree = 0.0f;
 
 		// if player count is between 2 and 5
-		if (FoundPlayers.Num() >= 2 && FoundPlayers.Num() <= 5)
+		if (pFoundPlayers.Num() >= 2 && pFoundPlayers.Num() <= 5)
 			// calculate degree for current player
-			degree = ((FoundPlayers.Num() - 2) % 4) * 90.0f;
+			degree = ((pFoundPlayers.Num() - 2) % 4) * 90.0f;
 
 		// if player count is between 6 and 9
-		else if (FoundPlayers.Num() >= 6 && FoundPlayers.Num() <= 9)
+		else if (pFoundPlayers.Num() >= 6 && pFoundPlayers.Num() <= 9)
 			// calculate degree for current player
-			degree = 45.0f + ((FoundPlayers.Num() - 2) % 4) * 90.0f;
+			degree = 45.0f + ((pFoundPlayers.Num() - 2) % 4) * 90.0f;
 
 		// if player count is between 10 and 17
-		else if (FoundPlayers.Num() >= 10 && FoundPlayers.Num() <= 17)
+		else if (pFoundPlayers.Num() >= 10 && pFoundPlayers.Num() <= 17)
 			// calculate degree for current player
-			degree = 22.5f + ((FoundPlayers.Num() - 2) % 8) * 45.0f;
+			degree = 22.5f + ((pFoundPlayers.Num() - 2) % 8) * 45.0f;
 
 		// if player count is between 18 and 33
-		else if (FoundPlayers.Num() >= 18 && FoundPlayers.Num() <= 33)
+		else if (pFoundPlayers.Num() >= 18 && pFoundPlayers.Num() <= 33)
 			// calculate degree for current player
-			degree = 11.25f + ((FoundPlayers.Num() - 2) % 16) * 22.5f;
+			degree = 11.25f + ((pFoundPlayers.Num() - 2) % 16) * 22.5f;
 
 		// if player count is between 34 and 65
-		else if (FoundPlayers.Num() >= 34 && FoundPlayers.Num() <= 65)
+		else if (pFoundPlayers.Num() >= 34 && pFoundPlayers.Num() <= 65)
 			// calculate degree for current player
-			degree = 5.625f + ((FoundPlayers.Num() - 2) % 32) * 11.25f;
+			degree = 5.625f + ((pFoundPlayers.Num() - 2) % 32) * 11.25f;
 
 		// location of teacher
 		FVector location = FVector();
 
 		// check all players
-		for (AActor* pPlayer : FoundPlayers)
+		for (AActor* pPlayer : pFoundPlayers)
 			// if current player is local player
 			if (((APawn*)pPlayer)->IsLocallyControlled())
 				// save location of teacher
@@ -548,11 +548,11 @@ void APlayerPawn::BeginPlay()
 			return;
 
 		// get all objects
-		TArray<AActor*> FoundObjects;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), FoundObjects);
+		TArray<AActor*> pFoundObjects;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASingleObject::StaticClass(), pFoundObjects);
 
 		// check all object
-		for (AActor* pObj : FoundObjects)
+		for (AActor* pObj : pFoundObjects)
 		{
 			// set no collision for question widgets
 			((ASingleObject*)pObj)->QuestionTeacher->SetCollisionProfileName("NoCollision");
@@ -592,11 +592,11 @@ bool APlayerPawn::InitStudent()
 		else
 		{
 			// get all player
-			TArray<AActor*> FoundPlayers;
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+			TArray<AActor*> pFoundPlayers;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 			// check all players
-			for (AActor* pPlayer : FoundPlayers)
+			for (AActor* pPlayer : pFoundPlayers)
 				// if teacher
 				if (((APlayerPawn*)pPlayer)->IsTeacher())
 					// set init student of teacher
@@ -614,15 +614,15 @@ bool APlayerPawn::InitStudent()
 	else if(!m_initStudent)
 	{
 		// get all player
-		TArray<AActor*> FoundPlayers;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+		TArray<AActor*> pFoundPlayers;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 		// if any player found
-		if (!FoundPlayers.Num())
+		if (!pFoundPlayers.Num())
 			return false;
 
 		// check all players
-		for (AActor* pPlayer : FoundPlayers)
+		for (AActor* pPlayer : pFoundPlayers)
 		{
 			// if name text of player is not empty
 			if (!((APlayerPawn*)pPlayer)->NameText->Text.IsEmpty())
@@ -753,8 +753,8 @@ void APlayerPawn::TraceForward()
 			else if (targetID == 3)
 			{
 				// get all players
-				TArray<AActor*> FoundPlayers;
-				UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+				TArray<AActor*> pFoundPlayers;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 				// get lesson from teacher
 				FLesson lesson = ((ULTVREGameInstance*)GetGameInstance())->GetCurrentLesson();
@@ -763,7 +763,7 @@ void APlayerPawn::TraceForward()
 				lesson.Creator = Settings->GetName();
 
 				// check all players
-				for (AActor* pPlayer : FoundPlayers)
+				for (AActor* pPlayer : pFoundPlayers)
 					// add lesson to clients
 					((APlayerPawn*)pPlayer)->AddLessonToClients(lesson);
 
@@ -777,7 +777,7 @@ void APlayerPawn::TraceForward()
 					if (m_isTeacher)
 					{
 						// check all players
-						for (AActor* pPlayer : FoundPlayers)
+						for (AActor* pPlayer : pFoundPlayers)
 						{
 							if (((APlayerPawn*)pPlayer) == this)
 								continue;
@@ -790,10 +790,10 @@ void APlayerPawn::TraceForward()
 					float timer = 1.0f;
 
 					// until only one player left of save timer under 0
-					while (FoundPlayers.Num() > 1 && timer > 0)
+					while (pFoundPlayers.Num() > 1 && timer > 0)
 					{
 						// get all players
-						UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+						UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundPlayers);
 
 						// decrease timer
 						timer -= GetWorld()->GetDeltaSeconds();

@@ -170,8 +170,8 @@ void USettingsComponent::SetGraphicLevel(int Level)
 void USettingsComponent::LoadSettings()
 {
 	// error saves
-	FText errorText;
-	int errorNumber;
+	FText errorText = FText::FromString("");
+	int errorNumber = 0;
 
 	// parse xml file into this
 	if (!FFastXml::ParseXmlFile(this, *Helper::GetAbsoluteFileName("Settings.xml"), 

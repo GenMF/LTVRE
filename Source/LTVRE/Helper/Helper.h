@@ -28,7 +28,7 @@ public:
 			mobile = false;
 
 		// file name to return
-		FString fileName;
+		FString fileName = "";
 
 		// if mobile app
 		if (mobile)

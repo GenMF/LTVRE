@@ -60,11 +60,11 @@ void ASingleObject::Tick(float DeltaTime)
 	}
 
 	// get all player
-	TArray<AActor*> FoundPlayers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), FoundPlayers);
+	TArray<AActor*> pFoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
 
 	// check all players
-	for (AActor* pActor : FoundPlayers)
+	for (AActor* pActor : pFoundActors)
 	{
 		// get player reference
 		APlayerPawn* pPlayer = (APlayerPawn*)pActor;
@@ -182,14 +182,14 @@ void ASingleObject::CheckPlayersClient_Implementation()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
 
 	// check all players
-	for (AActor* pObj : pFoundActors)
+	for (AActor* pPlayer : pFoundActors)
 	{
 		// if not local player continue
-		if (!((APlayerPawn*)pObj)->IsLocallyControlled())
+		if (!((APlayerPawn*)pPlayer)->IsLocallyControlled())
 			continue;
 
 		// rotate widgets to player camera
-		QuestionWidgetRotateTo(((APlayerPawn*)pObj)->Camera->GetComponentLocation());
+		QuestionWidgetRotateTo(((APlayerPawn*)pPlayer)->Camera->GetComponentLocation());
 
 		// question student visible
 		QuestionStudent->SetVisibility(true);
@@ -288,11 +288,11 @@ void ASingleObject::SetAnswerGiven(int _index)
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerPawn::StaticClass(), pFoundActors);
 
 	// check all players
-	for (AActor* pObj : pFoundActors)
+	for (AActor* pPlayer : pFoundActors)
 		// if local player continue
-		if (((APlayerPawn*)pObj)->IsLocallyControlled())
+		if (((APlayerPawn*)pPlayer)->IsLocallyControlled())
 			// set answer text of player
-			((APlayerPawn*)pObj)->SetAnswerGiven(GetName(), LessonObject.Answers[_index], _index == CorrectAnswer);
+			((APlayerPawn*)pPlayer)->SetAnswerGiven(GetName(), LessonObject.Answers[_index], _index == CorrectAnswer);
 }
 
 // show correct answer
