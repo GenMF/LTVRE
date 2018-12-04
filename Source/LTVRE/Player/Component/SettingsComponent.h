@@ -93,7 +93,8 @@ public:
 	/// set name of player
 	/// </summary>
 	/// <param name="_name">name of player</param>
-	void SetName(FString _name);
+	/// <returns>name changed</returns>
+	bool SetName(FString _name);
 
 	UFUNCTION(BlueprintCallable, Category = "Settins component")
 	/// <summary>

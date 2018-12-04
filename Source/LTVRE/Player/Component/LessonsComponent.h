@@ -113,7 +113,8 @@ public:
 	/// set name of current lesson
 	/// </summary>
 	/// <param name="Name">name to set</param>
-	void SetLessonName(FString Name);
+	/// <returns>name changed</returns>
+	bool SetLessonName(FString Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -157,7 +158,8 @@ public:
 	/// </summary>
 	/// <param name="LessonIsNew">if current lesson is new</param>
 	/// <param name="Index">index of current lesson</param>
-	void SaveCurrentLesson(bool LessonIsNew, int Index);
+	/// <returns>lesson saved</returns>
+	bool SaveCurrentLesson(bool LessonIsNew, int Index);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -199,7 +201,8 @@ public:
 	/// set name of current object group
 	/// </summary>
 	/// <param name="Name">name to set</param>
-	void SetObjectGroupName(FString Name);
+	/// <returns>name changed</returns>
+	bool SetObjectGroupName(FString Name);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -220,7 +223,8 @@ public:
 	/// <summary>
 	/// save current object group to object group list
 	/// </summary>
-	void SaveCurrentObjectGroup();
+	/// <returns>object group saved</returns>
+	bool SaveCurrentObjectGroup();
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -256,14 +260,16 @@ public:
 	/// set notice of current question
 	/// </summary>
 	/// <param name="Notice">notice to set</param>
-	void SetCurrentQuestionNotice(FString Notice);
+	/// <returns>question saved</returns>
+	bool SetCurrentQuestionNotice(FString Notice);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
 	/// set question o current question
 	/// </summary>
 	/// <param name="Question">question to set</param>
-	void SetCurrentQuestionQuestion(FString Question);
+	/// <returns>question saved</returns>
+	bool SetCurrentQuestionQuestion(FString Question);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -271,7 +277,8 @@ public:
 	/// </summary>
 	/// <param name="Index">index of answer</param>
 	/// <param name="Answer">answer to set</param>
-	void SetCurrentQuestionAnswer(int Index, FString Answer);
+	/// <returns>question saved</returns>
+	bool SetCurrentQuestionAnswer(int Index, FString Answer);
 
 	UFUNCTION(BlueprintCallable, Category = "Lessons component")
 	/// <summary>
@@ -400,6 +407,7 @@ private:
 	/// <summary>
 	/// save current question to array
 	/// </summary>
-	void SaveCurrentQuestion();
+	/// <returns>question saved</returns>
+	bool SaveCurrentQuestion();
 #pragma endregion
 };

@@ -36,11 +36,18 @@ void ULessonsComponent::EmptyCurrentLesson()
 }
 
 // set name of current lesson
-void ULessonsComponent::SetLessonName(FString Name)
+bool ULessonsComponent::SetLessonName(FString Name)
 {
-	// if name length is not valid return
+	// if name length is not valid return false
 	if (Name.Len() <= 0)
-		return;
+		return false;
+
+	// check all lessons
+	for (FLesson lesson : m_lessons)
+		// if name already in array
+		if (lesson.Name == Name)
+			// return false
+			return false;
 
 	// set name
 	m_currentLesson.Name = "";
@@ -55,6 +62,9 @@ void ULessonsComponent::SetLessonName(FString Name)
 		// add char at index i
 		m_currentLesson.Name += Name[i];
 	}
+
+	// return name changed true
+	return true;
 }
 
 // set creator of current lesson
@@ -93,11 +103,11 @@ void ULessonsComponent::SetLessonMapObject(int Index, FString ObjectName)
 }
 
 // save current lesson to lessons list
-void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
+bool ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
 {
-	// if current lesson has no name or index not valid return
+	// if current lesson has no name or index not valid return false
 	if (m_currentLesson.Name.Len() <= 0 || (!LessonIsNew && (Index < 0 || Index > m_lessons.Num() - 1)))
-		return;
+		return false;
 
 	// check all lessons
 	for (FLesson lesson : m_lessons)
@@ -109,8 +119,8 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
 			// empty current lesson
 			EmptyCurrentLesson();
 
-			// return
-			return;
+			// return false
+			return false;
 		}
 	}
 
@@ -125,6 +135,9 @@ void ULessonsComponent::SaveCurrentLesson(bool LessonIsNew, int Index)
 	
 	// save lessons
 	SaveLesson();
+
+	// return lesson saved true
+	return true;
 }
 
 // delete current lesson at index
@@ -174,11 +187,18 @@ void ULessonsComponent::EmptyCurrentObjectGroup()
 }
 
 // set name of current object group
-void ULessonsComponent::SetObjectGroupName(FString Name)
+bool ULessonsComponent::SetObjectGroupName(FString Name)
 {
-	// if name length is not valid return
+	// if name length is not valid return false
 	if (Name.Len() <= 0)
-		return;
+		return false;
+
+	// check all object groups
+	for (FLessonObjectGroup objGrp : m_objectGroups)
+		// if name already in array
+		if (objGrp.Name == Name)
+			// return
+			return false;
 
 	// set name
 	m_currentObjectGroup.Name = "";
@@ -193,6 +213,9 @@ void ULessonsComponent::SetObjectGroupName(FString Name)
 		// add char at index i
 		m_currentObjectGroup.Name += Name[i];
 	}
+
+	// return changed name true
+	return true;
 }
 
 // set picture name of current object group
@@ -224,11 +247,11 @@ void ULessonsComponent::SetObjectGroupObject(int ID, FString LessonObjectName)
 }
 
 // save current object group to object group list
-void ULessonsComponent::SaveCurrentObjectGroup()
+bool ULessonsComponent::SaveCurrentObjectGroup()
 {
-	// if current object group has no name return
+	// if current object group has no name return false
 	if (m_currentObjectGroup.Name.Len() <= 0)
-		return;
+		return false;
 
 	// check all object groups
 	for (FLessonObjectGroup objGrp : m_objectGroups)
@@ -241,7 +264,7 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 			EmptyCurrentObjectGroup();
 			
 			// return
-			return;
+			return false;
 		}
 	}
 
@@ -266,6 +289,9 @@ void ULessonsComponent::SaveCurrentObjectGroup()
 
 	// save lessons
 	SaveLesson();
+
+	// return saved true
+	return true;
 }
 
 // delete an object group at given index
@@ -281,7 +307,7 @@ void ULessonsComponent::SetCurrentQuestion(FLessonObject Question)
 }
 
 // set notice of current question
-void ULessonsComponent::SetCurrentQuestionNotice(FString Notice)
+bool ULessonsComponent::SetCurrentQuestionNotice(FString Notice)
 {
 	// text to set
 	FString text = "";
@@ -295,12 +321,12 @@ void ULessonsComponent::SetCurrentQuestionNotice(FString Notice)
 	// set notice of current question
 	m_currentQuestion.Notice = text;
 
-	// save current question
-	SaveCurrentQuestion();
+	// save current question and return if saved
+	return SaveCurrentQuestion();
 }
 
 // set question o current question
-void ULessonsComponent::SetCurrentQuestionQuestion(FString Question)
+bool ULessonsComponent::SetCurrentQuestionQuestion(FString Question)
 {
 	// text to set
 	FString text = "";
@@ -315,11 +341,11 @@ void ULessonsComponent::SetCurrentQuestionQuestion(FString Question)
 	m_currentQuestion.Question = text;
 
 	// save current question
-	SaveCurrentQuestion();
+	return SaveCurrentQuestion();
 }
 
 // set answer at index of current question
-void ULessonsComponent::SetCurrentQuestionAnswer(int Index, FString Answer)
+bool ULessonsComponent::SetCurrentQuestionAnswer(int Index, FString Answer)
 {
 	// while array length is lower than id add new answer
 	while (m_currentQuestion.Answers.Num() < Index + 1)
@@ -338,7 +364,7 @@ void ULessonsComponent::SetCurrentQuestionAnswer(int Index, FString Answer)
 	m_currentQuestion.Answers[Index] = text;
 
 	// save current question
-	SaveCurrentQuestion();
+	return SaveCurrentQuestion();
 }
 
 // delete current question from array
@@ -522,11 +548,12 @@ void ULessonsComponent::SaveLesson()
 }
 
 // save current question to array
-void ULessonsComponent::SaveCurrentQuestion()
+bool ULessonsComponent::SaveCurrentQuestion()
 {
-	// if question length under 0 return
-	if (m_currentQuestion.Question.Len() <= 0)
-		return;
+	// if question length under 0 or answer 1 empty return
+	if (m_currentQuestion.Question.Len() <= 0 ||
+		(m_currentQuestion.Answers.Num() > 0 && m_currentQuestion.Answers[0] != ""))
+		return false;
 
 	// bool to check if current question already in catalog
 	bool questionAlreadyInCatalog = false;
@@ -562,5 +589,8 @@ void ULessonsComponent::SaveCurrentQuestion()
 
 	// save to file
 	SaveLesson();
+
+	// return question saved successfully
+	return true;
 }
 #pragma endregion

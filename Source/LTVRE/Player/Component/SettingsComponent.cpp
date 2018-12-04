@@ -49,11 +49,11 @@ bool USettingsComponent::ProcessElement(const TCHAR* ElementName, const TCHAR* E
 
 #pragma region UFUNCTION
 // set name of player
-void USettingsComponent::SetName(FString _name)
+bool USettingsComponent::SetName(FString _name)
 {
-	// if name length is not valid return
+	// if name length is not valid return false
 	if (_name.Len() <= 0)
-		return;
+		return false;
 
 	// set player name
 	m_settings.Name = "";
@@ -71,6 +71,9 @@ void USettingsComponent::SetName(FString _name)
 
 	// save settings
 	SaveSettings();
+
+	// return name changed true
+	return true;
 }
 
 // set player to student
