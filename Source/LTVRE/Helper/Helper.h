@@ -98,26 +98,47 @@ public:
 		// date of lesson
 		text.Append(Element("Date", _lessonResult.m_LessonDate, _tabs));
 
+		// student results
+		text.Append(StudentResults(_lessonResult.m_Questions, _tabs));
+
+		// question results
+		text.Append(QuestionResults(_lessonResult.m_Questions, _tabs));
+
+		// return full string
+		return text;
+	}
+
+	/// <summary>
+	/// get student results from result questions
+	/// </summary>
+	/// <param name="_resQuestions">result questions</param>
+	/// <param name="_tabs">number of tabs</param>
+	/// <returns>string in xml format</returns>
+	static FString StudentResults(TArray<FResultQuestion> _resQuestions, int _tabs = 0)
+	{
+		// string to return
+		FString text = "";
+
 		// if questions available and at least one student
-		if (_lessonResult.m_Questions.Num() > 0 && _lessonResult.m_Questions[0].m_StudentsAnswer.Num() > 0)
+		if (_resQuestions.Num() > 0 && _resQuestions[0].m_StudentsAnswer.Num() > 0)
 		{
 			// question count
-			int questionCount = _lessonResult.m_Questions.Num();
+			int questionCount = _resQuestions.Num();
 
 			// check all result student answers
-			for (int i = 0; i < _lessonResult.m_Questions[0].m_StudentsAnswer.Num(); i++)
+			for (int i = 0; i < _resQuestions[0].m_StudentsAnswer.Num(); i++)
 			{
 				// add student result open element
 				text.Append(OpenElement("StudentResult", _tabs));
 
 				// add student name element
-				text.Append(Element("Name", _lessonResult.m_Questions[0].m_StudentsAnswer[i].m_Name, _tabs + 1));
+				text.Append(Element("Name", _resQuestions[0].m_StudentsAnswer[i].m_Name, _tabs + 1));
 
 				// current student correct answer count
 				int correctAnswers = 0;
 
 				// check all questions
-				for (FResultQuestion resQuestion : _lessonResult.m_Questions)
+				for (FResultQuestion resQuestion : _resQuestions)
 					// if first answer equal student answer increase correct answer count
 					if (resQuestion.m_Question.Answers[0] == resQuestion.m_StudentsAnswer[i].m_GivenAnswer)
 						correctAnswers++;
@@ -134,8 +155,23 @@ public:
 			}
 		}
 
+		// return full string
+		return text;
+	}
+
+	/// <summary>
+	/// question results
+	/// </summary>
+	/// <param name="_resQuestions">result questions</param>
+	/// <param name="_tabs">number of tabs</param>
+	/// <returns>string in xml format</returns>
+	static FString QuestionResults(TArray<FResultQuestion> _resQuestions, int _tabs = 0)
+	{
+		// string to return
+		FString text = "";
+
 		// check all questions
-		for (FResultQuestion resQuestion : _lessonResult.m_Questions)
+		for (FResultQuestion resQuestion : _resQuestions)
 		{
 			// question open element
 			text.Append(OpenElement("Question", _tabs));

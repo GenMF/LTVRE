@@ -552,7 +552,7 @@ bool ULessonsComponent::SaveCurrentQuestion()
 {
 	// if question length under 0 or answer 1 empty return
 	if (m_currentQuestion.Question.Len() <= 0 ||
-		(m_currentQuestion.Answers.Num() > 0 && m_currentQuestion.Answers[0] != ""))
+		(m_currentQuestion.Answers.Num() > 0 && m_currentQuestion.Answers[0] == ""))
 		return false;
 
 	// bool to check if current question already in catalog
