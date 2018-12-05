@@ -43,72 +43,24 @@ void UQuestionBase::HideShowNotice(bool _noticeShown, EPlayerStatus _status)
 	// practice
 	case EPlayerStatus::PRACTICE:
 	{
-		// if notice is already shown
-		if (_noticeShown)
-		{
-			// show notice and set show hide notice button text
-			m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
-
-			// if show hide notice button text valid set show hide notice button text
-			if (m_pShowHideNoticeButtonText != nullptr)
-				m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
-		}
-
-		// notice not shown
-		else
-		{
-			// hide notice
-			m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
-
-			// if show hide notice button text valid set show hide notice button text
-			if (m_pShowHideNoticeButtonText != nullptr)
-				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
-		}
+		// hide or show notice on practicing
+		HideShowNoticePractice(_noticeShown);
 		break;
 	}
 
 	// teacher
 	case EPlayerStatus::TEACHER:
 	{
-		// if notice is already shown
-		if (_noticeShown)
-		{
-			// show notice and set show hide notice button text
-			m_pNoticeButton->SetStyle(ButtonNoClickShownStyle);
-			m_pNoticeButtonText->SetColorAndOpacity(ButtonTextShownColor);
-
-			// if show hide notice button text valid
-			if (m_pShowHideNoticeButtonText != nullptr)
-				m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
-		}
-
-		// notice not shown
-		else
-		{
-			// set notice button style hidden and set show hide notice button text
-			m_pNoticeButton->SetStyle(ButtonNoClickHiddenStyle);
-			m_pNoticeButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
-
-			// if show hide notice button text valid
-			if (m_pShowHideNoticeButtonText != nullptr)
-				m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
-		}
+		// hide or show notice on teaching
+		HideShowNoticeTeacher(_noticeShown);
 		break;
 	}
 
 	// student
 	case EPlayerStatus::STUDENT:
 	{
-		// if notice is already shown
-		if (_noticeShown)
-			// show notice button
-			m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
-
-		// notice not shown
-		else
-			// show notice button
-			m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
-
+		// hide or show notice on studying
+		HideShowNoticeStudent(_noticeShown);
 		break;
 	}
 
@@ -127,120 +79,24 @@ void UQuestionBase::HideShowQuestion(bool _questionShown, EPlayerStatus _status)
 		// practice
 	case EPlayerStatus::PRACTICE:
 	{
-		// if question is already shown
-		if (_questionShown)
-		{
-			// show notice and set show hide notice button text
-			m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
-
-			// if show hide question button text valid
-			if (m_pShowHideQuestionButtonText != nullptr)
-				m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
-
-			// check all answer buttons
-			for (UButton* pBtn : m_pAnswerButtons)
-			{
-				// show button and set style
-				pBtn->SetVisibility(ESlateVisibility::Visible);
-				pBtn->SetStyle(ButtonClickShownStyle);
-			}
-		}
-
-		// question not shown
-		else
-		{
-			// hide notice and set show hide notice button text
-			m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
-
-			// if show hide question button text valid
-			if (m_pShowHideQuestionButtonText != nullptr)
-				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
-
-			// check all answer buttons and hide
-			for (UButton* pBtn : m_pAnswerButtons)
-				pBtn->SetVisibility(ESlateVisibility::Hidden);
-		}
+		// hide or show question on practicing
+		HideShowQuestionPractice(_questionShown);
 		break;
 	}
 
 	// teacher
 	case EPlayerStatus::TEACHER:
 	{
-		// if question is already shown
-		if (_questionShown)
-		{
-			// show question and set show hide question button text
-			m_pQuestionButton->SetStyle(ButtonNoClickShownStyle);
-			m_pQuestionButtonText->SetColorAndOpacity(ButtonTextShownColor);
-
-			// check all answer buttons
-			for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-			{
-				// set style of button and color of button text
-				m_pAnswerButtons[i]->SetStyle(ButtonClickShownStyle);
-				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextShownColor);
-
-				// if current answer is correct answer set color of answer text green
-				if (i == m_pObject->CorrectAnswer)
-					m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor::Green);
-			}
-
-			// if show hide question button text valid
-			if (m_pShowHideQuestionButtonText != nullptr)
-				m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
-		}
-
-		// question not shown
-		else
-		{
-			// set question button style hidden and set show hide question button text
-			m_pQuestionButton->SetStyle(ButtonNoClickHiddenStyle);
-			m_pQuestionButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
-
-			// check all answer buttons
-			for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-			{
-				// set style of button and color of button text
-				m_pAnswerButtons[i]->SetStyle(ButtonClickHiddenStyle);
-				m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextHiddenColor);
-
-				// if current answer is correct answer set color of answer text green
-				if (i == m_pObject->CorrectAnswer)
-					m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor(0.0f, 1.0f, 0.0f, 0.5f));
-			}
-
-			// if show hide question button text valid
-			if (m_pShowHideQuestionButtonText != nullptr)
-				m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
-		}
+		// hide or show question on teaching
+		HideShowQuestionTeacher(_questionShown);
 		break;
 	}
 
 	// student
 	case EPlayerStatus::STUDENT:
 	{
-		// if question is already shown
-		if (_questionShown)
-		{
-			// show question button
-			m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
-			
-			// show answer buttons
-			for (UButton* pBtn : m_pAnswerButtons)
-				pBtn->SetVisibility(ESlateVisibility::Visible);
-		}
-
-		// question not shown
-		else
-		{
-			// hide question button
-			m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
-
-			// hide answer buttons
-			for (UButton* pBtn : m_pAnswerButtons)
-				pBtn->SetVisibility(ESlateVisibility::Hidden);
-		}
-
+		// hide or show question on studying
+		HideShowQuestionStudent(_questionShown);
 		break;
 	}
 
@@ -388,67 +244,258 @@ void UQuestionBase::ClickOnWidget(FVector2D _widgetSize, FTransform _widgetTrans
 	// if no other button clicked check answer buttons
 	else
 	{
-		// check all answer buttons
-		for (int i = 0; i < m_pAnswerButtons.Num(); i++)
-		{
-			// if anchor is in answer button and no answer given set given answer
-			if (CheckPositionInButton(anchor, m_pAnswerButtons[i]) && m_pObject->GetAnswerGiven() < 0)
-			{
-				// if not answerable continue
-				if (!m_pObject->Answerable)
-					continue;
-
-				// set given answer at index
-				m_pObject->SetAnswerGiven(i);
-
-				// if practice
-				if (m_pObject->GetPlayerStatus() == EPlayerStatus::PRACTICE)
-				{
-					// button style to set
-					FButtonStyle style = ButtonClickShownStyle;
-
-					// set color of style green
-					style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
-					style.Hovered.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
-					style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
-					
-					// set style of answer button
-					m_pAnswerButtons[m_pObject->CorrectAnswer]->SetStyle(style);
-
-					// if given answer is not correct answer
-					if (i != m_pObject->CorrectAnswer)
-					{
-						// set color of style red
-						style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-						style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-						style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
-
-						// set style of answer button
-						m_pAnswerButtons[i]->SetStyle(style);
-					}
-				}
-
-				// if student
-				else
-				{
-					// button style to set
-					FButtonStyle style = ButtonClickShownStyle;
-
-					// set color of style green
-					style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-					style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-					style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-
-					// set style of answer button
-					m_pAnswerButtons[i]->SetStyle(style);
-				}
-			}
-		}
+		// click answer widget
+		ClickAnswer(anchor);
 	}			
 }
 #pragma endregion
 
 #pragma region private function
+// hide or show notice at practicing
+void UQuestionBase::HideShowNoticePractice(bool _noticeShown)
+{
+	// if notice is already shown
+	if (_noticeShown)
+	{
+		// show notice and set show hide notice button text
+		m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
+
+		// if show hide notice button text valid set show hide notice button text
+		if (m_pShowHideNoticeButtonText != nullptr)
+			m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
+	}
+
+	// notice not shown
+	else
+	{
+		// hide notice
+		m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
+
+		// if show hide notice button text valid set show hide notice button text
+		if (m_pShowHideNoticeButtonText != nullptr)
+			m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
+	}
+}
+
+// hide or show notice at teaching
+void UQuestionBase::HideShowNoticeTeacher(bool _noticeShown)
+{
+	// if notice is already shown
+	if (_noticeShown)
+	{
+		// show notice and set show hide notice button text
+		m_pNoticeButton->SetStyle(ButtonNoClickShownStyle);
+		m_pNoticeButtonText->SetColorAndOpacity(ButtonTextShownColor);
+
+		// if show hide notice button text valid
+		if (m_pShowHideNoticeButtonText != nullptr)
+			m_pShowHideNoticeButtonText->SetText(FText::FromString("hide notice"));
+	}
+
+	// notice not shown
+	else
+	{
+		// set notice button style hidden and set show hide notice button text
+		m_pNoticeButton->SetStyle(ButtonNoClickHiddenStyle);
+		m_pNoticeButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
+
+		// if show hide notice button text valid
+		if (m_pShowHideNoticeButtonText != nullptr)
+			m_pShowHideNoticeButtonText->SetText(FText::FromString("show notice"));
+	}
+}
+
+// hide or show notice at studying
+void UQuestionBase::HideShowNoticeStudent(bool _noticeShown)
+{
+	// if notice is already shown
+	if (_noticeShown)
+		// show notice button
+		m_pNoticeButton->SetVisibility(ESlateVisibility::Visible);
+
+	// notice not shown
+	else
+		// show notice button
+		m_pNoticeButton->SetVisibility(ESlateVisibility::Hidden);
+}
+
+// hide or show question at practicing
+void UQuestionBase::HideShowQuestionPractice(bool _questionShown)
+{
+	// if question is already shown
+	if (_questionShown)
+	{
+		// show notice and set show hide notice button text
+		m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
+
+		// if show hide question button text valid
+		if (m_pShowHideQuestionButtonText != nullptr)
+			m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
+
+		// check all answer buttons
+		for (UButton* pBtn : m_pAnswerButtons)
+		{
+			// show button and set style
+			pBtn->SetVisibility(ESlateVisibility::Visible);
+			pBtn->SetStyle(ButtonClickShownStyle);
+		}
+	}
+
+	// question not shown
+	else
+	{
+		// hide notice and set show hide notice button text
+		m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
+
+		// if show hide question button text valid
+		if (m_pShowHideQuestionButtonText != nullptr)
+			m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
+
+		// check all answer buttons and hide
+		for (UButton* pBtn : m_pAnswerButtons)
+			pBtn->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+// hide or show question at teaching
+void UQuestionBase::HideShowQuestionTeacher(bool _questionShown)
+{
+	// if question is already shown
+	if (_questionShown)
+	{
+		// show question and set show hide question button text
+		m_pQuestionButton->SetStyle(ButtonNoClickShownStyle);
+		m_pQuestionButtonText->SetColorAndOpacity(ButtonTextShownColor);
+
+		// check all answer buttons
+		for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+		{
+			// set style of button and color of button text
+			m_pAnswerButtons[i]->SetStyle(ButtonClickShownStyle);
+			m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextShownColor);
+
+			// if current answer is correct answer set color of answer text green
+			if (i == m_pObject->CorrectAnswer)
+				m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor::Green);
+		}
+
+		// if show hide question button text valid
+		if (m_pShowHideQuestionButtonText != nullptr)
+			m_pShowHideQuestionButtonText->SetText(FText::FromString("hide question"));
+	}
+
+	// question not shown
+	else
+	{
+		// set question button style hidden and set show hide question button text
+		m_pQuestionButton->SetStyle(ButtonNoClickHiddenStyle);
+		m_pQuestionButtonText->SetColorAndOpacity(ButtonTextHiddenColor);
+
+		// check all answer buttons
+		for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+		{
+			// set style of button and color of button text
+			m_pAnswerButtons[i]->SetStyle(ButtonClickHiddenStyle);
+			m_pAnswerButtonsText[i]->SetColorAndOpacity(ButtonTextHiddenColor);
+
+			// if current answer is correct answer set color of answer text green
+			if (i == m_pObject->CorrectAnswer)
+				m_pAnswerButtonsText[i]->SetColorAndOpacity(FLinearColor(0.0f, 1.0f, 0.0f, 0.5f));
+		}
+
+		// if show hide question button text valid
+		if (m_pShowHideQuestionButtonText != nullptr)
+			m_pShowHideQuestionButtonText->SetText(FText::FromString("show question"));
+	}
+}
+
+// hide or show question at studying
+void UQuestionBase::HideShowQuestionStudent(bool _questionShown)
+{
+	// if question is already shown
+	if (_questionShown)
+	{
+		// show question button
+		m_pQuestionButton->SetVisibility(ESlateVisibility::Visible);
+
+		// show answer buttons
+		for (UButton* pBtn : m_pAnswerButtons)
+			pBtn->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	// question not shown
+	else
+	{
+		// hide question button
+		m_pQuestionButton->SetVisibility(ESlateVisibility::Hidden);
+
+		// hide answer buttons
+		for (UButton* pBtn : m_pAnswerButtons)
+			pBtn->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+// click on answer button
+void UQuestionBase::ClickAnswer(FVector2D _anchor)
+{
+	// check all answer buttons
+	for (int i = 0; i < m_pAnswerButtons.Num(); i++)
+	{
+		// if anchor is in answer button and no answer given set given answer
+		if (CheckPositionInButton(_anchor, m_pAnswerButtons[i]) && m_pObject->GetAnswerGiven() < 0)
+		{
+			// if not answerable continue
+			if (!m_pObject->Answerable)
+				continue;
+
+			// set given answer at index
+			m_pObject->SetAnswerGiven(i);
+
+			// if practice
+			if (m_pObject->GetPlayerStatus() == EPlayerStatus::PRACTICE)
+			{
+				// button style to set
+				FButtonStyle style = ButtonClickShownStyle;
+
+				// set color of style green
+				style.Normal.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+				style.Hovered.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+				style.Pressed.TintColor = FSlateColor(FLinearColor(0.0f, 1.0f, 0.0f, 1.0f));
+
+				// set style of answer button
+				m_pAnswerButtons[m_pObject->CorrectAnswer]->SetStyle(style);
+
+				// if given answer is not correct answer
+				if (i != m_pObject->CorrectAnswer)
+				{
+					// set color of style red
+					style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+					style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+					style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+
+					// set style of answer button
+					m_pAnswerButtons[i]->SetStyle(style);
+				}
+			}
+
+			// if student
+			else
+			{
+				// button style to set
+				FButtonStyle style = ButtonClickShownStyle;
+
+				// set color of style green
+				style.Normal.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+				style.Hovered.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+				style.Pressed.TintColor = FSlateColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+
+				// set style of answer button
+				m_pAnswerButtons[i]->SetStyle(style);
+			}
+		}
+	}
+}
+
 // get 2d vector from 0,0 (upper left) to 1,1 (lower right)
 FVector2D UQuestionBase::CalculatePositionRelativeToWidget(FVector2D _widgetSize, FTransform _widgetTransform, 
 	FVector _hitLocation)

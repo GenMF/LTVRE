@@ -253,14 +253,71 @@ private:
 
 #pragma region private function
 	/// <summary>
-	/// initialize student on server
+	/// initialize student
 	/// </summary>
 	/// <returns>student initialized</returns>
 	bool InitStudent();
 
 	/// <summary>
+	/// initialize student on server
+	/// </summary>
+	/// <returns>student initialized</returns>
+	bool InitServerStudent();
+
+	/// <summary>
+	/// initialize student on client
+	/// </summary>
+	/// <returns>student initialized</returns>
+	bool InitClientStudent();
+
+	/// <summary>
+	/// begin play on server
+	/// </summary>
+	void BeginPlayServer();
+
+	/// <summary>
+	/// begin play on client
+	/// </summary>
+	void BeginPlayClient();
+
+	/// <summary>
 	/// trace from camera forward
 	/// </summary>
 	void TraceForward();
+
+	/// <summary>
+	/// get trace target id from hit
+	/// </summary>
+	/// <param name="_hit">hit result</param>
+	/// <param name="_status">player status</param>
+	/// <returns>target id</returns>
+	int GetTraceTargetID(FHitResult _hit, EPlayerStatus _status);
+
+	/// <summary>
+	/// decrease click timer
+	/// </summary>
+	/// <param name="_targetID">target id</param>
+	/// <param name="_hit">hit result</param>
+	/// <param name="_status">player status</param>
+	/// <param name="_pQuesBase">question base reference</param>
+	void DecreaseClickTimer(int _targetID, FHitResult _hit, EPlayerStatus _status, UQuestionBase* _pQuesBase);
+
+	/// <summary>
+	/// click on question widget
+	/// </summary>
+	/// <param name="_hit">hit result</param>
+	void ClickQuestionWidget(FHitResult _hit);
+
+	/// <summary>
+	/// click on back to menu widget
+	/// </summary>
+	void ClickBackMenuWidget();
+
+	/// <summary>
+	/// click on single object
+	/// </summary>
+	/// <param name="_hit">hit result</param>
+	/// <param name="_status">player status</param>
+	void ClickObject(FHitResult _hit, EPlayerStatus _status);
 #pragma endregion
 };

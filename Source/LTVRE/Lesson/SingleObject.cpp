@@ -93,9 +93,7 @@ void ASingleObject::Tick(float DeltaTime)
 // hide or show notice
 void ASingleObject::HideShowNotice()
 {
-	/// <summary>
-	/// TODO:
-	/// </summary>
+	// initialize references
 	InitReferences();
 
 	// if server
@@ -121,9 +119,7 @@ void ASingleObject::HideShowNotice()
 // hide or show question
 void ASingleObject::HideShowQuestion()
 {
-	/// <summary>
-	/// TODO:
-	/// </summary>
+	//initialize references
 	InitReferences();
 
 	// if server
@@ -157,9 +153,7 @@ void ASingleObject::HideShowQuestion()
 // set lesson object texts
 void ASingleObject::SetLessonObjectTexts()
 {
-	/// <summary>
-	/// TODO:
-	/// </summary>
+	// initialize references
 	InitReferences();
 
 	// set texts of widgets

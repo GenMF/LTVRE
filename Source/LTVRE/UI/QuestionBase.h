@@ -101,7 +101,7 @@ public:
 	/// hide or show notice
 	/// </summary>
 	/// <param name="_noticeShown">notice shown</paramn>
-	/// <param name="_statue">player statue</paramn>
+	/// <param name="_statue">player statue</param>
 	void HideShowNotice(bool _noticeShown, EPlayerStatus _status);
 
 	UFUNCTION(BlueprintCallable, Category = "Question base")
@@ -109,7 +109,7 @@ public:
 	/// hide or show question
 	/// </summary>
 	/// <param name="_questionShown">question shown</paramn>
-	/// <param name="_statue">player statue</paramn>
+	/// <param name="_statue">player statue</param>
 	void HideShowQuestion(bool _questionShown, EPlayerStatus _status);
 #pragma endregion
 
@@ -235,6 +235,48 @@ private:
 #pragma endregion
 
 #pragma region private function
+	/// <summary>
+	/// hide or show notice at practicing
+	/// </summary>
+	/// <param name="_noticeShown">notice shown</param>
+	void HideShowNoticePractice(bool _noticeShown);
+
+	/// <summary>
+	/// hide or show notice at teaching
+	/// </summary>
+	/// <param name="_noticeShown">notice shown</param>
+	void HideShowNoticeTeacher(bool _noticeShown);
+
+	/// <summary>
+	/// hide or show notice at studying
+	/// </summary>
+	/// <param name="_noticeShown">notice shown</param>
+	void HideShowNoticeStudent(bool _noticeShown);
+
+	/// <summary>
+	/// hide or show question at practicing
+	/// </summary>
+	/// <param name="_questionShown">question shown</param>
+	void HideShowQuestionPractice(bool _questionShown);
+
+	/// <summary>
+	/// hide or show question at teaching
+	/// </summary>
+	/// <param name="_questionShown">question shown</param>
+	void HideShowQuestionTeacher(bool _questionShown);
+
+	/// <summary>
+	/// hide or show question at studying
+	/// </summary>
+	/// <param name="_questionShown">question shown</param>
+	void HideShowQuestionStudent(bool _questionShown);
+
+	/// <summary>
+	/// click on answer button
+	/// </summary>
+	/// <param name="_anchor">anchor target</param>
+	void ClickAnswer(FVector2D _anchor);
+
 	/// <summary>
 	/// get 2d vector from -0.5,-0.5 (upper left) to 0.5,0.5 (lower right)
 	/// </summary>
