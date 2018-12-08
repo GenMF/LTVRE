@@ -435,8 +435,8 @@ void ULessonsComponent::AddLesson(FLesson _lesson)
 	// check all lessons
 	for (int i = 0; i < m_lessons.Num(); i++)
 	{
-		// if name and creator of current lesson equal with given
-		if (m_lessons[i].Name == _lesson.Name && m_lessons[i].Creator == _lesson.Creator)
+		// if name of current lesson equal with given
+		if (m_lessons[i].Name == _lesson.Name)
 		{
 			// update current lesson
 			m_lessons[i] = _lesson;
